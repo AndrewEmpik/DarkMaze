@@ -22,6 +22,7 @@ public class MazeGenerator : MonoBehaviour
 
 	public List<GameObject> Walls;
 	private GameObject _newWall;
+	private GameObject _exitWall;
 
 	public Text MazeSizeText;
 
@@ -91,6 +92,7 @@ public class MazeGenerator : MonoBehaviour
 	{
 		foreach (GameObject W in Walls)
 			Destroy(W);
+		Destroy(_exitWall); 
 
 		foreach (GameObject T in Torches)
 			Destroy(T);
@@ -134,6 +136,7 @@ public class MazeGenerator : MonoBehaviour
 	{
 		foreach (GameObject W in Walls)
 			W.transform.localScale = new Vector3(W.transform.localScale.x, val, W.transform.localScale.z);
+		_exitWall.transform.localScale = new Vector3(_exitWall.transform.localScale.x, val, _exitWall.transform.localScale.z);
 
 		foreach (GameObject T in Torches)
 		{
@@ -157,6 +160,7 @@ public class MazeGenerator : MonoBehaviour
 		Renderer rend;
 		foreach (GameObject W in Walls)
 		{
+			//Debug.Log(W.);
 			rend = W.transform.GetChild(0).GetComponent<Renderer>();
 			rend.material = material;
 		}
@@ -306,23 +310,19 @@ public class MazeGenerator : MonoBehaviour
 				// ставим "выход"
 				if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
 				{
-					_newWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
-					Walls.Add(_newWall);
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
 				}
 				if (i == MazeSize-1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
 				{
-					_newWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
-					Walls.Add(_newWall);
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
 				}
 				if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
 				{
-					_newWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
-					Walls.Add(_newWall);
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
 				}
 				if (j == MazeSize-1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
 				{
-					_newWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
-					Walls.Add(_newWall);
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
 				}
 			}
 
