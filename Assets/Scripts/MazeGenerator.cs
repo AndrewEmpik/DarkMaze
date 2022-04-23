@@ -237,7 +237,7 @@ public class MazeGenerator : MonoBehaviour
 	public void ChangeSize(int val)
 	{
 		int res = MazeSize + val;
-		res = Mathf.Clamp(res, 2, 100);
+		res = Mathf.Clamp(res, 2, 51);
 		MazeSize = res;
 		MazeSizeText.text = (res - 1).ToString();
 	}
