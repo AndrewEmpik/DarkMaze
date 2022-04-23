@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class MazeGenerator : MonoBehaviour
 {
+	public string GameName = "Horror Maze";
+	public string GameVersion = "alpha 0.3.1_i1";
+
 	public GameObject WallPrefab;
 	public GameObject ExitWallPrefab;
 	private Material _curMaterial;
