@@ -2899,7 +2899,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: <b>Horror Maze</b> alpha 0.3
+  m_Text: <b>Horror Maze</b> alpha 0.3.1
 --- !u!222 &379028512
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11308,7 +11308,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: <b>Horror Maze</b> alpha 0.3
+  m_Text: <b>Horror Maze</b> alpha 0.3.1
 --- !u!222 &1963727606
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11775,7 +11775,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: <b>Horror Maze</b> alpha 0.3
+  m_Text: <b>Horror Maze</b> alpha 0.3.1
 --- !u!222 &2090785768
 CanvasRenderer:
   m_ObjectHideFlags: 0
