@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class MazeGenerator : MonoBehaviour
 {
 	public string GameName = "Horror Maze";
-	public string GameVersion = "alpha 0.3.1_i1";
+	public string GameVersion = "alpha <a.b.c>";
 
 	public GameObject WallPrefab;
 	public GameObject ExitWallPrefab;
@@ -59,6 +59,10 @@ public class MazeGenerator : MonoBehaviour
 		TopRight,
 		BottomLeft,
 		BottomRight,
+		HalfTopLeft,
+		HalfTopRight,
+		HalfBottomLeft,
+		HalfBottomRight,
 		Exit
 	}
 
@@ -76,6 +80,14 @@ public class MazeGenerator : MonoBehaviour
 				return PositionByCellAddress(0, MazeSize);
 			case PinnedPosition.BottomRight:
 				return PositionByCellAddress(MazeSize, MazeSize);
+			case PinnedPosition.HalfTopLeft:
+				return PositionByCellAddress(MazeSize / 4, MazeSize / 4);
+			case PinnedPosition.HalfTopRight:
+				return PositionByCellAddress(MazeSize * 3/4, MazeSize / 4);
+			case PinnedPosition.HalfBottomLeft:
+				return PositionByCellAddress(MazeSize / 4, MazeSize * 3/4);
+			case PinnedPosition.HalfBottomRight:
+				return PositionByCellAddress(MazeSize * 3/4, MazeSize * 3/4);
 			case PinnedPosition.Exit:
 			// TODO
 				return PositionByCellAddress(0, 0);

@@ -5629,7 +5629,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameName: Horror Maze
-  GameVersion: alpha 0.4_i1
+  GameVersion: alpha 0.4.1
   WallPrefab: {fileID: 7758314666711883648, guid: 2851a5bfc190f8b44b1e0d5b0b45bca0, type: 3}
   ExitWallPrefab: {fileID: 720569946234762135, guid: 138148201352d3647a5466360b1d06bb, type: 3}
   MazeCenter: {x: 0, y: 0, z: 0}
@@ -10149,7 +10149,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1708775101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11971,7 +11971,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: <b>Horror Maze</b> alpha 0.3...
+  m_Text: <b>Horror Maze</b> alpha 0.4...
 --- !u!222 &2090785768
 CanvasRenderer:
   m_ObjectHideFlags: 0

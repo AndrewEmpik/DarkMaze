@@ -56,7 +56,7 @@ public class FliBall : MonoBehaviour
 
 	public void Respawn()
 	{
-		transform.position = Main.PositionByCellAddress((MazeGenerator.PinnedPosition)Random.Range(1, 5)) + new Vector3(0, 1.52f, 0);
+		transform.position = Main.PositionByCellAddress((MazeGenerator.PinnedPosition)Random.Range(5, 9)) + new Vector3(0, 1.52f, 0);
 	}
 
 	private void OnCollisionEnter(Collision collision)
