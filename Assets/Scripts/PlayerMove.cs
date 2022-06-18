@@ -22,6 +22,9 @@ public class PlayerMove : MonoBehaviour
 
 	private bool _dead = false;
 
+	[SerializeField] GameObject Match;
+	bool _matchActive = false;
+
 	private void Start()
 	{
 		FootstepsAudio.Play();
@@ -39,15 +42,30 @@ public class PlayerMove : MonoBehaviour
 			ToggleMenuActive();
 		}
 
-
 		if (!MenuActive)
-	        MouseAiming();
+		{
+			MouseAiming();
+
+			if (Input.GetKeyDown(KeyCode.F))
+			{
+				ToggleMatch();
+			}
+
+		}
+
+
     }
 
 	public void ToggleMenuActive()
 	{
 		MenuActive = !MenuActive;
 		Menu.gameObject.SetActive(MenuActive);
+	}
+
+	public void ToggleMatch()
+	{
+		_matchActive = !_matchActive;
+		Match.SetActive(_matchActive);
 	}
 
 	public void Die()
