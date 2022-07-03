@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
@@ -25,8 +26,12 @@ public class PlayerMove : MonoBehaviour
 	[SerializeField] GameObject Match;
 	bool _matchActive = false;
 
+	[SerializeField] TMP_Text MatchesUIText;
+	public int MatchesCount = 10;
+
 	private void Start()
 	{
+		MatchesUIUpdate();
 		FootstepsAudio.Play();
 		FootstepsAudio.Pause();
 		//FootstepsAudio.outputAudioMixerGroup.audioMixer.SetFloat("Pitch", 1f);
@@ -48,6 +53,7 @@ public class PlayerMove : MonoBehaviour
 
 			if (Input.GetKeyDown(KeyCode.F))
 			{
+				ChangeMatchesCount(-1);
 				ToggleMatch();
 			}
 
@@ -55,6 +61,17 @@ public class PlayerMove : MonoBehaviour
 
 
     }
+
+	public void MatchesUIUpdate()
+	{
+		MatchesUIText.text = MatchesCount.ToString();
+	}
+
+	public void ChangeMatchesCount(int value)
+	{
+		MatchesCount += value;
+		MatchesUIUpdate();
+	}
 
 	public void ToggleMenuActive()
 	{
