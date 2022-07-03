@@ -18,7 +18,6 @@ public class MazeGenerator : MonoBehaviour
 	public Camera MainCamera;
 	public Camera PlayerCamera;
 
-
 	public WinCanvas WinCanvas;
 
 	private float _cellSize = 3;
@@ -51,6 +50,11 @@ public class MazeGenerator : MonoBehaviour
 	public int TorchProbability = 50;
 
 	private Vector3 _mazeZeroPoint = Vector3.zero;
+
+	[SerializeField]
+	private Matchbox _matchboxPrefab;
+	[SerializeField]
+	private int _matchboxCount = 10;
 
 	public enum PinnedPosition
 	{
@@ -123,7 +127,7 @@ public class MazeGenerator : MonoBehaviour
 		FindObjectOfType<FliBall>().Respawn();
 		FindObjectOfType<PlayerMove>().transform.position = PositionByCellAddress(PinnedPosition.Center);
 
-
+		// спички не обновл€ю, поскольку потом (в главной ветке) всЄ равно буду делать рестарт сцены
 	}
 
 	public void ToggleTorch(bool val)
@@ -343,6 +347,15 @@ public class MazeGenerator : MonoBehaviour
 
 		if (_curMaterial != null)
 			SetMaterial(_curMaterial);
+
+		for (int i = 0; i < _matchboxCount; i++)
+		{
+			Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
+			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress.x, matchBoxCellAddress.y);
+			matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
+								Vector3.forward * Random.Range(-1f, 1f)) * _cellSize / 2 * 0.9f;
+			Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0,360), 0f)); 
+		}
 
 	}
 
