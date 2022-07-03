@@ -31,6 +31,7 @@ public class PlayerMove : MonoBehaviour
 	[SerializeField] TMP_Text MatchesUIText;
 	[SerializeField] TMP_Text PickUIText;
 	[SerializeField] GameObject MatchesProgressBar;
+	[SerializeField] GameObject MatchInHandObject;
 	public int MatchesCount = 10;
 
 	private void Start()
@@ -144,6 +145,7 @@ public class PlayerMove : MonoBehaviour
 		matchLifeCoroutine = StartCoroutine(MatchLifeCoroutine());
 		MatchLightingAudio.pitch = Random.Range(0.7f, 1.1f);
 		MatchLightingAudio.Play();
+		MatchInHandObject.SetActive(true);
 	}
 
 	public void PutOutMatch()
@@ -152,6 +154,7 @@ public class PlayerMove : MonoBehaviour
 		Match.SetActive(_matchActive);
 		MatchesProgressBar.SetActive(false);
 		StopCoroutine(matchLifeCoroutine);
+		MatchInHandObject.SetActive(false);
 	}
 
 	public void Die()
