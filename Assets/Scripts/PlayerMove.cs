@@ -18,6 +18,8 @@ public class PlayerMove : MonoBehaviour
 	public Canvas Menu;
 
 	public AudioSource FootstepsAudio;
+	public AudioSource GatherItemAudio;
+	public AudioSource MatchLightingAudio;
 
 	public Canvas FailMenu;
 
@@ -93,6 +95,7 @@ public class PlayerMove : MonoBehaviour
 	{
 		Destroy(matchbox.gameObject);
 		TryChangeMatchesCount(35);
+		GatherItemAudio.Play();
 	}
 
 	public void MatchesUIUpdate()
@@ -139,6 +142,8 @@ public class PlayerMove : MonoBehaviour
 		Match.SetActive(true);
 		MatchesProgressBar.SetActive(true);
 		matchLifeCoroutine = StartCoroutine(MatchLifeCoroutine());
+		MatchLightingAudio.pitch = Random.Range(0.7f, 1.1f);
+		MatchLightingAudio.Play();
 	}
 
 	public void PutOutMatch()

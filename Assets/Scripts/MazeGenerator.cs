@@ -30,7 +30,7 @@ public class MazeGenerator : MonoBehaviour
 
 	private float _curWallHeight = 1f;
 	private int _curTorchType = 3;
-	private float _curDayTime = 0.2f;
+	private float _curDayTime = 0.05f;
 
 	[SerializeField]
 	private GameObject _globalLight;
