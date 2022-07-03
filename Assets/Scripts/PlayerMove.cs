@@ -27,6 +27,7 @@ public class PlayerMove : MonoBehaviour
 	bool _matchActive = false;
 
 	[SerializeField] TMP_Text MatchesUIText;
+	[SerializeField] TMP_Text PickUIText;
 	[SerializeField] GameObject MatchesProgressBar;
 	public int MatchesCount = 10;
 
@@ -61,7 +62,38 @@ public class PlayerMove : MonoBehaviour
 					LightMatch();
 			}
 		}
-    }
+
+		//
+
+		// Create ray from center of the screen
+		// TODO cache camera !!
+		var ray = PointOfView.GetComponent<Camera>().ViewportPointToRay(Vector3.one * 0.5f);
+		RaycastHit hit;
+		// Shot ray to find object to pick
+		Debug.DrawLine(ray.origin, ray.origin+ray.direction, Color.blue);
+
+		PickUIText.gameObject.SetActive(false);
+
+		if (Physics.Raycast(ray, out hit, 2f))
+		{
+			Debug.DrawLine(ray.origin, hit.point, Color.yellow);
+			// Check if object is pickable
+			Matchbox matchbox = hit.transform.GetComponent<Matchbox>();
+			// If object has PickableItem class
+			if (matchbox)
+			{
+				PickUIText.gameObject.SetActive(true);
+				if (Input.GetKeyDown(KeyCode.E))
+					PickMatchbox(matchbox);
+			}
+		}
+	}
+
+	public void PickMatchbox(Matchbox matchbox)
+	{
+		Destroy(matchbox.gameObject);
+		TryChangeMatchesCount(35);
+	}
 
 	public void MatchesUIUpdate()
 	{
