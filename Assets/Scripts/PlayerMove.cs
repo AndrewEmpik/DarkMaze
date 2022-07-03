@@ -27,11 +27,13 @@ public class PlayerMove : MonoBehaviour
 	bool _matchActive = false;
 
 	[SerializeField] TMP_Text MatchesUIText;
+	[SerializeField] GameObject MatchesProgressBar;
 	public int MatchesCount = 10;
 
 	private void Start()
 	{
 		MatchesUIUpdate();
+		MatchesProgressBar.transform.localScale = new Vector3(0, 1, 1);
 		FootstepsAudio.Play();
 		FootstepsAudio.Pause();
 		//FootstepsAudio.outputAudioMixerGroup.audioMixer.SetFloat("Pitch", 1f);
@@ -53,13 +55,12 @@ public class PlayerMove : MonoBehaviour
 
 			if (Input.GetKeyDown(KeyCode.F))
 			{
-				ChangeMatchesCount(-1);
-				ToggleMatch();
+				if (_matchActive)
+					PutOutMatch();
+				else if (TryChangeMatchesCount(-1))
+					LightMatch();
 			}
-
 		}
-
-
     }
 
 	public void MatchesUIUpdate()
@@ -67,10 +68,29 @@ public class PlayerMove : MonoBehaviour
 		MatchesUIText.text = MatchesCount.ToString();
 	}
 
-	public void ChangeMatchesCount(int value)
+	public bool TryChangeMatchesCount(int value)
 	{
+		bool result = true;
 		MatchesCount += value;
+		if (MatchesCount < 0)
+		{
+			MatchesCount = 0;
+			result = false;
+		}
 		MatchesUIUpdate();
+		return result;
+	}
+
+	IEnumerator MatchLifeCoroutine()
+	{
+		float baseTime = 20f;
+
+		for (float t = baseTime; t >= 0; t -= Time.deltaTime * (1 + Rigidbody.velocity.magnitude/moveSpeed) )
+		{
+			MatchesProgressBar.transform.localScale = new Vector3(t / baseTime, 1, 1);
+			yield return null;
+		}
+		PutOutMatch(); // переделать на выключение
 	}
 
 	public void ToggleMenuActive()
@@ -79,10 +99,22 @@ public class PlayerMove : MonoBehaviour
 		Menu.gameObject.SetActive(MenuActive);
 	}
 
-	public void ToggleMatch()
+	Coroutine matchLifeCoroutine;
+
+	public void LightMatch()
 	{
-		_matchActive = !_matchActive;
+		_matchActive = true;
+		Match.SetActive(true);
+		MatchesProgressBar.SetActive(true);
+		matchLifeCoroutine = StartCoroutine(MatchLifeCoroutine());
+	}
+
+	public void PutOutMatch()
+	{
+		_matchActive = false;
 		Match.SetActive(_matchActive);
+		MatchesProgressBar.SetActive(false);
+		StopCoroutine(matchLifeCoroutine);
 	}
 
 	public void Die()
