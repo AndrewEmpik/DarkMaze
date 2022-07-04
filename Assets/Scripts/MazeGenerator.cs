@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MazeGenerator : MonoBehaviour
@@ -53,6 +54,11 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField]
 	private int _matchboxCount = 10;
 
+	[SerializeField] GameObject PostProcessVolume;
+	[SerializeField] GameObject MenuCanvas;
+
+	public static bool FirstLoad = true;
+
 	public enum PinnedPosition
 	{
 		Center,
@@ -65,6 +71,111 @@ public class MazeGenerator : MonoBehaviour
 		HalfBottomLeft,
 		HalfBottomRight,
 		Exit
+	}
+
+	void Start()
+	{
+		PostProcessVolume.SetActive(true);
+		if (FirstLoad)
+		{
+			MenuCanvas.SetActive(true);
+			FirstLoad = false;
+		}
+		WinCanvas.gameObject.SetActive(true);
+
+		//MainCamera.enabled = true;
+		//PlayerCamera.enabled = false;
+		//SetTorchType(3);
+		SetDayTime(_curDayTime);
+
+		MazeSizeText.text = (MazeSize - 1).ToString();
+
+		//TestPoint.position = MazeCenter;
+
+		List<List<int>> _mazeMapList;
+
+		_mazeMapList = _generateMaze(MazeSize);
+
+		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * _cellSize;
+		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
+
+		//Vector3 _prevPoint = _mazeZeroPoint-new Vector3(10,0,-10);
+
+		// j - горизонталь, i - вертикаль
+		for (int i = 0; i < MazeSize; i++)
+			for (int j = 0; j < MazeSize; j++)
+			{
+				//Debug.DrawLine( _prevPoint,
+				//				_mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), 
+				//				Color.cyan,1000);
+				//_prevPoint = _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize);
+
+				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
+				{
+					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
+					Walls.Add(_newWall);
+
+					for (int c = 1; c <= 2; c++)
+					{
+						if (Random.Range(1, TorchProbability) == 1)
+						{
+							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
+							_newTorch.SetActive(_tglAddLight.isOn);
+							Torches.Add(_newTorch);
+						}
+					}
+
+				}
+
+				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 2) != 0)
+				{
+					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
+					Walls.Add(_newWall);
+
+					for (int c = 1; c <= 2; c++)
+					{
+						if (Random.Range(1, TorchProbability) == 1)
+						{
+							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
+							_newTorch.SetActive(_tglAddLight.isOn);
+							Torches.Add(_newTorch);
+						}
+					}
+
+				}
+
+
+				// ставим "выход"
+				if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
+				{
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
+				}
+				if (i == MazeSize-1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
+				{
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
+				}
+				if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
+				{
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
+				}
+				if (j == MazeSize-1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
+				{
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
+				}
+			}
+
+		if (_curMaterial != null)
+			SetMaterial(_curMaterial);
+
+		for (int i = 0; i < _matchboxCount; i++)
+		{
+			Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
+			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress.x, matchBoxCellAddress.y);
+			matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
+								Vector3.forward * Random.Range(-1f, 1f)) * _cellSize / 2 * 0.9f;
+			Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0,360), 0f)); 
+		}
+
 	}
 
 	public Vector3 PositionByCellAddress(PinnedPosition value)
@@ -106,6 +217,8 @@ public class MazeGenerator : MonoBehaviour
 
 	public void RebuildMaze()
 	{
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
 		foreach (GameObject W in Walls)
 			Destroy(W);
 		Destroy(_exitWall); 
@@ -258,103 +371,6 @@ public class MazeGenerator : MonoBehaviour
 		MazeSizeText.text = (res - 1).ToString();
 	}
 
-
-	void Start()
-	{
-		//MainCamera.enabled = true;
-		//PlayerCamera.enabled = false;
-		//SetTorchType(3);
-		SetDayTime(_curDayTime);
-
-		MazeSizeText.text = (MazeSize - 1).ToString();
-
-		//TestPoint.position = MazeCenter;
-
-		List<List<int>> _mazeMapList;
-
-		_mazeMapList = _generateMaze(MazeSize);
-
-		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * _cellSize;
-		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
-
-		//Vector3 _prevPoint = _mazeZeroPoint-new Vector3(10,0,-10);
-
-		// j - горизонталь, i - вертикаль
-		for (int i = 0; i < MazeSize; i++)
-			for (int j = 0; j < MazeSize; j++)
-			{
-				//Debug.DrawLine( _prevPoint,
-				//				_mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), 
-				//				Color.cyan,1000);
-				//_prevPoint = _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize);
-
-				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
-				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
-					Walls.Add(_newWall);
-
-					for (int c = 1; c <= 2; c++)
-					{
-						if (Random.Range(1, TorchProbability) == 1)
-						{
-							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
-							_newTorch.SetActive(_tglAddLight.isOn);
-							Torches.Add(_newTorch);
-						}
-					}
-
-				}
-
-				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 2) != 0)
-				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
-					Walls.Add(_newWall);
-
-					for (int c = 1; c <= 2; c++)
-					{
-						if (Random.Range(1, TorchProbability) == 1)
-						{
-							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
-							_newTorch.SetActive(_tglAddLight.isOn);
-							Torches.Add(_newTorch);
-						}
-					}
-
-				}
-
-
-				// ставим "выход"
-				if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
-				}
-				if (i == MazeSize-1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
-				}
-				if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
-				}
-				if (j == MazeSize-1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
-				}
-			}
-
-		if (_curMaterial != null)
-			SetMaterial(_curMaterial);
-
-		for (int i = 0; i < _matchboxCount; i++)
-		{
-			Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
-			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress.x, matchBoxCellAddress.y);
-			matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
-								Vector3.forward * Random.Range(-1f, 1f)) * _cellSize / 2 * 0.9f;
-			Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0,360), 0f)); 
-		}
-
-	}
 
 	private int manageWall(int where, int which, bool toAdd = true) // 1 пр, 2 лев, 3 всё
 	{

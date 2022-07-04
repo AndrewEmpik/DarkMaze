@@ -44,6 +44,9 @@ public class PlayerMove : MonoBehaviour
 
 	private void Start()
 	{
+		Time.timeScale = MazeGenerator.FirstLoad ? 0f : 1f;
+		MenuActive = MazeGenerator.FirstLoad;
+
 		for (int i = 0; i < _playerRotationsListLength; i++)
 			_playerRotationsList.Add(0f);
 
@@ -177,6 +180,7 @@ public class PlayerMove : MonoBehaviour
 	{
 		MenuActive = !MenuActive;
 		Menu.gameObject.SetActive(MenuActive);
+		Time.timeScale = MenuActive ? 0f : 1f;
 	}
 
 	Coroutine matchLifeCoroutine;
