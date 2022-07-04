@@ -36,8 +36,15 @@ public class PlayerMove : MonoBehaviour
 	[SerializeField] Transform MatchFlame;
 	public int MatchesCount = 10;
 
+
+	[SerializeField] private List<float> _playerRotationsList = new List<float>();
+	[SerializeField] private int _playerRotationsListLength = 30;
+
 	private void Start()
 	{
+		for (int i = 0; i < _playerRotationsListLength; i++)
+			_playerRotationsList.Add(0f);
+
 		MatchesUIUpdate();
 		MatchesProgressBar.transform.localScale = new Vector3(0, 1, 1);
 		FootstepsAudio.Play();
@@ -47,6 +54,10 @@ public class PlayerMove : MonoBehaviour
 
 	void Update()
     {
+
+
+
+
 		Cursor.visible = MenuActive;
 		Cursor.lockState = MenuActive ? CursorLockMode.None : CursorLockMode.Locked;
 
@@ -201,6 +212,8 @@ public class PlayerMove : MonoBehaviour
 		_dead = false;
 	}
 
+	float rotationImpulse = 0f;
+
 	void FixedUpdate()
 	{
 		if (!MenuActive)
@@ -210,8 +223,25 @@ public class PlayerMove : MonoBehaviour
 			Rigidbody.velocity = Vector3.zero;
 			FootstepsAudio.Pause();
 		}
-			
+
+		/*float y = Input.GetAxis("Mouse X") * turnSpeed;
+		_playerRotationsList.Add(y);
+		_playerRotationsList.RemoveAt(0);
+		float sumY = 0f;
+		foreach (float s in _playerRotationsList)
+			sumY += s;
+		for (int i = 0; i < _playerRotationsListLength; i++)
+		{
+			sumY += _playerRotationsList[i]* (((float)i)/_playerRotationsListLength);
+		}
+
+		rotationImpulse = sumY / _playerRotationsListLength;*/
+
 	}
+
+
+
+
 	void MouseAiming()
     {
 		//Cursor.visible = false;
@@ -223,11 +253,20 @@ public class PlayerMove : MonoBehaviour
         // clamp the vertical rotation
         rotX = Mathf.Clamp(rotX, minTurnAngle, maxTurnAngle);
 		
-		Debug.Log(rotX);
+		//Debug.Log(rotX);
 		float _sin = Mathf.Sin(Mathf.Abs(rotX) * Mathf.Deg2Rad);
 		float angleCoef = 0.585f * _sin * _sin;
 
 		MatchFlame.transform.localScale = new Vector3(1,1 - angleCoef /*(90+45)*/ ,1);
+
+		_playerRotationsList.Add(y);
+		_playerRotationsList.RemoveAt(0);
+		float sumY = 0f;
+		foreach (float s in _playerRotationsList)
+			sumY += s;
+		float rotationImpulse = sumY / _playerRotationsListLength;
+
+		MatchFlame.localEulerAngles = new Vector3(0f, 0f, rotationImpulse*4);
 
 		// rotate the camera
 		transform.eulerAngles = new Vector3(0, transform.eulerAngles.y + y, 0);
