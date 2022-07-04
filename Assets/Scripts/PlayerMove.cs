@@ -34,6 +34,7 @@ public class PlayerMove : MonoBehaviour
 	[SerializeField] GameObject MatchInHandObject;
 	[SerializeField] Transform BurntPartOfMatch;
 	[SerializeField] Transform MatchFlame;
+	[SerializeField] GameObject BurnedMatchPrefab;
 	public int MatchesCount = 10;
 
 
@@ -164,7 +165,10 @@ public class PlayerMove : MonoBehaviour
 		}
 
 		if (!boolValue)
+		{
 			MatchInHandObject.SetActive(false);
+			Instantiate(BurnedMatchPrefab, transform.localPosition, Quaternion.Euler(0f,Random.Range(0,360),0f));
+		}
 	}
 
 	public void ToggleMenuActive()
