@@ -63,7 +63,7 @@ public class PlayerMove : MonoBehaviour
 			{
 				if (_matchActive)
 					PutOutMatch();
-				else if (TryChangeMatchesCount(-1))
+				else if (!MatchInHandObject.activeInHierarchy && TryChangeMatchesCount(-1))
 					LightMatch();
 			}
 		}
@@ -183,6 +183,7 @@ public class PlayerMove : MonoBehaviour
 		MatchesProgressBar.SetActive(false);
 		StopCoroutine(matchLifeCoroutine);
 		StartCoroutine(RaiseInHandsCoroutine(false));
+		MatchLightingAudio.Stop(); // актуально, если очень быстро погасить после зажигания
 		//MatchInHandObject.SetActive(false);
 	}
 
