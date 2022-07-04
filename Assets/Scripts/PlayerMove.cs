@@ -122,8 +122,8 @@ public class PlayerMove : MonoBehaviour
 	IEnumerator MatchLifeCoroutine()
 	{
 		float baseTime = 20f;
-		Vector3 FlameTopPosition = new Vector3(0.133499995f, -0.0650999546f, 0.362199992f);
-		Vector3 FlameBottomPosition = new Vector3(0.164199993f, -0.1523f, 0.338400006f);
+		Vector3 FlameTopPosition = new Vector3(0.133499995f, -0.1180999546f, 0.362199992f);
+		Vector3 FlameBottomPosition = new Vector3(0.164199993f, -0.2053f, 0.338400006f);
 
 		for (float t = baseTime; t >= 0; t -= Time.deltaTime * (1 + Rigidbody.velocity.magnitude/moveSpeed) )
 		{
