@@ -222,6 +222,13 @@ public class PlayerMove : MonoBehaviour
         rotX += Input.GetAxis("Mouse Y") * turnSpeed;
         // clamp the vertical rotation
         rotX = Mathf.Clamp(rotX, minTurnAngle, maxTurnAngle);
+		
+		Debug.Log(rotX);
+		float _sin = Mathf.Sin(Mathf.Abs(rotX) * Mathf.Deg2Rad);
+		float angleCoef = 0.585f * _sin * _sin;
+
+		MatchFlame.transform.localScale = new Vector3(1,1 - angleCoef /*(90+45)*/ ,1);
+
 		// rotate the camera
 		transform.eulerAngles = new Vector3(0, transform.eulerAngles.y + y, 0);
 		PointOfView.eulerAngles = new Vector3(-rotX, PointOfView.eulerAngles.y, 0);
