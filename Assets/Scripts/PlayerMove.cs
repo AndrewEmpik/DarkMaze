@@ -32,6 +32,8 @@ public class PlayerMove : MonoBehaviour
 	[SerializeField] TMP_Text PickUIText;
 	[SerializeField] GameObject MatchesProgressBar;
 	[SerializeField] GameObject MatchInHandObject;
+	[SerializeField] Transform BurntPartOfMatch;
+	[SerializeField] Transform MatchFlame;
 	public int MatchesCount = 10;
 
 	private void Start()
@@ -120,13 +122,38 @@ public class PlayerMove : MonoBehaviour
 	IEnumerator MatchLifeCoroutine()
 	{
 		float baseTime = 20f;
+		Vector3 FlameTopPosition = new Vector3(0.133499995f, -0.0650999546f, 0.362199992f);
+		Vector3 FlameBottomPosition = new Vector3(0.164199993f, -0.1523f, 0.338400006f);
 
 		for (float t = baseTime; t >= 0; t -= Time.deltaTime * (1 + Rigidbody.velocity.magnitude/moveSpeed) )
 		{
 			MatchesProgressBar.transform.localScale = new Vector3(t / baseTime, 1, 1);
+			BurntPartOfMatch.localScale = new Vector3(1, 0.31f * ((baseTime-t) / baseTime), 1);
+			MatchFlame.localPosition = new Vector3(	Mathf.Lerp(FlameTopPosition.x, FlameBottomPosition.x, (baseTime - t) / baseTime),
+													Mathf.Lerp(FlameTopPosition.y, FlameBottomPosition.y, (baseTime - t) / baseTime),
+													Mathf.Lerp(FlameTopPosition.z, FlameBottomPosition.z, (baseTime - t) / baseTime));
 			yield return null;
 		}
 		PutOutMatch(); // переделать на выключение
+	}
+
+	IEnumerator RaiseInHandsCoroutine(bool boolValue)
+	{
+		float baseTime = 0.2f;
+		float yMax = 0f;
+		float yMin = -0.23f;
+
+		if (boolValue)
+			MatchInHandObject.SetActive(true);
+
+		for (float t = 0; t <= baseTime; t += Time.deltaTime)
+		{
+			MatchInHandObject.transform.localPosition = new Vector3(0,Mathf.Lerp(boolValue ? yMin : yMax, boolValue ? yMax : yMin, t/baseTime),0);
+			yield return null;
+		}
+
+		if (!boolValue)
+			MatchInHandObject.SetActive(false);
 	}
 
 	public void ToggleMenuActive()
@@ -145,7 +172,8 @@ public class PlayerMove : MonoBehaviour
 		matchLifeCoroutine = StartCoroutine(MatchLifeCoroutine());
 		MatchLightingAudio.pitch = Random.Range(0.7f, 1.1f);
 		MatchLightingAudio.Play();
-		MatchInHandObject.SetActive(true);
+		StartCoroutine(RaiseInHandsCoroutine(true));
+		//MatchInHandObject.SetActive(true);
 	}
 
 	public void PutOutMatch()
@@ -154,7 +182,8 @@ public class PlayerMove : MonoBehaviour
 		Match.SetActive(_matchActive);
 		MatchesProgressBar.SetActive(false);
 		StopCoroutine(matchLifeCoroutine);
-		MatchInHandObject.SetActive(false);
+		StartCoroutine(RaiseInHandsCoroutine(false));
+		//MatchInHandObject.SetActive(false);
 	}
 
 	public void Die()
