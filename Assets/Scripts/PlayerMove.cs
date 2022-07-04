@@ -12,6 +12,7 @@ public class PlayerMove : MonoBehaviour
     private float rotX;
 
 	public Transform PointOfView;
+	private Camera _playerCamera;
 	public Rigidbody Rigidbody;
 
 	public bool MenuActive = true;
@@ -51,14 +52,11 @@ public class PlayerMove : MonoBehaviour
 		FootstepsAudio.Play();
 		FootstepsAudio.Pause();
 		//FootstepsAudio.outputAudioMixerGroup.audioMixer.SetFloat("Pitch", 1f);
+		_playerCamera = PointOfView.GetComponent<Camera>();
 	}
 
 	void Update()
     {
-
-
-
-
 		Cursor.visible = MenuActive;
 		Cursor.lockState = MenuActive ? CursorLockMode.None : CursorLockMode.Locked;
 
@@ -83,8 +81,7 @@ public class PlayerMove : MonoBehaviour
 		//
 
 		// Create ray from center of the screen
-		// TODO cache camera !!
-		var ray = PointOfView.GetComponent<Camera>().ViewportPointToRay(Vector3.one * 0.5f);
+		var ray = _playerCamera.ViewportPointToRay(Vector3.one * 0.5f);
 		RaycastHit hit;
 		// Shot ray to find object to pick
 		Debug.DrawLine(ray.origin, ray.origin+ray.direction, Color.blue);
@@ -104,6 +101,11 @@ public class PlayerMove : MonoBehaviour
 					PickMatchbox(matchbox);
 			}
 		}
+
+		if (Input.GetMouseButton(1))
+			_playerCamera.fieldOfView = 30;
+		else
+			_playerCamera.fieldOfView = 60;
 	}
 
 	public void PickMatchbox(Matchbox matchbox)
