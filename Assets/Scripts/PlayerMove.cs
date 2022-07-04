@@ -36,6 +36,7 @@ public class PlayerMove : MonoBehaviour
 	[SerializeField] Transform BurntPartOfMatch;
 	[SerializeField] Transform MatchFlame;
 	[SerializeField] GameObject BurnedMatchPrefab;
+	[SerializeField] Light Flashlight;
 	public int MatchesCount = 10;
 
 
@@ -75,6 +76,11 @@ public class PlayerMove : MonoBehaviour
 					PutOutMatch();
 				else if (!MatchInHandObject.activeInHierarchy && TryChangeMatchesCount(-1))
 					LightMatch();
+			}
+
+			if (Input.GetKeyDown(KeyCode.L))
+			{
+				ToggleFlashlight();
 			}
 		}
 
@@ -177,6 +183,11 @@ public class PlayerMove : MonoBehaviour
 	{
 		MenuActive = !MenuActive;
 		Menu.gameObject.SetActive(MenuActive);
+	}
+
+	public void ToggleFlashlight()
+	{
+		Flashlight.gameObject.SetActive(!Flashlight.gameObject.activeInHierarchy);
 	}
 
 	Coroutine matchLifeCoroutine;
