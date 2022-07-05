@@ -123,6 +123,56 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &8209860
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8209861}
+  - component: {fileID: 8209862}
+  m_Layer: 0
+  m_Name: MenuManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8209861
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8209860}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.72, z: 0.38}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8209862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8209860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40fc3ecb5391253438659fb5a4e603e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _drpCamera: {fileID: 1949135410}
+  _drpLight: {fileID: 1920353015}
+  _menuCanvas: {fileID: 2103224239}
+  _winCanvas: {fileID: 1708775103}
+  _failCanvas: {fileID: 826565189}
+  _player: {fileID: 852237361}
 --- !u!1 &10323655
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,7 +429,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
 --- !u!1 &44826112
 GameObject:
@@ -498,7 +548,7 @@ RectTransform:
   - {fileID: 2041778709}
   - {fileID: 1541628117}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -14841,7 +14891,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &267109502
 GameObject:
@@ -15488,8 +15538,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 719328054}
-        m_TargetAssemblyTypeName: MazeGenerator, Assembly-CSharp
+      - m_Target: {fileID: 8209862}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: NextCameraDropdownValue
         m_Mode: 1
         m_Arguments:
@@ -18173,7 +18223,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &628745027
 GameObject:
@@ -18771,7 +18821,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: -1, y: -30, z: 0}
 --- !u!1 &719328051
 GameObject:
@@ -18827,8 +18877,6 @@ MonoBehaviour:
   Walls: []
   MazeSizeText: {fileID: 1033120946}
   _globalLight: {fileID: 705507993}
-  _drpCamera: {fileID: 1949135410}
-  _drpLight: {fileID: 1920353015}
   _tglAddLight: {fileID: 1728050121}
   Torches: []
   TorchPrefab: {fileID: 4513912454870971881, guid: 6bd735d4c1bd83d4da3c555fb4474a45, type: 3}
@@ -19536,7 +19584,7 @@ PrefabInstance:
       objectReference: {fileID: 1824577471}
     - target: {fileID: 6746762083295785143, guid: fe09423d99f1b674aa7c51dc0f97d71c, type: 3}
       propertyPath: m_RootOrder
-      value: 15
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 6746762083295785143, guid: fe09423d99f1b674aa7c51dc0f97d71c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -19871,7 +19919,7 @@ RectTransform:
   m_Children:
   - {fileID: 543478377}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -19962,8 +20010,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 719328054}
-        m_TargetAssemblyTypeName: MazeGenerator, Assembly-CSharp
+      - m_Target: {fileID: 8209862}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: QuitApplication
         m_Mode: 1
         m_Arguments:
@@ -20077,7 +20125,7 @@ Transform:
   - {fileID: 1308841896}
   - {fileID: 434943508}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &852237361
 MonoBehaviour:
@@ -20097,12 +20145,12 @@ MonoBehaviour:
   maxTurnAngle: 90
   PointOfView: {fileID: 936436600}
   Rigidbody: {fileID: 852237359}
-  MenuActive: 1
   Menu: {fileID: 2103224239}
   FootstepsAudio: {fileID: 1653378183}
   GatherItemAudio: {fileID: 1308841897}
   MatchLightingAudio: {fileID: 434943509}
   FailMenu: {fileID: 826565189}
+  Dead: 0
   Match: {fileID: 649013438}
   MatchesUIText: {fileID: 856685136}
   PickUIText: {fileID: 1541628118}
@@ -21076,7 +21124,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 35.177498, y: 42.371063, z: 0.0000031336076}
 --- !u!114 &963194229
 MonoBehaviour:
@@ -22099,8 +22147,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 719328054}
-        m_TargetAssemblyTypeName: MazeGenerator, Assembly-CSharp
+      - m_Target: {fileID: 8209862}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: NextLightDropdownValue
         m_Mode: 1
         m_Arguments:
@@ -22493,7 +22541,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1308841895
 GameObject:
@@ -22786,7 +22834,7 @@ Transform:
   - {fileID: 333605298}
   - {fileID: 552979754}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1343028275
 MonoBehaviour:
@@ -23025,7 +23073,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1416780364
 GameObject:
@@ -24540,7 +24588,7 @@ RectTransform:
   m_Children:
   - {fileID: 271722582}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -26428,7 +26476,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2041778708
 GameObject:
@@ -26752,7 +26800,7 @@ RectTransform:
   m_Children:
   - {fileID: 93105146}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

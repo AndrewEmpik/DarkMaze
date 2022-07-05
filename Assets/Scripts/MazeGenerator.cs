@@ -11,7 +11,6 @@ public class MazeGenerator : MonoBehaviour
 	private Material _curMaterial;
 	public Vector3 MazeCenter = new Vector3(40f, 0f, 10f);
 	public int MazeSize = 5;
-	//public Transform TestPoint;
 
 	public Camera MainCamera;
 	public Camera PlayerCamera;
@@ -34,11 +33,6 @@ public class MazeGenerator : MonoBehaviour
 	private GameObject _globalLight;
 
 	[SerializeField]
-	private Dropdown _drpCamera;
-	[SerializeField]
-	private Dropdown _drpLight;
-
-	[SerializeField]
 	private Toggle _tglAddLight;
 
 	public List<GameObject> Torches;
@@ -57,8 +51,6 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField] GameObject PostProcessVolume;
 	[SerializeField] GameObject MenuCanvas;
 
-	public static bool FirstLoad = true;
-
 	public enum PinnedPosition
 	{
 		Center,
@@ -76,10 +68,10 @@ public class MazeGenerator : MonoBehaviour
 	void Start()
 	{
 		PostProcessVolume.SetActive(true);
-		if (FirstLoad)
+		if (MenuManager.FirstLoad)
 		{
 			MenuCanvas.SetActive(true);
-			FirstLoad = false;
+			MenuManager.FirstLoad = false;
 		}
 		WinCanvas.gameObject.SetActive(true);
 
@@ -213,8 +205,6 @@ public class MazeGenerator : MonoBehaviour
 		return _mazeZeroPoint + new Vector3( Mathf.Clamp(x+1,1,MazeSize-1) * _cellSize, 0, -Mathf.Clamp(y+1, 1, MazeSize-1) * _cellSize);
 	}
 
-
-
 	public void RebuildMaze()
 	{
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -244,21 +234,6 @@ public class MazeGenerator : MonoBehaviour
 	{
 		foreach (GameObject T in Torches)
 			T.SetActive(val);
-	}
-
-	public void NextCameraDropdownValue()
-	{
-		if (_drpCamera.value >= _drpCamera.options.Count - 1)
-			_drpCamera.value = 0;
-		else
-			_drpCamera.value++;
-	}
-	public void NextLightDropdownValue()
-	{
-		if (_drpLight.value >= _drpLight.options.Count - 1)
-			_drpLight.value = 0;
-		else
-			_drpLight.value++;
 	}
 
 	public void SetWallsHeight(float val)
@@ -336,15 +311,6 @@ public class MazeGenerator : MonoBehaviour
 				break;
 		}
 		_curTorchType = index;
-	}
-
-	private float fps = 30f;
-
-	void OnGUI()
-	{
-		//float newFPS = 1.0f / Time.smoothDeltaTime;
-		fps = 1.0f / Time.smoothDeltaTime;  //Mathf.Lerp(fps, newFPS, 0.0005f);
-		GUI.Label(new Rect(0, 0, 100, 100), "FPS: " + ((int)fps).ToString());
 	}
 
 	public void SetDayTime(float val)
@@ -530,15 +496,6 @@ public class MazeGenerator : MonoBehaviour
 		}
 
 		return _mazeMapList;
-	}
-
-	public void QuitApplication()
-	{
-		#if UNITY_EDITOR
-			UnityEditor.EditorApplication.isPlaying = false; // работает только в редакторе
-		#else
-			Application.Quit(); // работает только в билде
-		#endif
 	}
 
 }

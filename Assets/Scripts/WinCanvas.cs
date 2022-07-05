@@ -15,7 +15,7 @@ public class WinCanvas : MonoBehaviour
 	{
 		_winMenuActive = !_winMenuActive;
 		gameObject.SetActive(_winMenuActive);
-		FindObjectOfType<PlayerMove>().MenuActive = _winMenuActive;
+		MenuManager.MenuActive = _winMenuActive;
 	}
 
 }

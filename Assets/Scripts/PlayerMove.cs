@@ -15,7 +15,6 @@ public class PlayerMove : MonoBehaviour
 	private Camera _playerCamera;
 	public Rigidbody Rigidbody;
 
-	public bool MenuActive = true;
 	public Canvas Menu;
 
 	public AudioSource FootstepsAudio;
@@ -24,7 +23,7 @@ public class PlayerMove : MonoBehaviour
 
 	public Canvas FailMenu;
 
-	private bool _dead = false;
+	public bool Dead = false;
 
 	[SerializeField] GameObject Match;
 	bool _matchActive = false;
@@ -44,8 +43,8 @@ public class PlayerMove : MonoBehaviour
 
 	private void Start()
 	{
-		Time.timeScale = MazeGenerator.FirstLoad ? 0f : 1f;
-		MenuActive = MazeGenerator.FirstLoad;
+		Time.timeScale = MenuManager.FirstLoad ? 0f : 1f;
+		MenuManager.MenuActive = MenuManager.FirstLoad;
 
 		for (int i = 0; i < _playerRotationsListLength; i++)
 			_playerRotationsList.Add(0f);
@@ -60,15 +59,10 @@ public class PlayerMove : MonoBehaviour
 
 	void Update()
     {
-		Cursor.visible = MenuActive;
-		Cursor.lockState = MenuActive ? CursorLockMode.None : CursorLockMode.Locked;
+		Cursor.visible = MenuManager.MenuActive;
+		Cursor.lockState = MenuManager.MenuActive ? CursorLockMode.None : CursorLockMode.Locked;
 
-		if (!_dead && Input.GetKeyDown(KeyCode.Escape))	
-		{
-			ToggleMenuActive();
-		}
-
-		if (!MenuActive)
+		if (!MenuManager.MenuActive)
 		{
 			MouseAiming();
 
@@ -176,13 +170,6 @@ public class PlayerMove : MonoBehaviour
 		}
 	}
 
-	public void ToggleMenuActive()
-	{
-		MenuActive = !MenuActive;
-		Menu.gameObject.SetActive(MenuActive);
-		Time.timeScale = MenuActive ? 0f : 1f;
-	}
-
 	Coroutine matchLifeCoroutine;
 
 	public void LightMatch()
@@ -211,22 +198,15 @@ public class PlayerMove : MonoBehaviour
 	public void Die()
 	{
 		FailMenu.gameObject.SetActive(true);
-		MenuActive = true;
-		_dead = true;
-	}
-
-	public void HideFailMenu()
-	{
-		FailMenu.gameObject.SetActive(false);
-		MenuActive = false;
-		_dead = false;
+		MenuManager.MenuActive = true;
+		Dead = true;
 	}
 
 	float rotationImpulse = 0f;
 
 	void FixedUpdate()
 	{
-		if (!MenuActive)
+		if (!MenuManager.MenuActive)
 			KeyboardMovement();
 		else
 		{
@@ -248,9 +228,6 @@ public class PlayerMove : MonoBehaviour
 		rotationImpulse = sumY / _playerRotationsListLength;*/
 
 	}
-
-
-
 
 	void MouseAiming()
     {
