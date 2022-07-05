@@ -16420,7 +16420,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1708775105}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: WinCanvas, Assembly-CSharp
         m_MethodName: ToggleWinMenuActive
         m_Mode: 1
@@ -18309,8 +18309,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 852237361}
-        m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
+      - m_Target: {fileID: 8209862}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: ToggleMenuActive
         m_Mode: 1
         m_Arguments:
@@ -18873,7 +18873,6 @@ MonoBehaviour:
   MazeSize: 22
   MainCamera: {fileID: 963194227}
   PlayerCamera: {fileID: 936436602}
-  WinCanvas: {fileID: 1708775105}
   Walls: []
   MazeSizeText: {fileID: 1033120946}
   _globalLight: {fileID: 705507993}
@@ -24360,7 +24359,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1708775105}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: WinCanvas, Assembly-CSharp
         m_MethodName: ToggleWinMenuActive
         m_Mode: 1
@@ -24505,7 +24504,6 @@ GameObject:
   - component: {fileID: 1708775103}
   - component: {fileID: 1708775102}
   - component: {fileID: 1708775101}
-  - component: {fileID: 1708775105}
   m_Layer: 5
   m_Name: WinCanvas
   m_TagString: Untagged
@@ -24595,18 +24593,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1708775105
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1708775100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4efd246be36ab854a817ed920d084aad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1710330348
 GameObject:
   m_ObjectHideFlags: 0

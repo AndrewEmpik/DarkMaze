@@ -15,8 +15,6 @@ public class MazeGenerator : MonoBehaviour
 	public Camera MainCamera;
 	public Camera PlayerCamera;
 
-	public WinCanvas WinCanvas;
-
 	private float _cellSize = 3;
 
 	public List<GameObject> Walls;
@@ -73,7 +71,6 @@ public class MazeGenerator : MonoBehaviour
 			MenuCanvas.SetActive(true);
 			MenuManager.FirstLoad = false;
 		}
-		WinCanvas.gameObject.SetActive(true);
 
 		//MainCamera.enabled = true;
 		//PlayerCamera.enabled = false;

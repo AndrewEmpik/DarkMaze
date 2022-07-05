@@ -16,14 +16,30 @@ public class MenuManager : MonoBehaviour
 
 	public static bool MenuActive = true;
 
+	bool _winMenuActive = false;
+
 	public static bool FirstLoad = true;
 
 	[SerializeField] PlayerMove _player;
 
+	public static MenuManager Instance;
+
+	private void Awake()
+	{
+		if (Instance == null)
+		{
+			Instance = this;
+			DontDestroyOnLoad(gameObject);
+		}
+		else
+			Destroy(gameObject);
+	}
+
 	void Start()
     {
-        
-    }
+
+		_winCanvas.gameObject.SetActive(false);
+	}
 
     void Update()
     {
@@ -31,6 +47,13 @@ public class MenuManager : MonoBehaviour
 		{
 			ToggleMenuActive();
 		}
+	}
+
+	public void ToggleWinMenuActive()
+	{
+		_winMenuActive = !_winMenuActive;
+		_winCanvas.gameObject.SetActive(_winMenuActive);
+		MenuActive = _winMenuActive;
 	}
 
 	void OnGUI()
