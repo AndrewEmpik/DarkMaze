@@ -16420,8 +16420,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: WinCanvas, Assembly-CSharp
+      - m_Target: {fileID: 8209862}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: ToggleWinMenuActive
         m_Mode: 1
         m_Arguments:

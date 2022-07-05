@@ -43,9 +43,6 @@ public class PlayerMove : MonoBehaviour
 
 	private void Start()
 	{
-		Time.timeScale = MenuManager.FirstLoad ? 0f : 1f;
-		MenuManager.MenuActive = MenuManager.FirstLoad;
-
 		for (int i = 0; i < _playerRotationsListLength; i++)
 			_playerRotationsList.Add(0f);
 

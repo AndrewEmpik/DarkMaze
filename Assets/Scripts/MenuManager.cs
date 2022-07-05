@@ -26,17 +26,19 @@ public class MenuManager : MonoBehaviour
 
 	private void Awake()
 	{
-		if (Instance == null)
-		{
+		//if (Instance == null)
+		//{
 			Instance = this;
-			DontDestroyOnLoad(gameObject);
-		}
-		else
-			Destroy(gameObject);
+		//	DontDestroyOnLoad(gameObject);
+		//}
+		//else
+		//	Destroy(gameObject);
 	}
 
 	void Start()
-    {
+	{
+		Time.timeScale = FirstLoad ? 0f : 1f;
+		MenuActive = FirstLoad;
 
 		_winCanvas.gameObject.SetActive(false);
 	}
