@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class MazeGenerator : MonoBehaviour
 {
+	[SerializeField] private PlaytimeSettings _defaultSettings;
+	[SerializeField] private PlaytimeSettings _playtimeSettings;
+
 	public GameObject WallPrefab;
 	public GameObject ExitWallPrefab;
 	private Material _curMaterial;
@@ -49,6 +52,8 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField] GameObject PostProcessVolume;
 	[SerializeField] GameObject MenuCanvas;
 
+	private bool _postEffectsOn = true;
+
 	public enum PinnedPosition
 	{
 		Center,
@@ -68,18 +73,15 @@ public class MazeGenerator : MonoBehaviour
 		PostProcessVolume.SetActive(true);
 		if (MenuManager.FirstLoad)
 		{
+			ApplySettings(_defaultSettings);
+
 			MenuCanvas.SetActive(true);
 			MenuManager.FirstLoad = false;
 		}
-
-		//MainCamera.enabled = true;
-		//PlayerCamera.enabled = false;
-		//SetTorchType(3);
-		SetDayTime(_curDayTime);
-
-		MazeSizeText.text = (MazeSize - 1).ToString();
-
-		//TestPoint.position = MazeCenter;
+		else
+		{
+			ApplySettings(_playtimeSettings);
+		}
 
 		List<List<int>> _mazeMapList;
 
@@ -88,16 +90,10 @@ public class MazeGenerator : MonoBehaviour
 		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * _cellSize;
 		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
 
-		//Vector3 _prevPoint = _mazeZeroPoint-new Vector3(10,0,-10);
-
 		// j - горизонталь, i - вертикаль
 		for (int i = 0; i < MazeSize; i++)
 			for (int j = 0; j < MazeSize; j++)
 			{
-				//Debug.DrawLine( _prevPoint,
-				//				_mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), 
-				//				Color.cyan,1000);
-				//_prevPoint = _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize);
 
 				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
 				{
@@ -167,6 +163,34 @@ public class MazeGenerator : MonoBehaviour
 
 	}
 
+	public void ApplySettings(PlaytimeSettings settings)
+	{
+		MazeSize = settings.MazeSize;
+		_curWallHeight = settings.WallHeight;
+		_curDayTime = settings.LightIntensity;
+		//bool AdditionLightOn;
+		_curTorchType = settings.TypeOfAddLight;
+		int cameraPosition = settings.CameraPosition;
+		_postEffectsOn = settings.PostEffectsOn;
+		_curMaterial = settings.WallMaterial;
+
+		SetDayTime(_curDayTime);
+		MainCamera.GetComponent<CameraPosition>().SetCameraPosition(cameraPosition);
+		MazeSizeText.text = (MazeSize - 1).ToString();
+	}
+
+	public void SavePlaytimeSettings()
+	{
+		_playtimeSettings.MazeSize = MazeSize;
+		_playtimeSettings.WallHeight = _curWallHeight;
+		_playtimeSettings.LightIntensity = _curDayTime;
+		//bool AdditionLightOn;
+		_playtimeSettings.TypeOfAddLight = _curTorchType;
+		//_playtimeSettings.CameraPosition = cameraPosition;
+		_playtimeSettings.PostEffectsOn = _postEffectsOn;
+		_playtimeSettings.WallMaterial = _curMaterial;
+	}
+
 	public Vector3 PositionByCellAddress(PinnedPosition value)
 	{
 		switch (value)
@@ -204,27 +228,9 @@ public class MazeGenerator : MonoBehaviour
 
 	public void RebuildMaze()
 	{
+		//_playtimeSettings.CheckString = "Changed " + MazeSize.ToString();
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
-		foreach (GameObject W in Walls)
-			Destroy(W);
-		Destroy(_exitWall); 
-
-		foreach (GameObject T in Torches)
-			Destroy(T);
-
-		Walls.Clear();
-		Torches.Clear();
-
-		Start();
-
-		SetWallsHeight(_curWallHeight);
-		SetTorchType(_curTorchType);
-
-		FindObjectOfType<FliBall>().Respawn();
-		FindObjectOfType<PlayerMove>().transform.position = PositionByCellAddress(PinnedPosition.Center);
-
-		// спички не обновляю, поскольку потом (в главной ветке) всё равно буду делать рестарт сцены
 	}
 
 	public void ToggleTorch(bool val)
@@ -253,6 +259,8 @@ public class MazeGenerator : MonoBehaviour
 		
 
 		_curWallHeight = val;
+
+		_playtimeSettings.WallHeight = _curWallHeight;
 	}
 
 	public void SetMaterial(Material material)
@@ -493,6 +501,11 @@ public class MazeGenerator : MonoBehaviour
 		}
 
 		return _mazeMapList;
+	}
+
+	private void OnDestroy()
+	{
+		SavePlaytimeSettings();
 	}
 
 }

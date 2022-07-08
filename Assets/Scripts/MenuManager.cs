@@ -24,6 +24,9 @@ public class MenuManager : MonoBehaviour
 
 	public static MenuManager Instance;
 
+	[SerializeField] private PlaytimeSettings _defaultSettings;
+	[SerializeField] private PlaytimeSettings _playtimeSettings;
+
 	private void Awake()
 	{
 		//if (Instance == null)
@@ -62,7 +65,7 @@ public class MenuManager : MonoBehaviour
 	{
 		//float newFPS = 1.0f / Time.smoothDeltaTime;
 		fps = 1.0f / Time.smoothDeltaTime;  //Mathf.Lerp(fps, newFPS, 0.0005f);
-		GUI.Label(new Rect(0, 0, 100, 100), "FPS: " + ((int)fps).ToString());
+		GUI.Label(new Rect(0, 0, 200, 100), "FPS: " + ((int)fps).ToString());
 	}
 	public void NextCameraDropdownValue()
 	{
