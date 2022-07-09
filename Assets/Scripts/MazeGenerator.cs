@@ -180,11 +180,13 @@ public class MazeGenerator : MonoBehaviour
 		int cameraPosition = settings.CameraPosition;
 		_postEffectsOn = settings.PostEffectsOn;
 		_curMaterial = settings.WallMaterial;
+		DefineCurMaterialsToggleGroupIndex();
 
 		SetDayTime(_curDayTime);
 		MainCamera.GetComponent<CameraPosition>().SetCameraPosition(cameraPosition);
 		MazeSizeText.text = (MazeSize - 1).ToString();
 		_sliderLight.value = _curDayTime;
+		_materialToggles[_curMaterialsToggleGroupIndex].isOn = true;
 	}
 
 	public void SavePlaytimeSettings()
@@ -197,12 +199,13 @@ public class MazeGenerator : MonoBehaviour
 		//_playtimeSettings.CameraPosition = cameraPosition;
 		_playtimeSettings.PostEffectsOn = _postEffectsOn;
 		_playtimeSettings.WallMaterial = _curMaterial;
+	}
 
-		var activeToggle = _materialsToggleGroup.GetFirstActiveToggle();
-		Debug.Log(activeToggle);
-		for (int i = 0; i < _materialToggles.Length; i++)
+	void DefineCurMaterialsToggleGroupIndex()
+	{
+		for (int i = 0; i < _materialsForToggles.Length; i++)
 		{
-			if (_materialToggles[i] == activeToggle)
+			if (_materialsForToggles[i] == _curMaterial)
 			{
 				_curMaterialsToggleGroupIndex = i;
 				break;
@@ -283,6 +286,7 @@ public class MazeGenerator : MonoBehaviour
 	}
 
 	[SerializeField] Toggle[] _materialToggles = new Toggle[3];
+	[SerializeField] Material[] _materialsForToggles = new Material[3];
 
 	public void SetMaterial(Material material)
 	{
