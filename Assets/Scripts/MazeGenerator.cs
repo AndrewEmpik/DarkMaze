@@ -1,21 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MazeGenerator : MonoBehaviour
 {
+	[SerializeField] private PlaytimeSettings _defaultSettings;
+	[SerializeField] private PlaytimeSettings _playtimeSettings;
+
+	[SerializeField] private MenuManager _menuManager;
+
 	public GameObject WallPrefab;
 	public GameObject ExitWallPrefab;
 	private Material _curMaterial;
 	public Vector3 MazeCenter = new Vector3(40f, 0f, 10f);
 	public int MazeSize = 5;
-	//public Transform TestPoint;
 
 	public Camera MainCamera;
 	public Camera PlayerCamera;
-
-	public WinCanvas WinCanvas;
 
 	private float _cellSize = 3;
 
@@ -33,11 +36,6 @@ public class MazeGenerator : MonoBehaviour
 	private GameObject _globalLight;
 
 	[SerializeField]
-	private Dropdown _drpCamera;
-	[SerializeField]
-	private Dropdown _drpLight;
-
-	[SerializeField]
 	private Toggle _tglAddLight;
 
 	public List<GameObject> Torches;
@@ -53,6 +51,24 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField]
 	private int _matchboxCount = 10;
 
+	[SerializeField] GameObject PostProcessVolume;
+	[SerializeField] GameObject MenuCanvas;
+
+	private bool _postEffectsOn = true;
+	private bool _addLightOn = true;
+	[SerializeField] Toggle _postEffectsToggle;
+	[SerializeField] Toggle _addLightToggle;
+	[SerializeField] Dropdown _torchTypeDropdown;
+	[SerializeField] AudioSource _clickSound;
+
+	[SerializeField] Slider _sliderLight;
+	[SerializeField] Slider _sliderHeight;
+
+	int _cameraPosition = 0;
+	[SerializeField] ToggleGroup _materialsToggleGroup;
+
+	public static int _curMaterialsToggleGroupIndex = 0;
+
 	public enum PinnedPosition
 	{
 		Center,
@@ -65,6 +81,157 @@ public class MazeGenerator : MonoBehaviour
 		HalfBottomLeft,
 		HalfBottomRight,
 		Exit
+	}
+
+	void Start()
+	{
+		if (MenuManager.FirstLoad)
+		{
+			ApplySettings(_defaultSettings);
+
+			MenuCanvas.SetActive(true);
+			MenuManager.FirstLoad = false;
+		}
+		else
+		{
+			ApplySettings(_playtimeSettings);
+		}
+
+		List<List<int>> _mazeMapList;
+
+		_mazeMapList = _generateMaze(MazeSize);
+
+		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * _cellSize;
+		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
+
+		// j - горизонталь, i - вертикаль
+		for (int i = 0; i < MazeSize; i++)
+			for (int j = 0; j < MazeSize; j++)
+			{
+
+				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
+				{
+					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
+					Walls.Add(_newWall);
+
+					for (int c = 1; c <= 2; c++)
+					{
+						if (Random.Range(1, TorchProbability) == 1)
+						{
+							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
+							_newTorch.SetActive(_tglAddLight.isOn);
+							Torches.Add(_newTorch);
+						}
+					}
+
+				}
+
+				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 2) != 0)
+				{
+					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
+					Walls.Add(_newWall);
+
+					for (int c = 1; c <= 2; c++)
+					{
+						if (Random.Range(1, TorchProbability) == 1)
+						{
+							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
+							_newTorch.SetActive(_tglAddLight.isOn);
+							Torches.Add(_newTorch);
+						}
+					}
+
+				}
+
+
+				// ставим "выход"
+				if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
+				{
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
+				}
+				if (i == MazeSize-1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
+				{
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
+				}
+				if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
+				{
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
+				}
+				if (j == MazeSize-1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
+				{
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
+				}
+			}
+
+		ApplyRestOfSettings();
+
+		for (int i = 0; i < _matchboxCount; i++)
+		{
+			Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
+			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress.x, matchBoxCellAddress.y);
+			matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
+								Vector3.forward * Random.Range(-1f, 1f)) * _cellSize / 2 * 0.9f;
+			Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0,360), 0f)); 
+		}
+
+	}
+
+	public void ApplySettings(PlaytimeSettings settings)
+	{
+		MazeSize = settings.MazeSize;
+		_curWallHeight = settings.WallHeight;
+		_curDayTime = settings.LightIntensity;
+		_addLightOn = settings.AdditionLightOn;
+		_curTorchType = settings.TypeOfAddLight;
+		_cameraPosition = settings.CameraPosition;
+		_postEffectsOn = settings.PostEffectsOn;
+		_curMaterial = settings.WallMaterial;
+		DefineCurMaterialsToggleGroupIndex();
+
+		SetDayTime(_curDayTime);
+		MainCamera.GetComponent<CameraPosition>().SetCameraPosition(_cameraPosition);
+		_menuManager.SetCameraDropdownValue(_cameraPosition);
+		MazeSizeText.text = (MazeSize - 1).ToString();
+		_sliderLight.value = _curDayTime;
+		_sliderHeight.value = _curWallHeight;
+		_postEffectsToggle.isOn = _postEffectsOn;
+		PostProcessVolume.SetActive(_postEffectsOn);
+		_addLightToggle.isOn = _addLightOn;
+		_materialToggles[_curMaterialsToggleGroupIndex].isOn = true;
+		_clickSound.Stop(); // нужно, чтобы на предыдущих шагах звук не срабатывал
+	}
+
+	public void ApplyRestOfSettings()
+	{
+		SetWallsHeight(_curWallHeight);
+		_torchTypeDropdown.value = _curTorchType;
+
+		if (_curMaterial != null)
+			SetMaterial(_curMaterial);
+	}
+
+	public void SavePlaytimeSettings()
+	{
+		_playtimeSettings.MazeSize = MazeSize;
+		_playtimeSettings.WallHeight = _curWallHeight;
+		_playtimeSettings.LightIntensity = _curDayTime;
+		_playtimeSettings.AdditionLightOn = _addLightOn;
+		_playtimeSettings.TypeOfAddLight = _curTorchType;
+		_playtimeSettings.CameraPosition = _cameraPosition;
+		_playtimeSettings.PostEffectsOn = _postEffectsOn;
+		_playtimeSettings.WallMaterial = _curMaterial;
+	}
+
+	void DefineCurMaterialsToggleGroupIndex()
+	{
+		for (int i = 0; i < _materialsForToggles.Length; i++)
+		{
+			if (_materialsForToggles[i] == _curMaterial)
+			{
+				_curMaterialsToggleGroupIndex = i;
+				break;
+			}
+		}
 	}
 
 	public Vector3 PositionByCellAddress(PinnedPosition value)
@@ -102,57 +269,34 @@ public class MazeGenerator : MonoBehaviour
 		return _mazeZeroPoint + new Vector3( Mathf.Clamp(x+1,1,MazeSize-1) * _cellSize, 0, -Mathf.Clamp(y+1, 1, MazeSize-1) * _cellSize);
 	}
 
-
-
 	public void RebuildMaze()
 	{
-		foreach (GameObject W in Walls)
-			Destroy(W);
-		Destroy(_exitWall); 
+		//_playtimeSettings.CheckString = "Changed " + MazeSize.ToString();
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
-		foreach (GameObject T in Torches)
-			Destroy(T);
-
-		Walls.Clear();
-		Torches.Clear();
-
-		Start();
-
-		SetWallsHeight(_curWallHeight);
-		SetTorchType(_curTorchType);
-
-		FindObjectOfType<FliBall>().Respawn();
-		FindObjectOfType<PlayerMove>().transform.position = PositionByCellAddress(PinnedPosition.Center);
-
-		// спички не обновляю, поскольку потом (в главной ветке) всё равно буду делать рестарт сцены
 	}
 
 	public void ToggleTorch(bool val)
 	{
 		foreach (GameObject T in Torches)
 			T.SetActive(val);
+		_addLightOn = val;
 	}
-
-	public void NextCameraDropdownValue()
+	public void TogglePostEffectsValue(bool val)
 	{
-		if (_drpCamera.value >= _drpCamera.options.Count - 1)
-			_drpCamera.value = 0;
-		else
-			_drpCamera.value++;
+		_postEffectsOn = val;
 	}
-	public void NextLightDropdownValue()
+	public void SetCameraPositionValue(int value)
 	{
-		if (_drpLight.value >= _drpLight.options.Count - 1)
-			_drpLight.value = 0;
-		else
-			_drpLight.value++;
+		_cameraPosition = value;
 	}
 
 	public void SetWallsHeight(float val)
 	{
 		foreach (GameObject W in Walls)
 			W.transform.localScale = new Vector3(W.transform.localScale.x, val, W.transform.localScale.z);
-		_exitWall.transform.localScale = new Vector3(_exitWall.transform.localScale.x, val, _exitWall.transform.localScale.z);
+		if (_exitWall)
+			_exitWall.transform.localScale = new Vector3(_exitWall.transform.localScale.x, val, _exitWall.transform.localScale.z);
 
 		foreach (GameObject T in Torches)
 		{
@@ -166,9 +310,13 @@ public class MazeGenerator : MonoBehaviour
 			}
 		}
 		
-
 		_curWallHeight = val;
+
+		_playtimeSettings.WallHeight = _curWallHeight;
 	}
+
+	[SerializeField] Toggle[] _materialToggles = new Toggle[3];
+	[SerializeField] Material[] _materialsForToggles = new Material[3];
 
 	public void SetMaterial(Material material)
 	{
@@ -225,15 +373,6 @@ public class MazeGenerator : MonoBehaviour
 		_curTorchType = index;
 	}
 
-	private float fps = 30f;
-
-	void OnGUI()
-	{
-		//float newFPS = 1.0f / Time.smoothDeltaTime;
-		fps = 1.0f / Time.smoothDeltaTime;  //Mathf.Lerp(fps, newFPS, 0.0005f);
-		GUI.Label(new Rect(0, 0, 100, 100), "FPS: " + ((int)fps).ToString());
-	}
-
 	public void SetDayTime(float val)
 	{
 		_globalLight.transform.rotation = Quaternion.Euler(Mathf.Lerp(-30, 50, val), -30, 0f);
@@ -258,103 +397,6 @@ public class MazeGenerator : MonoBehaviour
 		MazeSizeText.text = (res - 1).ToString();
 	}
 
-
-	void Start()
-	{
-		//MainCamera.enabled = true;
-		//PlayerCamera.enabled = false;
-		//SetTorchType(3);
-		SetDayTime(_curDayTime);
-
-		MazeSizeText.text = (MazeSize - 1).ToString();
-
-		//TestPoint.position = MazeCenter;
-
-		List<List<int>> _mazeMapList;
-
-		_mazeMapList = _generateMaze(MazeSize);
-
-		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * _cellSize;
-		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
-
-		//Vector3 _prevPoint = _mazeZeroPoint-new Vector3(10,0,-10);
-
-		// j - горизонталь, i - вертикаль
-		for (int i = 0; i < MazeSize; i++)
-			for (int j = 0; j < MazeSize; j++)
-			{
-				//Debug.DrawLine( _prevPoint,
-				//				_mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), 
-				//				Color.cyan,1000);
-				//_prevPoint = _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize);
-
-				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
-				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
-					Walls.Add(_newWall);
-
-					for (int c = 1; c <= 2; c++)
-					{
-						if (Random.Range(1, TorchProbability) == 1)
-						{
-							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
-							_newTorch.SetActive(_tglAddLight.isOn);
-							Torches.Add(_newTorch);
-						}
-					}
-
-				}
-
-				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 2) != 0)
-				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
-					Walls.Add(_newWall);
-
-					for (int c = 1; c <= 2; c++)
-					{
-						if (Random.Range(1, TorchProbability) == 1)
-						{
-							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
-							_newTorch.SetActive(_tglAddLight.isOn);
-							Torches.Add(_newTorch);
-						}
-					}
-
-				}
-
-
-				// ставим "выход"
-				if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
-				}
-				if (i == MazeSize-1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
-				}
-				if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
-				}
-				if (j == MazeSize-1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
-				}
-			}
-
-		if (_curMaterial != null)
-			SetMaterial(_curMaterial);
-
-		for (int i = 0; i < _matchboxCount; i++)
-		{
-			Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
-			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress.x, matchBoxCellAddress.y);
-			matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
-								Vector3.forward * Random.Range(-1f, 1f)) * _cellSize / 2 * 0.9f;
-			Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0,360), 0f)); 
-		}
-
-	}
 
 	private int manageWall(int where, int which, bool toAdd = true) // 1 пр, 2 лев, 3 всё
 	{
@@ -516,13 +558,9 @@ public class MazeGenerator : MonoBehaviour
 		return _mazeMapList;
 	}
 
-	public void QuitApplication()
+	private void OnDestroy()
 	{
-		#if UNITY_EDITOR
-			UnityEditor.EditorApplication.isPlaying = false; // работает только в редакторе
-		#else
-			Application.Quit(); // работает только в билде
-		#endif
+		SavePlaytimeSettings();
 	}
 
 }
