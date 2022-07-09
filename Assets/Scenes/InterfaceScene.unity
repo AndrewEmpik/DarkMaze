@@ -18877,6 +18877,11 @@ MonoBehaviour:
   PostProcessVolume: {fileID: 1399609688}
   MenuCanvas: {fileID: 2103224236}
   _sliderLight: {fileID: 539987156}
+  _materialsToggleGroup: {fileID: 1077008029}
+  _materialToggles:
+  - {fileID: 1710330350}
+  - {fileID: 823299832}
+  - {fileID: 446764539}
 --- !u!1 &727787652
 GameObject:
   m_ObjectHideFlags: 0
@@ -21628,7 +21633,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AllowSwitchOff: 0
+  m_AllowSwitchOff: 1
 --- !u!1 &1084964795
 GameObject:
   m_ObjectHideFlags: 0
@@ -24695,7 +24700,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &1728050119
 GameObject:
   m_ObjectHideFlags: 0

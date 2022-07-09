@@ -55,6 +55,10 @@ public class MazeGenerator : MonoBehaviour
 	private bool _postEffectsOn = true;
 
 	[SerializeField] Slider _sliderLight;
+	[SerializeField] ToggleGroup _materialsToggleGroup;
+
+	public static int _curMaterialsToggleGroupIndex = 0;
+
 	public enum PinnedPosition
 	{
 		Center,
@@ -71,6 +75,8 @@ public class MazeGenerator : MonoBehaviour
 
 	void Start()
 	{
+		Debug.Log("_curMaterialsToggleGroupIndex = " + _curMaterialsToggleGroupIndex);
+
 		PostProcessVolume.SetActive(true);
 		if (MenuManager.FirstLoad)
 		{
@@ -191,6 +197,17 @@ public class MazeGenerator : MonoBehaviour
 		//_playtimeSettings.CameraPosition = cameraPosition;
 		_playtimeSettings.PostEffectsOn = _postEffectsOn;
 		_playtimeSettings.WallMaterial = _curMaterial;
+
+		var activeToggle = _materialsToggleGroup.GetFirstActiveToggle();
+		Debug.Log(activeToggle);
+		for (int i = 0; i < _materialToggles.Length; i++)
+		{
+			if (_materialToggles[i] == activeToggle)
+			{
+				_curMaterialsToggleGroupIndex = i;
+				break;
+			}
+		}
 	}
 
 	public Vector3 PositionByCellAddress(PinnedPosition value)
@@ -264,6 +281,8 @@ public class MazeGenerator : MonoBehaviour
 
 		_playtimeSettings.WallHeight = _curWallHeight;
 	}
+
+	[SerializeField] Toggle[] _materialToggles = new Toggle[3];
 
 	public void SetMaterial(Material material)
 	{
