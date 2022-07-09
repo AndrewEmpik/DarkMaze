@@ -18876,6 +18876,7 @@ MonoBehaviour:
   _matchboxCount: 10
   PostProcessVolume: {fileID: 1399609688}
   MenuCanvas: {fileID: 2103224236}
+  _sliderLight: {fileID: 539987156}
 --- !u!1 &727787652
 GameObject:
   m_ObjectHideFlags: 0

@@ -54,6 +54,7 @@ public class MazeGenerator : MonoBehaviour
 
 	private bool _postEffectsOn = true;
 
+	[SerializeField] Slider _sliderLight;
 	public enum PinnedPosition
 	{
 		Center,
@@ -177,6 +178,7 @@ public class MazeGenerator : MonoBehaviour
 		SetDayTime(_curDayTime);
 		MainCamera.GetComponent<CameraPosition>().SetCameraPosition(cameraPosition);
 		MazeSizeText.text = (MazeSize - 1).ToString();
+		_sliderLight.value = _curDayTime;
 	}
 
 	public void SavePlaytimeSettings()
