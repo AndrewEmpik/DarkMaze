@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7267f4bcda385549b53132cc771402a, type: 3}
   m_Name: DefaultSettings
   m_EditorClassIdentifier: 
-  MazeSize: 15
-  WallHeight: 0.5
+  MazeSize: 21
+  WallHeight: 1
   LightIntensity: 0.5
-  AdditionLightOn: 0
-  TypeOfAddLight: 2
+  AdditionLightOn: 1
+  TypeOfAddLight: 3
   CameraPosition: 1
-  PostEffectsOn: 0
+  PostEffectsOn: 1
   WallMaterial: {fileID: 2100000, guid: 7b7adbbb470b28b4191131a47dc469df, type: 2}

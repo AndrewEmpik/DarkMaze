@@ -12,11 +12,8 @@ public class CameraPosition : MonoBehaviour
 
 	public void SetCameraPosition (int index)
 	{
-		Debug.Log(MazeGenerator);
-		Debug.Log(MazeGenerator.MazeSize);
 		_curCameraPosition = index;
 		float coef = (MazeGenerator.MazeSize - 2) / 49f;
-
 
 		if (index == 0) // игрок
 		{

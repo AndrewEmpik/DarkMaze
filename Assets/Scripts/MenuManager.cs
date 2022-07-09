@@ -74,6 +74,12 @@ public class MenuManager : MonoBehaviour
 		else
 			_drpCamera.value++;
 	}
+
+	public void SetCameraDropdownValue(int value)
+	{
+		_drpCamera.value = value;
+	}
+
 	public void NextLightDropdownValue()
 	{
 		if (_drpLight.value >= _drpLight.options.Count - 1)

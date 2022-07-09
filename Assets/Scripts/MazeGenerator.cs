@@ -9,6 +9,8 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField] private PlaytimeSettings _defaultSettings;
 	[SerializeField] private PlaytimeSettings _playtimeSettings;
 
+	[SerializeField] private MenuManager _menuManager;
+
 	public GameObject WallPrefab;
 	public GameObject ExitWallPrefab;
 	private Material _curMaterial;
@@ -53,8 +55,17 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField] GameObject MenuCanvas;
 
 	private bool _postEffectsOn = true;
+	private bool _addLightOn = true;
+	[SerializeField] Toggle _postEffectsToggle;
+	[SerializeField] Toggle _addLightToggle;
+	[SerializeField] Dropdown _torchTypeDropdown;
+	[SerializeField] AudioSource _clickSound;
 
 	[SerializeField] Slider _sliderLight;
+	[SerializeField] Slider _sliderHeight;
+
+	int _cameraPosition = 0;
+
 	public enum PinnedPosition
 	{
 		Center,
@@ -150,8 +161,7 @@ public class MazeGenerator : MonoBehaviour
 				}
 			}
 
-		if (_curMaterial != null)
-			SetMaterial(_curMaterial);
+		ApplyRestOfSettings();
 
 		for (int i = 0; i < _matchboxCount; i++)
 		{
@@ -169,16 +179,31 @@ public class MazeGenerator : MonoBehaviour
 		MazeSize = settings.MazeSize;
 		_curWallHeight = settings.WallHeight;
 		_curDayTime = settings.LightIntensity;
-		//bool AdditionLightOn;
+		_addLightOn = settings.AdditionLightOn;
 		_curTorchType = settings.TypeOfAddLight;
-		int cameraPosition = settings.CameraPosition;
+		_cameraPosition = settings.CameraPosition;
 		_postEffectsOn = settings.PostEffectsOn;
 		_curMaterial = settings.WallMaterial;
 
 		SetDayTime(_curDayTime);
-		MainCamera.GetComponent<CameraPosition>().SetCameraPosition(cameraPosition);
+		MainCamera.GetComponent<CameraPosition>().SetCameraPosition(_cameraPosition);
+		_menuManager.SetCameraDropdownValue(_cameraPosition);
 		MazeSizeText.text = (MazeSize - 1).ToString();
 		_sliderLight.value = _curDayTime;
+		_sliderHeight.value = _curWallHeight;
+		_postEffectsToggle.isOn = _postEffectsOn;
+		_addLightToggle.isOn = _addLightOn;
+		_clickSound.Stop(); // нужно, чтобы на предыдущих шагах звук не срабатывал
+		//PostProcessVolume.gameObject.SetActive(_postEffectsOn);
+	}
+
+	public void ApplyRestOfSettings()
+	{
+		SetWallsHeight(_curWallHeight);
+		_torchTypeDropdown.value = _curTorchType;
+
+		if (_curMaterial != null)
+			SetMaterial(_curMaterial);
 	}
 
 	public void SavePlaytimeSettings()
@@ -186,9 +211,9 @@ public class MazeGenerator : MonoBehaviour
 		_playtimeSettings.MazeSize = MazeSize;
 		_playtimeSettings.WallHeight = _curWallHeight;
 		_playtimeSettings.LightIntensity = _curDayTime;
-		//bool AdditionLightOn;
+		_playtimeSettings.AdditionLightOn = _addLightOn;
 		_playtimeSettings.TypeOfAddLight = _curTorchType;
-		//_playtimeSettings.CameraPosition = cameraPosition;
+		_playtimeSettings.CameraPosition = _cameraPosition;
 		_playtimeSettings.PostEffectsOn = _postEffectsOn;
 		_playtimeSettings.WallMaterial = _curMaterial;
 	}
@@ -239,13 +264,23 @@ public class MazeGenerator : MonoBehaviour
 	{
 		foreach (GameObject T in Torches)
 			T.SetActive(val);
+		_addLightOn = val;
+	}
+	public void TogglePostEffectsValue(bool val)
+	{
+		_postEffectsOn = val;
+	}
+	public void SetCameraPositionValue(int value)
+	{
+		_cameraPosition = value;
 	}
 
 	public void SetWallsHeight(float val)
 	{
 		foreach (GameObject W in Walls)
 			W.transform.localScale = new Vector3(W.transform.localScale.x, val, W.transform.localScale.z);
-		_exitWall.transform.localScale = new Vector3(_exitWall.transform.localScale.x, val, _exitWall.transform.localScale.z);
+		if (_exitWall)
+			_exitWall.transform.localScale = new Vector3(_exitWall.transform.localScale.x, val, _exitWall.transform.localScale.z);
 
 		foreach (GameObject T in Torches)
 		{
@@ -259,7 +294,6 @@ public class MazeGenerator : MonoBehaviour
 			}
 		}
 		
-
 		_curWallHeight = val;
 
 		_playtimeSettings.WallHeight = _curWallHeight;

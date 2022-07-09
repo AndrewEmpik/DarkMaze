@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7267f4bcda385549b53132cc771402a, type: 3}
   m_Name: TmpPlaytimeSettings
   m_EditorClassIdentifier: 
-  MazeSize: 0
-  WallHeight: 0
-  CheckString: TestFirst
+  MazeSize: 15
+  WallHeight: 0.5
+  LightIntensity: 0.5
+  AdditionLightOn: 0
+  TypeOfAddLight: 2
+  CameraPosition: 0
+  PostEffectsOn: 0
+  WallMaterial: {fileID: 2100000, guid: 7b7adbbb470b28b4191131a47dc469df, type: 2}

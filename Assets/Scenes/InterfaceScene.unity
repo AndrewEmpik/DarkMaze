@@ -18859,6 +18859,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _defaultSettings: {fileID: 11400000, guid: 2884f616c0db6a4478bfa0264e3b9793, type: 2}
   _playtimeSettings: {fileID: 11400000, guid: 7189ecb8c2631144cb81779de6b0d798, type: 2}
+  _menuManager: {fileID: 8209862}
   WallPrefab: {fileID: 7758314666711883648, guid: 2851a5bfc190f8b44b1e0d5b0b45bca0, type: 3}
   ExitWallPrefab: {fileID: 720569946234762135, guid: 138148201352d3647a5466360b1d06bb, type: 3}
   MazeCenter: {x: 0, y: 0, z: 0}
@@ -18876,7 +18877,12 @@ MonoBehaviour:
   _matchboxCount: 10
   PostProcessVolume: {fileID: 1399609688}
   MenuCanvas: {fileID: 2103224236}
+  _postEffectsToggle: {fileID: 2125888645}
+  _addLightToggle: {fileID: 1728050121}
+  _torchTypeDropdown: {fileID: 1920353015}
+  _clickSound: {fileID: 266789422}
   _sliderLight: {fileID: 539987156}
+  _sliderHeight: {fileID: 619883550}
 --- !u!1 &727787652
 GameObject:
   m_ObjectHideFlags: 0
@@ -21628,7 +21634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AllowSwitchOff: 0
+  m_AllowSwitchOff: 1
 --- !u!1 &1084964795
 GameObject:
   m_ObjectHideFlags: 0
@@ -24695,7 +24701,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &1728050119
 GameObject:
   m_ObjectHideFlags: 0
@@ -25817,6 +25823,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 719328054}
+        m_TargetAssemblyTypeName: MazeGenerator, Assembly-CSharp
+        m_MethodName: SetCameraPositionValue
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &1949135411
 MonoBehaviour:
@@ -26888,6 +26906,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: Play
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 719328054}
+        m_TargetAssemblyTypeName: MazeGenerator, Assembly-CSharp
+        m_MethodName: TogglePostEffectsValue
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
