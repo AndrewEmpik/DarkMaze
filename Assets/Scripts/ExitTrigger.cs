@@ -8,7 +8,7 @@ public class ExitTrigger : MonoBehaviour
 	{
 		if (other.tag == "Player")
 		{
-			MenuManager.Instance.ToggleWinMenuActive();
+			MenuManager.Instance.Win();
 		}
 	}
 }

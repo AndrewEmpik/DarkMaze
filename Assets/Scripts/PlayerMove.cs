@@ -56,9 +56,6 @@ public class PlayerMove : MonoBehaviour
 
 	void Update()
     {
-		Cursor.visible = MenuManager.MenuActive;
-		Cursor.lockState = MenuManager.MenuActive ? CursorLockMode.None : CursorLockMode.Locked;
-
 		if (!MenuManager.MenuActive)
 		{
 			MouseAiming();
@@ -194,9 +191,8 @@ public class PlayerMove : MonoBehaviour
 
 	public void Die()
 	{
-		FailMenu.gameObject.SetActive(true);
-		MenuManager.MenuActive = true;
 		Dead = true;
+		MenuManager.Instance.Lose();
 	}
 
 	float rotationImpulse = 0f;

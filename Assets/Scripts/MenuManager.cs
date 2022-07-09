@@ -17,6 +17,7 @@ public class MenuManager : MonoBehaviour
 	public static bool MenuActive = true;
 
 	bool _winMenuActive = false;
+	bool _failMenuActive = false;
 
 	public static bool FirstLoad = true;
 
@@ -43,22 +44,23 @@ public class MenuManager : MonoBehaviour
 		Time.timeScale = FirstLoad ? 0f : 1f;
 		MenuActive = FirstLoad;
 
-		_winCanvas.gameObject.SetActive(false);
+		// для удобства, если в редакторе они были включены, в игре выключить
+		if (_winCanvas.gameObject.activeInHierarchy)
+			_winCanvas.gameObject.SetActive(false);
+		if (_failCanvas.gameObject.activeInHierarchy)
+			_failCanvas.gameObject.SetActive(false);
 	}
 
     void Update()
-    {
-		if (!_player.Dead && Input.GetKeyDown(KeyCode.Escape))
-		{
-			ToggleMenuActive();
-		}
-	}
-
-	public void ToggleWinMenuActive()
 	{
-		_winMenuActive = !_winMenuActive;
-		_winCanvas.gameObject.SetActive(_winMenuActive);
-		MenuActive = _winMenuActive;
+		Cursor.visible = MenuActive;
+		Cursor.lockState = MenuActive ? CursorLockMode.None : CursorLockMode.Locked;
+
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			if (!_winMenuActive && !_failMenuActive)
+				ToggleMenuActive();
+		}
 	}
 
 	void OnGUI()
@@ -95,12 +97,24 @@ public class MenuManager : MonoBehaviour
 		Time.timeScale = MenuActive ? 0f : 1f;
 	}
 
-	public void HideFailMenu()
+	public void Win()
 	{
-		_failCanvas.gameObject.SetActive(false);
-		// два следующих присвоения будут не нужны, поскольку переделываем архитектуру
-		//MenuActive = false;
-		//_dead = false;
+		_winMenuActive = true;
+		_winCanvas.gameObject.SetActive(true);
+		MenuActive = true;
+	}
+	public void HideWinMenu()
+	{
+		_winMenuActive = false;
+		_winCanvas.gameObject.SetActive(false);
+		MenuActive = false;
+	}
+
+	public void Lose()
+	{
+		_failMenuActive = true;
+		_failCanvas.gameObject.SetActive(true);
+		MenuActive = true;
 	}
 
 	public void QuitApplication()

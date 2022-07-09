@@ -85,9 +85,6 @@ public class MazeGenerator : MonoBehaviour
 
 	void Start()
 	{
-		Debug.Log("_curMaterialsToggleGroupIndex = " + _curMaterialsToggleGroupIndex);
-
-		PostProcessVolume.SetActive(true);
 		if (MenuManager.FirstLoad)
 		{
 			ApplySettings(_defaultSettings);
@@ -198,10 +195,10 @@ public class MazeGenerator : MonoBehaviour
 		_sliderLight.value = _curDayTime;
 		_sliderHeight.value = _curWallHeight;
 		_postEffectsToggle.isOn = _postEffectsOn;
+		PostProcessVolume.SetActive(_postEffectsOn);
 		_addLightToggle.isOn = _addLightOn;
 		_materialToggles[_curMaterialsToggleGroupIndex].isOn = true;
 		_clickSound.Stop(); // нужно, чтобы на предыдущих шагах звук не срабатывал
-		//PostProcessVolume.gameObject.SetActive(_postEffectsOn);
 	}
 
 	public void ApplyRestOfSettings()

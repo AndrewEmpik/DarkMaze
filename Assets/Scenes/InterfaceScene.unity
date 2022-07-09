@@ -14967,8 +14967,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 719328054}
-        m_TargetAssemblyTypeName: MazeGenerator, Assembly-CSharp
+      - m_Target: {fileID: 8209862}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: QuitApplication
         m_Mode: 1
         m_Arguments:
@@ -16264,8 +16264,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 719328054}
-        m_TargetAssemblyTypeName: MazeGenerator, Assembly-CSharp
+      - m_Target: {fileID: 8209862}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: QuitApplication
         m_Mode: 1
         m_Arguments:
@@ -16412,7 +16412,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8209862}
         m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: ToggleWinMenuActive
+        m_MethodName: HideWinMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
