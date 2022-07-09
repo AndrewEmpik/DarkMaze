@@ -65,6 +65,9 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField] Slider _sliderHeight;
 
 	int _cameraPosition = 0;
+	[SerializeField] ToggleGroup _materialsToggleGroup;
+
+	public static int _curMaterialsToggleGroupIndex = 0;
 
 	public enum PinnedPosition
 	{
@@ -82,6 +85,8 @@ public class MazeGenerator : MonoBehaviour
 
 	void Start()
 	{
+		Debug.Log("_curMaterialsToggleGroupIndex = " + _curMaterialsToggleGroupIndex);
+
 		PostProcessVolume.SetActive(true);
 		if (MenuManager.FirstLoad)
 		{
@@ -184,6 +189,7 @@ public class MazeGenerator : MonoBehaviour
 		_cameraPosition = settings.CameraPosition;
 		_postEffectsOn = settings.PostEffectsOn;
 		_curMaterial = settings.WallMaterial;
+		DefineCurMaterialsToggleGroupIndex();
 
 		SetDayTime(_curDayTime);
 		MainCamera.GetComponent<CameraPosition>().SetCameraPosition(_cameraPosition);
@@ -193,6 +199,7 @@ public class MazeGenerator : MonoBehaviour
 		_sliderHeight.value = _curWallHeight;
 		_postEffectsToggle.isOn = _postEffectsOn;
 		_addLightToggle.isOn = _addLightOn;
+		_materialToggles[_curMaterialsToggleGroupIndex].isOn = true;
 		_clickSound.Stop(); // нужно, чтобы на предыдущих шагах звук не срабатывал
 		//PostProcessVolume.gameObject.SetActive(_postEffectsOn);
 	}
@@ -216,6 +223,18 @@ public class MazeGenerator : MonoBehaviour
 		_playtimeSettings.CameraPosition = _cameraPosition;
 		_playtimeSettings.PostEffectsOn = _postEffectsOn;
 		_playtimeSettings.WallMaterial = _curMaterial;
+	}
+
+	void DefineCurMaterialsToggleGroupIndex()
+	{
+		for (int i = 0; i < _materialsForToggles.Length; i++)
+		{
+			if (_materialsForToggles[i] == _curMaterial)
+			{
+				_curMaterialsToggleGroupIndex = i;
+				break;
+			}
+		}
 	}
 
 	public Vector3 PositionByCellAddress(PinnedPosition value)
@@ -298,6 +317,9 @@ public class MazeGenerator : MonoBehaviour
 
 		_playtimeSettings.WallHeight = _curWallHeight;
 	}
+
+	[SerializeField] Toggle[] _materialToggles = new Toggle[3];
+	[SerializeField] Material[] _materialsForToggles = new Material[3];
 
 	public void SetMaterial(Material material)
 	{

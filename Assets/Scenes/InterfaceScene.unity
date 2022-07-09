@@ -18883,6 +18883,15 @@ MonoBehaviour:
   _clickSound: {fileID: 266789422}
   _sliderLight: {fileID: 539987156}
   _sliderHeight: {fileID: 619883550}
+  _materialsToggleGroup: {fileID: 1077008029}
+  _materialToggles:
+  - {fileID: 1710330350}
+  - {fileID: 823299832}
+  - {fileID: 446764539}
+  _materialsForToggles:
+  - {fileID: 2100000, guid: 65d3c5602cc240f47aa30e01f4c2aba8, type: 2}
+  - {fileID: 2100000, guid: ba705f97196fd0c478ece1137780657e, type: 2}
+  - {fileID: 2100000, guid: 7b7adbbb470b28b4191131a47dc469df, type: 2}
 --- !u!1 &727787652
 GameObject:
   m_ObjectHideFlags: 0
