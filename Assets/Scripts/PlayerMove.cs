@@ -35,11 +35,15 @@ public class PlayerMove : MonoBehaviour
 	[SerializeField] Transform BurntPartOfMatch;
 	[SerializeField] Transform MatchFlame;
 	[SerializeField] GameObject BurnedMatchPrefab;
+	[SerializeField] Light Flashlight;
 	public int MatchesCount = 10;
 
 
 	[SerializeField] private List<float> _playerRotationsList = new List<float>();
 	[SerializeField] private int _playerRotationsListLength = 30;
+
+	private bool _hasFlashlight = false;
+	[SerializeField] TMP_Text _flashLightUI;
 
 	private void Start()
 	{
@@ -67,6 +71,12 @@ public class PlayerMove : MonoBehaviour
 				else if (!MatchInHandObject.activeInHierarchy && TryChangeMatchesCount(-1))
 					LightMatch();
 			}
+
+			if (Input.GetKeyDown(KeyCode.L))
+			{
+				if (_hasFlashlight)
+					ToggleFlashlight();
+			}
 		}
 
 		//
@@ -91,6 +101,17 @@ public class PlayerMove : MonoBehaviour
 				if (Input.GetKeyDown(KeyCode.E))
 					PickMatchbox(matchbox);
 			}
+
+			if (!_hasFlashlight)
+			{
+				Flashlight flashlight = hit.transform.GetComponent<Flashlight>();
+				if (flashlight)
+				{
+					PickUIText.gameObject.SetActive(true);
+					if (Input.GetKeyDown(KeyCode.E))
+						PickFlashlight(flashlight);
+				}
+			}
 		}
 
 		if (Input.GetMouseButton(1))
@@ -104,6 +125,14 @@ public class PlayerMove : MonoBehaviour
 		Destroy(matchbox.gameObject);
 		TryChangeMatchesCount(35);
 		GatherItemAudio.Play();
+	}
+	public void PickFlashlight(Flashlight flashlight)
+	{
+		_hasFlashlight = true;
+		Destroy(flashlight.gameObject);
+		GatherItemAudio.Play();
+		ToggleFlashlight();
+		_flashLightUI.gameObject.SetActive(true);
 	}
 
 	public void MatchesUIUpdate()
@@ -162,6 +191,11 @@ public class PlayerMove : MonoBehaviour
 			MatchInHandObject.SetActive(false);
 			Instantiate(BurnedMatchPrefab, transform.localPosition, Quaternion.Euler(0f,Random.Range(0,360),0f));
 		}
+	}
+
+	public void ToggleFlashlight()
+	{
+		Flashlight.gameObject.SetActive(!Flashlight.gameObject.activeInHierarchy);
 	}
 
 	Coroutine matchLifeCoroutine;

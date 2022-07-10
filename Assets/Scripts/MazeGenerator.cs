@@ -20,7 +20,7 @@ public class MazeGenerator : MonoBehaviour
 	public Camera MainCamera;
 	public Camera PlayerCamera;
 
-	private float _cellSize = 3;
+	public float CellSize = 3;
 
 	public List<GameObject> Walls;
 	private GameObject _newWall;
@@ -83,7 +83,7 @@ public class MazeGenerator : MonoBehaviour
 		Exit
 	}
 
-	void Start()
+	void Awake()
 	{
 		if (MenuManager.FirstLoad)
 		{
@@ -101,7 +101,7 @@ public class MazeGenerator : MonoBehaviour
 
 		_mazeMapList = _generateMaze(MazeSize);
 
-		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * _cellSize;
+		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * CellSize;
 		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
 
 		// j - горизонталь, i - вертикаль
@@ -111,7 +111,7 @@ public class MazeGenerator : MonoBehaviour
 
 				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
 				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
+					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
 					Walls.Add(_newWall);
 
 					for (int c = 1; c <= 2; c++)
@@ -128,7 +128,7 @@ public class MazeGenerator : MonoBehaviour
 
 				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 2) != 0)
 				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
+					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
 					Walls.Add(_newWall);
 
 					for (int c = 1; c <= 2; c++)
@@ -147,19 +147,19 @@ public class MazeGenerator : MonoBehaviour
 				// ставим "выход"
 				if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
 				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
 				}
 				if (i == MazeSize-1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
 				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, 0f, 0f));
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
 				}
 				if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
 				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
 				}
 				if (j == MazeSize-1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
 				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * _cellSize, 0, -i * _cellSize), Quaternion.Euler(0f, -90f, 0f));
+					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
 				}
 			}
 
@@ -170,7 +170,7 @@ public class MazeGenerator : MonoBehaviour
 			Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
 			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress.x, matchBoxCellAddress.y);
 			matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
-								Vector3.forward * Random.Range(-1f, 1f)) * _cellSize / 2 * 0.9f;
+								Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
 			Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0,360), 0f)); 
 		}
 
@@ -266,14 +266,13 @@ public class MazeGenerator : MonoBehaviour
 
 	public Vector3 PositionByCellAddress(int x,int y)
 	{
-		return _mazeZeroPoint + new Vector3( Mathf.Clamp(x+1,1,MazeSize-1) * _cellSize, 0, -Mathf.Clamp(y+1, 1, MazeSize-1) * _cellSize);
+		return _mazeZeroPoint + new Vector3( Mathf.Clamp(x+1,1,MazeSize-1) * CellSize, 0, -Mathf.Clamp(y+1, 1, MazeSize-1) * CellSize);
 	}
 
 	public void RebuildMaze()
 	{
 		//_playtimeSettings.CheckString = "Changed " + MazeSize.ToString();
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
 	}
 
 	public void ToggleTorch(bool val)
@@ -396,7 +395,6 @@ public class MazeGenerator : MonoBehaviour
 		MazeSize = res;
 		MazeSizeText.text = (res - 1).ToString();
 	}
-
 
 	private int manageWall(int where, int which, bool toAdd = true) // 1 пр, 2 лев, 3 всё
 	{
