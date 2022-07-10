@@ -30,9 +30,12 @@ public class MenuManager : MonoBehaviour
 
 	private void Awake()
 	{
+		Time.timeScale = FirstLoad ? 0f : 1f;
+		MenuActive = FirstLoad;
+
 		//if (Instance == null)
 		//{
-			Instance = this;
+		Instance = this;
 		//	DontDestroyOnLoad(gameObject);
 		//}
 		//else
@@ -41,8 +44,6 @@ public class MenuManager : MonoBehaviour
 
 	void Start()
 	{
-		Time.timeScale = FirstLoad ? 0f : 1f;
-		MenuActive = FirstLoad;
 
 		// для удобства, если в редакторе они были включены, в игре выключить
 		if (_winCanvas.gameObject.activeInHierarchy)
