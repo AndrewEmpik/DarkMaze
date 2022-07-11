@@ -126,13 +126,21 @@ public class PlayerMove : MonoBehaviour
 		TryChangeMatchesCount(35);
 		GatherItemAudio.Play();
 	}
-	public void PickFlashlight(Flashlight flashlight)
+
+	public void PickFlashlight(Flashlight flashlight=null)
 	{
 		_hasFlashlight = true;
-		Destroy(flashlight.gameObject);
+		if(flashlight)
+			Destroy(flashlight.gameObject);
 		GatherItemAudio.Play();
 		ToggleFlashlight();
 		_flashLightUI.gameObject.SetActive(true);
+	}
+
+	[ContextMenu("Get flashlight")]
+	public void DebugPickFlashligh()
+	{
+		PickFlashlight();
 	}
 
 	public void MatchesUIUpdate()
