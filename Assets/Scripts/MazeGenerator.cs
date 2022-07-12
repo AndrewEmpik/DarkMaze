@@ -184,6 +184,11 @@ public class MazeGenerator : MonoBehaviour
 
 	}
 
+	private void Update()
+	{
+		RenderSettings.skybox.SetFloat("_Rotation", Time.time * 0.4f);
+	}
+
 	public void ApplySettings(PlaytimeSettings settings)
 	{
 		MazeSize = settings.MazeSize;
