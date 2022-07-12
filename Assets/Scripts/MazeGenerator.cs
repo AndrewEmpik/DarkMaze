@@ -42,7 +42,8 @@ public class MazeGenerator : MonoBehaviour
 	public GameObject TorchPrefab;
 	private GameObject _newTorch;
 
-	public int TorchProbability = 50;
+	public int TorchProbability = 20;
+	public int LatticeProbability = 60;
 
 	private Vector3 _mazeZeroPoint = Vector3.zero;
 
@@ -104,6 +105,29 @@ public class MazeGenerator : MonoBehaviour
 		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * CellSize;
 		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
 
+		void RandomizeTorchAndLatticeHere()
+		{
+			bool torchPlaced = false;
+			for (int c = 1; c <= 2; c++)
+			{
+				if (Random.Range(1, TorchProbability) == 1)
+				{
+					_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
+					_newTorch.SetActive(_tglAddLight.isOn);
+					Torches.Add(_newTorch);
+					torchPlaced = true;
+				}
+			}
+			if (!torchPlaced)
+			{
+				if (Random.Range(1, LatticeProbability) == 1)
+				{
+				_newWall.GetComponent<WallInternal>().ActivateLattice();
+				}
+
+			}
+		}
+
 		// j - горизонталь, i - вертикаль
 		for (int i = 0; i < MazeSize; i++)
 			for (int j = 0; j < MazeSize; j++)
@@ -114,15 +138,7 @@ public class MazeGenerator : MonoBehaviour
 					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
 					Walls.Add(_newWall);
 
-					for (int c = 1; c <= 2; c++)
-					{
-						if (Random.Range(1, TorchProbability) == 1)
-						{
-							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
-							_newTorch.SetActive(_tglAddLight.isOn);
-							Torches.Add(_newTorch);
-						}
-					}
+					RandomizeTorchAndLatticeHere();
 
 				}
 
@@ -131,15 +147,7 @@ public class MazeGenerator : MonoBehaviour
 					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
 					Walls.Add(_newWall);
 
-					for (int c = 1; c <= 2; c++)
-					{
-						if (Random.Range(1, TorchProbability) == 1)
-						{
-							_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
-							_newTorch.SetActive(_tglAddLight.isOn);
-							Torches.Add(_newTorch);
-						}
-					}
+					RandomizeTorchAndLatticeHere();
 
 				}
 

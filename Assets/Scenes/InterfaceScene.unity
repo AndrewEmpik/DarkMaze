@@ -721,7 +721,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh24344
+  m_Name: pb_Mesh24342
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -19124,6 +19124,7 @@ MonoBehaviour:
   Torches: []
   TorchPrefab: {fileID: 4513912454870971881, guid: 6bd735d4c1bd83d4da3c555fb4474a45, type: 3}
   TorchProbability: 20
+  LatticeProbability: 60
   _matchboxPrefab: {fileID: 6746762083295785142, guid: fe09423d99f1b674aa7c51dc0f97d71c, type: 3}
   _matchboxCount: 10
   PostProcessVolume: {fileID: 1399609688}
@@ -19842,7 +19843,7 @@ PrefabInstance:
       objectReference: {fileID: 1824577471}
     - target: {fileID: 6746762083295785143, guid: fe09423d99f1b674aa7c51dc0f97d71c, type: 3}
       propertyPath: m_RootOrder
-      value: 16
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6746762083295785143, guid: fe09423d99f1b674aa7c51dc0f97d71c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -20554,7 +20555,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -82.7, y: 22.1}
+  m_AnchoredPosition: {x: -82.69995, y: 22.099976}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!1 &863329614
@@ -23100,7 +23101,7 @@ Transform:
   - {fileID: 333605298}
   - {fileID: 552979754}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1343028275
 MonoBehaviour:
@@ -25711,7 +25712,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1306
+  m_Name: pb_Mesh-1282
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
