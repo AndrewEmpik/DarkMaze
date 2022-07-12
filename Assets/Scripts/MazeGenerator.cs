@@ -119,7 +119,7 @@ public class MazeGenerator : MonoBehaviour
 			}
 			if (!torchPlaced)
 			{
-				if (Random.Range(1, TorchProbability*4) == 1)
+				if (Random.Range(1, TorchProbability*3) == 1)
 				{
 				_newWall.GetComponent<WallInternal>().ActivateLattice();
 				}
