@@ -42,7 +42,8 @@ public class MazeGenerator : MonoBehaviour
 	public GameObject TorchPrefab;
 	private GameObject _newTorch;
 
-	public int TorchProbability = 50;
+	public int TorchProbability = 20;
+	public int LatticeProbability = 60;
 
 	private Vector3 _mazeZeroPoint = Vector3.zero;
 
@@ -119,7 +120,7 @@ public class MazeGenerator : MonoBehaviour
 			}
 			if (!torchPlaced)
 			{
-				if (Random.Range(1, TorchProbability*3) == 1)
+				if (Random.Range(1, LatticeProbability) == 1)
 				{
 				_newWall.GetComponent<WallInternal>().ActivateLattice();
 				}

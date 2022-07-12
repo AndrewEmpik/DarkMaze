@@ -19124,6 +19124,7 @@ MonoBehaviour:
   Torches: []
   TorchPrefab: {fileID: 4513912454870971881, guid: 6bd735d4c1bd83d4da3c555fb4474a45, type: 3}
   TorchProbability: 20
+  LatticeProbability: 60
   _matchboxPrefab: {fileID: 6746762083295785142, guid: fe09423d99f1b674aa7c51dc0f97d71c, type: 3}
   _matchboxCount: 10
   PostProcessVolume: {fileID: 1399609688}
