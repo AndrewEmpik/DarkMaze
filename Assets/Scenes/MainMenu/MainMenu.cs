@@ -56,4 +56,14 @@ public class MainMenu : MonoBehaviour
 			_imageForDarkEffect.gameObject.SetActive(false);
 	}
 
+	// потом унифицировать где-то, чтобы не плодить код
+	public void QuitApplication()
+	{
+#if UNITY_EDITOR
+		UnityEditor.EditorApplication.isPlaying = false; // работает только в редакторе
+#else
+			Application.Quit(); // работает только в билде
+#endif
+	}
+
 }
