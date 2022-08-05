@@ -8,10 +8,14 @@ public class MainMenu : MonoBehaviour
 {
 	[SerializeField] RawImage _imageForDarkEffect;
 	[SerializeField] float _darkEffectDuration = 0.5f;
+	[SerializeField] AudioSource _music;
+	float _startMusicVolume;
+
 	Color _imageForDarkEffectStartColor = new Color(35f/255, 31f / 255, 32f / 255, 0);
 
 	void Start()
     {
+		_startMusicVolume = _music.volume;
 		StartCoroutine(DarkOutCoroutine(false));
 	}
 
@@ -40,6 +44,8 @@ public class MainMenu : MonoBehaviour
 				ratio = 1 - ratio;
 
 			_imageForDarkEffect.color = _imageForDarkEffectStartColor + new Color(0, 0, 0, ratio);
+			if (on)
+				_music.volume = _startMusicVolume * (1-ratio);
 			yield return null;
 		}
 
