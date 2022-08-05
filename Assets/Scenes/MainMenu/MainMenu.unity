@@ -1242,7 +1242,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 20
+  m_Spacing: 30
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -1401,7 +1401,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e8efbcaedca28564ea80a5439b76a3ed, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b73733c76aedd924c80ea2de10172f0e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1523,7 +1523,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e8efbcaedca28564ea80a5439b76a3ed, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 14b4da1d6b0f57c4caeb0bb95734afb5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
