@@ -1,8 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+enum direction
+{
+	up,
+	right,
+	down,
+	left,
+	randomOrUnknown
+};
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -12,6 +22,7 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField] private MenuManager _menuManager;
 
 	public GameObject WallPrefab;
+	public GameObject CubeWallPrefab;
 	public GameObject ExitWallPrefab;
 	private Material _curMaterial;
 	public Vector3 MazeCenter = new Vector3(40f, 0f, 10f);
@@ -102,74 +113,100 @@ public class MazeGenerator : MonoBehaviour
 
 		_mazeMapList = _generateMaze(MazeSize);
 
-		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * CellSize;
-		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
+		bool generateNewMaze = true;
 
-		void RandomizeTorchAndLatticeHere()
+		_mazeMapList = _generateMaze2(MazeSize);
+
+		//Vector3 _prevPoint = _mazeZeroPoint-new Vector3(10,0,-10);
+		if (generateNewMaze)
 		{
-			bool torchPlaced = false;
-			for (int c = 1; c <= 2; c++)
-			{
-				if (Random.Range(1, TorchProbability) == 1)
+			// j - горизонталь, i - вертикаль
+			for (int i = 0; i < MazeSize; i++)
+				for (int j = 0; j < MazeSize; j++)
 				{
-					_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
-					_newTorch.SetActive(_tglAddLight.isOn);
-					Torches.Add(_newTorch);
-					torchPlaced = true;
-				}
-			}
-			if (!torchPlaced)
-			{
-				if (Random.Range(1, LatticeProbability) == 1)
-				{
-				_newWall.GetComponent<WallInternal>().ActivateLattice();
+					if (_mazeMapList[i][j] == 1 || _mazeMapList[i][j] == 2)
+					{
+						_newWall = Instantiate(CubeWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.identity);
+						Walls.Add(_newWall);
+					}
+
 				}
 
-			}
 		}
 
-		// j - горизонталь, i - вертикаль
-		for (int i = 0; i < MazeSize; i++)
-			for (int j = 0; j < MazeSize; j++)
+		else
+		{
+
+			float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * CellSize;
+			_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
+
+			void RandomizeTorchAndLatticeHere()
 			{
-
-				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
+				bool torchPlaced = false;
+				for (int c = 1; c <= 2; c++)
 				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
-					Walls.Add(_newWall);
-
-					RandomizeTorchAndLatticeHere();
-
+					if (Random.Range(1, TorchProbability) == 1)
+					{
+						_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
+						_newTorch.SetActive(_tglAddLight.isOn);
+						Torches.Add(_newTorch);
+						torchPlaced = true;
+					}
 				}
-
-				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 2) != 0)
+				if (!torchPlaced)
 				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
-					Walls.Add(_newWall);
+					if (Random.Range(1, LatticeProbability) == 1)
+					{
+						_newWall.GetComponent<WallInternal>().ActivateLattice();
+					}
 
-					RandomizeTorchAndLatticeHere();
-
-				}
-
-
-				// ставим "выход"
-				if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
-				}
-				if (i == MazeSize-1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
-				}
-				if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
-				}
-				if (j == MazeSize-1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
 				}
 			}
+
+			// j - горизонталь, i - вертикаль
+			for (int i = 0; i < MazeSize; i++)
+				for (int j = 0; j < MazeSize; j++)
+				{
+
+					if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
+					{
+						_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
+						Walls.Add(_newWall);
+
+						RandomizeTorchAndLatticeHere();
+
+					}
+
+					if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 2) != 0)
+					{
+						_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
+						Walls.Add(_newWall);
+
+						RandomizeTorchAndLatticeHere();
+
+					}
+
+
+					// ставим "выход"
+					if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
+					{
+						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
+					}
+					if (i == MazeSize - 1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
+					{
+						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
+					}
+					if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
+					{
+						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
+					}
+					if (j == MazeSize - 1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
+					{
+						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
+					}
+				}
+
+		}
 
 		ApplyRestOfSettings();
 
@@ -568,6 +605,238 @@ public class MazeGenerator : MonoBehaviour
 
 		return _mazeMapList;
 	}
+
+	// // //
+	// CATACOMB GENERATION
+	// // // 
+	private List<List<int>> _generateMaze2(int _mazeSize)
+	{
+
+		List<List<int>> _mazeMapList = new List<List<int>>();
+
+		for (int i = 0; i < _mazeSize; i++)
+		{
+			_mazeMapList.Add(new List<int>());
+			for (int j = 0; j < _mazeSize; j++)
+			{
+				if (i == 0 || i == _mazeSize - 1 || j == 0 || j == _mazeSize - 1) // внешняя граница
+					_mazeMapList[i].Add(2);
+				else
+					_mazeMapList[i].Add(1);
+			}
+		}
+
+		List<Vector2Int> activePaths = new List<Vector2Int>();
+
+		activePaths.Add(new Vector2Int(_mazeSize / 2, _mazeSize / 2));
+		_mazeMapList[activePaths[0].y][activePaths[0].x] = 0;
+		//bool 
+
+		int testCnt = 0;
+		Vector2Int previousP = new Vector2Int(); // test
+		while (activePaths.Count > 0 && testCnt < 1000)
+		{
+			testCnt++;
+			foreach (Vector2Int P in activePaths.ToList()) // ToList - для того, чтобы удалять внутри foreach
+			{
+				//_mazeMapList[P.y][P.x] = 0;
+				Vector2Int? nextCell = StepFromExistingCell(P);
+				if (nextCell == null)
+					activePaths.Remove(P);
+				else
+				{
+					if (testCnt == 3)
+						previousP = P;
+
+					activePaths[activePaths.IndexOf(P)] = (Vector2Int)nextCell;
+					_mazeMapList[((Vector2Int)nextCell).y][((Vector2Int)nextCell).x] = 0;
+
+					if (testCnt == 3)
+						activePaths.Add(previousP);
+				}
+
+			}
+		}
+		if (testCnt >= 1000)
+			Debug.LogError("Зациклились, абортнулись");
+
+		//StepAtPathContinuous(_mazeSize/2, _mazeSize/2);
+
+
+		/*string dbgStr = "";
+		for (int i = 0; i < _mazeSize; i++)
+		{
+			dbgStr = "";
+			for (int j = 0; j < _mazeSize; j++)
+				dbgStr += _mazeMapList[i][j] + " ";
+			Debug.Log(dbgStr);
+		};*/
+
+
+		return _mazeMapList;
+
+
+		//////////////
+		Vector2Int? StepFromExistingCell(Vector2Int currentCell) //, direction direction = direction.random)
+		{
+			List<direction> directionsAvailable = new List<direction>();
+
+			for (int i = 0; i < 4; i++)
+			{
+				direction direction = (direction)i;
+				if (CheckCellForPath(GetNeighbourCell(currentCell, direction), direction))
+					directionsAvailable.Add(direction);
+			}
+
+			direction furtherDirection = direction.randomOrUnknown;
+
+			if (directionsAvailable.Count == 0)
+				return null;
+			else if (directionsAvailable.Count == 1)
+				furtherDirection = directionsAvailable[0];
+			else if (directionsAvailable.Count >= 2)
+				furtherDirection = directionsAvailable[Random.Range(0, directionsAvailable.Count)];
+
+			Vector2Int newCell = currentCell;
+
+			switch (furtherDirection)
+			{
+				case direction.left: newCell.x--; break;
+				case direction.up: newCell.y--; break;
+				case direction.right: newCell.x++; break;
+				case direction.down: newCell.y++; break;
+			}
+
+			return newCell;
+		}
+
+		void CreatePathFromCell(int y, int x, direction direction = direction.randomOrUnknown)
+		{
+			if (direction == direction.randomOrUnknown)
+				direction = (direction)Random.Range(0, 4);
+			//Debug.Log(direction);
+
+			if (_mazeMapList[y][x] == 2)
+				Debug.LogError("I am on \"2\", don't want to! y = " + y + ", x = " + x);
+			_mazeMapList[y][x] = 0;
+
+			bool goFurther = true;
+			///
+			Vector2Int currentCell = new Vector2Int(x, y);
+			List<direction> directionsAvailable = new List<direction>();
+
+			if (CheckCellForPath(GetNeighbourCell(currentCell, directionToLeft(direction)), directionToLeft(direction)))
+				directionsAvailable.Add(directionToLeft(direction));
+			if (CheckCellForPath(GetNeighbourCell(currentCell, direction), direction))
+				directionsAvailable.Add(direction);
+			if (CheckCellForPath(GetNeighbourCell(currentCell, directionToRight(direction)), directionToRight(direction)))
+				directionsAvailable.Add(directionToRight(direction));
+
+			Debug.Log("At y:" + y + " x:" + x + ", direction: " + direction + "| directionsAvailable:");
+			foreach (direction D in directionsAvailable)
+				Debug.Log(D);
+
+			direction furtherDirection = direction;
+
+			if (directionsAvailable.Count == 0)
+				return;
+			else if (directionsAvailable.Count == 1)
+				furtherDirection = directionsAvailable[0];
+			else if (directionsAvailable.Count >= 2)
+				furtherDirection = directionsAvailable[Random.Range(0, directionsAvailable.Count)];
+
+			Debug.Log("furtherDirection: " + furtherDirection);
+			//int furtherBase = Random.Range(-1,/*2*/3);
+			/*switch (furtherBase)
+			{
+				case -1:
+					furtherDirection = directionToLeft(direction);
+					break;
+				case 0:
+					//furtherDirection = direction;
+					break;
+				case 1:
+					furtherDirection = directionToRight(direction);
+					break;
+				//for test
+				default:
+					goFurther = false;
+					break;
+			}*/
+
+
+			switch (furtherDirection)
+			{
+				case direction.left: x--; break;
+				case direction.up: y--; break;
+				case direction.right: x++; break;
+				case direction.down: y++; break;
+			}
+
+			if (goFurther) CreatePathFromCell(y, x, furtherDirection);
+
+		}
+
+		bool CheckCellForPath(Vector2Int cell, direction direction)
+		{
+			try
+			{
+				if (_mazeMapList[cell.y][cell.x] == 2)
+				{
+					Debug.Log("Detected \"2\": y = " + cell.y + ", x = " + cell.x);
+					return false;
+				}
+
+			}
+			catch
+			{
+				Debug.LogError("Exception with coords: y = " + cell.y + ", x = " + cell.x);
+				return false;
+			}
+
+			Vector2Int cellToCheck = new Vector2Int();
+			cellToCheck = GetNeighbourCell(cell, directionToLeft(direction));
+			if (_mazeMapList[cellToCheck.y][cellToCheck.x] == 0) return false;
+			cellToCheck = GetNeighbourCell(cell, direction);
+			if (_mazeMapList[cellToCheck.y][cellToCheck.x] == 0) return false;
+			cellToCheck = GetNeighbourCell(cell, directionToRight(direction));
+			if (_mazeMapList[cellToCheck.y][cellToCheck.x] == 0) return false;
+
+			return true;
+		};
+
+		Vector2Int GetNeighbourCell(Vector2Int cell, direction direction)
+		{
+			return new Vector2Int(
+				cell.x + (direction == direction.left ? -1 :
+							direction == direction.right ? 1
+															: 0),
+				cell.y + (direction == direction.up ? -1 :
+							direction == direction.down ? 1
+															: 0)
+															);
+		}
+
+		//Vector2Int cell = new Vector2Int();
+
+		direction directionToRight(direction direction)
+		{
+			direction directionToRight = direction + 1;
+			if ((int)directionToRight > 3)
+				directionToRight = 0;
+			return directionToRight;
+		}
+		direction directionToLeft(direction direction)
+		{
+			direction directionToLeft = direction - 1;
+			if ((int)directionToLeft < 0)
+				directionToLeft = (direction)3;
+			return directionToLeft;
+		}
+
+	}
+
+
 
 	private void OnDestroy()
 	{
