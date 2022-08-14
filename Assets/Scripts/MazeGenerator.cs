@@ -14,6 +14,13 @@ enum direction
 	randomOrUnknown
 };
 
+struct NavigateCell
+{
+	Vector2Int cell;
+	direction direction;
+	bool mainDirection;
+}
+
 static class Extensions
 {
 	public static direction directionToRight(this direction direction)
@@ -713,6 +720,17 @@ public class MazeGenerator : MonoBehaviour
 	{
 		Debug.Log(direction.left.directionToRight());
 
+		/* Юнит-тесты OK
+		TestDirectionRandomize(true, true, true);			//	250	500	250
+		TestDirectionRandomize(true, true, false);          //	500	500	0
+		TestDirectionRandomize(true, false, true);          //	500	0	500
+		TestDirectionRandomize(true, false, false);         //	all	0	0
+		TestDirectionRandomize(false, true, true);          //	0	500	500
+		TestDirectionRandomize(false, true, false);			//	0	all	0
+		TestDirectionRandomize(false, false, true);         //	0	0	all
+		TestDirectionRandomize(false, false, false);		//	0	0	0
+		*/
+
 		catacombMazeMap = new CatacombMazeMap(_mazeSize);
 		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // толща - 1, края - 2
 
@@ -724,6 +742,8 @@ public class MazeGenerator : MonoBehaviour
 		// далее надо пройтись по всем и сделать шаг
 		foreach (PathProcess p in activePathProcesses)
 		{
+			p.MakeStep();
+			p.MakeStep();
 			p.MakeStep();
 		}
 
@@ -944,6 +964,123 @@ public class MazeGenerator : MonoBehaviour
 
 	}
 
+	private void TestDirectionRandomize(bool left, bool forward, bool right)
+	{
+		int iterations = 10000;
+
+		List<direction> desiredDirections = new List<direction> { direction.left, direction.up, direction.right };
+
+		int[] tests = new int[3];
+
+		for (int i = 0; i < iterations; i++)
+		{
+
+			List<direction> bannedDirections = new List<direction>();
+
+			bool directionDetermined = false;
+			//direction resultDirection;
+
+			bool wannaForward = Random.Range(0, 2) == 1 ? true : false;
+			while (!directionDetermined && desiredDirections.Count > bannedDirections.Count)
+			{
+				
+				if (wannaForward && !bannedDirections.Contains(direction.up))
+				{
+					if (forward)
+					{
+						directionDetermined = true;
+						//resultDirection = direction.up;
+						tests[1]++;
+						break;
+					}
+					else
+					{
+						bannedDirections.Add(direction.up);
+					}
+				}
+				else
+				{
+					if (!bannedDirections.Contains(direction.left) && !bannedDirections.Contains(direction.right))
+					{
+						if (Random.Range(0, 2) == 1)
+						{
+							if (left)
+							{
+								directionDetermined = true;
+								//resultDirection = direction.left;
+								tests[0]++;
+								break;
+							}
+							else
+							{
+								bannedDirections.Add(direction.left);
+								// переходим на right
+								if (right)
+								{
+									directionDetermined = true;
+									//resultDirection = direction.right;
+									tests[2]++;
+									break;
+								}
+								else
+								{
+									bannedDirections.Add(direction.right);
+								}
+							}
+						}
+						else
+						{
+							if (right)
+							{
+								directionDetermined = true;
+								//resultDirection = direction.right;
+								tests[2]++;
+								break;
+							}
+							else
+							{
+								bannedDirections.Add(direction.right);
+								if (left)
+								{
+									directionDetermined = true;
+									//resultDirection = direction.left;
+									tests[0]++;
+									break;
+								}
+								else
+								{
+									bannedDirections.Add(direction.left);
+								}
+							}
+						}
+					}
+					else
+					{
+						if (!bannedDirections.Contains(direction.left))
+						{
+							directionDetermined = true;
+							//resultDirection = direction.left;
+							tests[0]++;
+						}
+						else if (!bannedDirections.Contains(direction.right))
+						{
+							directionDetermined = true;
+							//resultDirection = direction.right;
+							tests[2]++;
+						}
+						else
+						{
+							wannaForward = true;
+						}
+					}
+				}
+
+			}
+		}
+
+		Debug.Log(tests[0] + " | " + tests[1] + " | " + tests[2]);
+	}
+
 
 	private class PathProcess
 	{
@@ -993,7 +1130,25 @@ public class MazeGenerator : MonoBehaviour
 				desiredDirections.Add(currentDirection.directionToRight());
 			}
 
+			bool directionDetermined = false;
+			List<direction> bannedDirections = new List<direction>();
 
+			bool wannaForward = Random.Range(0, 2) == 1 ? true : false;
+			//while (!directionDetermined || desiredDirections.Count > bannedDirections.Count)
+			//{
+				if (wannaForward)
+				{
+					// check forward
+				}
+				else
+				{
+					
+				}
+					
+			//}
+
+
+			/////
 			List<Vector2Int> possibleSteps = new List<Vector2Int>();
 
 			foreach (direction d in desiredDirections)
@@ -1015,7 +1170,11 @@ public class MazeGenerator : MonoBehaviour
 			if (possibleSteps.Count == 0)
 				isActive = false;
 			else
-				catacombMazeMap.DigPathAt(possibleSteps[Random.Range(0, possibleSteps.Count)]);
+			{
+				Vector2Int nextCell = possibleSteps[Random.Range(0, possibleSteps.Count)];
+				catacombMazeMap.DigPathAt(nextCell);
+				currentCell = nextCell;
+			}
 		}
 	}
 
