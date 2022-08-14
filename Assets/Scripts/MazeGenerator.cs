@@ -14,6 +14,29 @@ enum direction
 	randomOrUnknown
 };
 
+static class Extensions
+{
+	public static direction directionToRight(this direction direction)
+	{
+		if (direction == direction.randomOrUnknown)
+			return direction.randomOrUnknown;
+		direction directionToRight = direction + 1;
+		if ((int)directionToRight > 3)
+			directionToRight = 0;
+		return directionToRight;
+	}
+
+	public static direction directionToLeft(this direction direction)
+	{
+		if (direction == direction.randomOrUnknown)
+			return direction.randomOrUnknown;
+		direction directionToLeft = direction - 1;
+		if ((int)directionToLeft < 0)
+			directionToLeft = (direction)3;
+		return directionToLeft;
+	}
+}
+
 public class MazeGenerator : MonoBehaviour
 {
 	[SerializeField] private PlaytimeSettings _defaultSettings;
@@ -659,6 +682,17 @@ public class MazeGenerator : MonoBehaviour
 			}
 		}
 
+		public void WeedOutCellsAvailableToDigFromList(ref List<Vector2Int> cells)
+		{
+			foreach (Vector2Int c in cells.ToList())
+			{
+				if (c.x < 1 || c.x > mazeSize - 2 ||
+					c.y < 1 || c.y > mazeSize - 2 ||
+					mazeMap[c.x][c.y] != 1) // TODO добавить проверку на коридорность
+					cells.Remove(c);
+			}
+		}
+
 		public void PrintMazeMap()
 		{
 			string dbgStr = "";
@@ -677,6 +711,7 @@ public class MazeGenerator : MonoBehaviour
 
 	private List<List<int>> _generateMaze2(int _mazeSize)
 	{
+		Debug.Log(direction.left.directionToRight());
 
 		catacombMazeMap = new CatacombMazeMap(_mazeSize);
 		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // толща - 1, края - 2
@@ -685,6 +720,12 @@ public class MazeGenerator : MonoBehaviour
 		activePathProcesses.Add(new PathProcess(new Vector2Int(_mazeSize / 2, _mazeSize / 2)));
 		activePathProcesses.Add(new PathProcess(new Vector2Int(1, 2)));
 		activePathProcesses.Add(new PathProcess(new Vector2Int(0, 5)));
+
+		// далее надо пройтись по всем и сделать шаг
+		foreach (PathProcess p in activePathProcesses)
+		{
+			p.MakeStep();
+		}
 
 		if (1 == 0)
 		{
@@ -792,12 +833,12 @@ public class MazeGenerator : MonoBehaviour
 			Vector2Int currentCell = new Vector2Int(x, y);
 			List<direction> directionsAvailable = new List<direction>();
 
-			if (CheckCellForPath(GetNeighbourCell(currentCell, directionToLeft(direction)), directionToLeft(direction)))
-				directionsAvailable.Add(directionToLeft(direction));
+			if (CheckCellForPath(GetNeighbourCell(currentCell, direction.directionToLeft()), direction.directionToLeft()))
+				directionsAvailable.Add(direction.directionToLeft());
 			if (CheckCellForPath(GetNeighbourCell(currentCell, direction), direction))
 				directionsAvailable.Add(direction);
-			if (CheckCellForPath(GetNeighbourCell(currentCell, directionToRight(direction)), directionToRight(direction)))
-				directionsAvailable.Add(directionToRight(direction));
+			if (CheckCellForPath(GetNeighbourCell(currentCell, direction.directionToRight()), direction.directionToRight()))
+				directionsAvailable.Add(direction.directionToRight());
 
 			Debug.Log("At y:" + y + " x:" + x + ", direction: " + direction + "| directionsAvailable:");
 			foreach (direction D in directionsAvailable)
@@ -817,13 +858,13 @@ public class MazeGenerator : MonoBehaviour
 			/*switch (furtherBase)
 			{
 				case -1:
-					furtherDirection = directionToLeft(direction);
+					furtherDirection = direction.directionToLeft();
 					break;
 				case 0:
 					//furtherDirection = direction;
 					break;
 				case 1:
-					furtherDirection = directionToRight(direction);
+					furtherDirection = direction.directionToRight();
 					break;
 				//for test
 				default:
@@ -862,11 +903,11 @@ public class MazeGenerator : MonoBehaviour
 			}
 
 			Vector2Int cellToCheck = new Vector2Int();
-			cellToCheck = GetNeighbourCell(cell, directionToLeft(direction));
+			cellToCheck = GetNeighbourCell(cell, direction.directionToLeft());
 			if (_mazeMapList[cellToCheck.y][cellToCheck.x] == 0) return false;
 			cellToCheck = GetNeighbourCell(cell, direction);
 			if (_mazeMapList[cellToCheck.y][cellToCheck.x] == 0) return false;
-			cellToCheck = GetNeighbourCell(cell, directionToRight(direction));
+			cellToCheck = GetNeighbourCell(cell, direction.directionToRight());
 			if (_mazeMapList[cellToCheck.y][cellToCheck.x] == 0) return false;
 
 			return true;
@@ -885,21 +926,6 @@ public class MazeGenerator : MonoBehaviour
 		}
 
 		//Vector2Int cell = new Vector2Int();
-
-		direction directionToRight(direction direction)
-		{
-			direction directionToRight = direction + 1;
-			if ((int)directionToRight > 3)
-				directionToRight = 0;
-			return directionToRight;
-		}
-		direction directionToLeft(direction direction)
-		{
-			direction directionToLeft = direction - 1;
-			if ((int)directionToLeft < 0)
-				directionToLeft = (direction)3;
-			return directionToLeft;
-		}
 
 	}
 
@@ -924,16 +950,13 @@ public class MazeGenerator : MonoBehaviour
 		bool isActive = true;
 		List<Vector2Int> pathSteps;
 		Vector2Int pathOrigin;
+		Vector2Int currentCell;
+		direction currentDirection = direction.randomOrUnknown;
 
-		public bool IsActive 
-		{ 
-			get => isActive; 
-		}
-
-		public Vector2Int PathOrigin
-		{
-			get => pathOrigin;
-		}
+		public bool IsActive { get => isActive; }
+		public Vector2Int PathOrigin { get => pathOrigin; }
+		public Vector2Int CurrentCell { get => currentCell; }
+		public direction CurrentDirection {	get => currentDirection; }
 
 		public void StopPath()
 		{
@@ -943,7 +966,56 @@ public class MazeGenerator : MonoBehaviour
 		public PathProcess(Vector2Int origin)
 		{
 			pathOrigin = origin;
+			currentCell = pathOrigin;
 			catacombMazeMap.DigPathAt(origin);
+		}
+		public PathProcess(Vector2Int origin, direction direction) : this(origin)
+		{
+			currentDirection = direction;
+		}
+
+		public void MakeStep()
+		{
+			// определить, куда можно сделать step
+
+			List<direction> desiredDirections = new List<direction>();
+			if (currentDirection == direction.randomOrUnknown)
+			{
+				desiredDirections.Add(direction.up);
+				desiredDirections.Add(direction.right);
+				desiredDirections.Add(direction.down);
+				desiredDirections.Add(direction.left);
+			}
+			else
+			{
+				desiredDirections.Add(currentDirection);
+				desiredDirections.Add(currentDirection.directionToLeft());
+				desiredDirections.Add(currentDirection.directionToRight());
+			}
+
+
+			List<Vector2Int> possibleSteps = new List<Vector2Int>();
+
+			foreach (direction d in desiredDirections)
+			{
+				Vector2Int newCell = currentCell;
+				switch (d)
+				{
+					case direction.left: newCell.x--; break;
+					case direction.up: newCell.y--; break;
+					case direction.right: newCell.x++; break;
+					case direction.down: newCell.y++; break;
+				}
+				// if (newCell.x >= 1 && newCell.x <= MazeSize-2)
+				possibleSteps.Add(newCell);
+			}
+
+			catacombMazeMap.WeedOutCellsAvailableToDigFromList(ref possibleSteps);
+
+			if (possibleSteps.Count == 0)
+				isActive = false;
+			else
+				catacombMazeMap.DigPathAt(possibleSteps[Random.Range(0, possibleSteps.Count)]);
 		}
 	}
 
