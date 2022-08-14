@@ -609,70 +609,137 @@ public class MazeGenerator : MonoBehaviour
 	// // //
 	// CATACOMB GENERATION
 	// // // 
+
+
+	class CatacombMazeMap
+	{
+		List<List<int>> mazeMap = new List<List<int>>();
+		int mazeSize;
+
+		public int MazeSize
+		{
+			get => mazeSize;
+		}
+
+		public List<List<int>> MazeMap
+		{ 
+			get => mazeMap;
+		}
+
+		// толща - 1, края - 2. Пустоты - 0, но их нет изначально
+		public CatacombMazeMap(int mazeSize)
+		{
+			this.mazeSize = mazeSize;
+			for (int i = 0; i < mazeSize; i++)
+			{
+				mazeMap.Add(new List<int>());
+				for (int j = 0; j < mazeSize; j++)
+				{
+					if (i == 0 || i == mazeSize - 1 || j == 0 || j == mazeSize - 1) // внешняя граница
+						mazeMap[i].Add(2);
+					else
+						mazeMap[i].Add(1);
+				}
+			}
+		}
+
+		public void DigPathAt(Vector2Int cell)
+		{
+			if (cell.x > mazeSize - 1 || cell.x < 0 ||
+				cell.y > mazeSize - 1 || cell.y < 0)
+				throw new System.ArgumentOutOfRangeException("cell", cell, "Вылезли за границы размеров лабиринта");
+
+			if (mazeMap[cell.x][cell.y] >= 1)
+				mazeMap[cell.x][cell.y] = 0;
+			else
+			{
+				PrintMazeMap();
+				Debug.Log(cell.x + ", " + cell.y + ": " + mazeMap[cell.x][cell.y]);
+				throw new System.Exception("Тут уже было пробурено!");
+			}
+		}
+
+		public void PrintMazeMap()
+		{
+			string dbgStr = "";
+			for (int i = 0; i < mazeSize; i++)
+			{
+				dbgStr = "";
+				for (int j = 0; j < mazeSize; j++)
+					dbgStr += mazeMap[i][j] + " ";
+				Debug.Log(dbgStr);
+			};
+		}
+	}
+
+
+	static CatacombMazeMap catacombMazeMap;
+
 	private List<List<int>> _generateMaze2(int _mazeSize)
 	{
 
-		List<List<int>> _mazeMapList = new List<List<int>>();
+		catacombMazeMap = new CatacombMazeMap(_mazeSize);
+		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // толща - 1, края - 2
 
-		for (int i = 0; i < _mazeSize; i++)
+		List<PathProcess> activePathProcesses = new List<PathProcess>();
+		activePathProcesses.Add(new PathProcess(new Vector2Int(_mazeSize / 2, _mazeSize / 2)));
+		activePathProcesses.Add(new PathProcess(new Vector2Int(1, 2)));
+		activePathProcesses.Add(new PathProcess(new Vector2Int(0, 5)));
+
+		if (1 == 0)
 		{
-			_mazeMapList.Add(new List<int>());
-			for (int j = 0; j < _mazeSize; j++)
+			/*уберём*/
+			List<Vector2Int> activePaths = new List<Vector2Int>();
+
+
+			activePaths.Add(new Vector2Int(_mazeSize / 2, _mazeSize / 2));
+			_mazeMapList[activePaths[0].y][activePaths[0].x] = 0;
+			//bool 
+
+
+
+			int testCnt = 0;
+			Vector2Int previousP = new Vector2Int(); // test
+			while (activePaths.Count > 0 && testCnt < 1000)
 			{
-				if (i == 0 || i == _mazeSize - 1 || j == 0 || j == _mazeSize - 1) // внешняя граница
-					_mazeMapList[i].Add(2);
-				else
-					_mazeMapList[i].Add(1);
-			}
-		}
-
-		List<Vector2Int> activePaths = new List<Vector2Int>();
-
-		activePaths.Add(new Vector2Int(_mazeSize / 2, _mazeSize / 2));
-		_mazeMapList[activePaths[0].y][activePaths[0].x] = 0;
-		//bool 
-
-		int testCnt = 0;
-		Vector2Int previousP = new Vector2Int(); // test
-		while (activePaths.Count > 0 && testCnt < 1000)
-		{
-			testCnt++;
-			foreach (Vector2Int P in activePaths.ToList()) // ToList - для того, чтобы удалять внутри foreach
-			{
-				//_mazeMapList[P.y][P.x] = 0;
-				Vector2Int? nextCell = StepFromExistingCell(P);
-				if (nextCell == null)
-					activePaths.Remove(P);
-				else
+				testCnt++;
+				foreach (Vector2Int P in activePaths.ToList()) // ToList - для того, чтобы удалять внутри foreach
 				{
-					if (testCnt == 3)
-						previousP = P;
+					//_mazeMapList[P.y][P.x] = 0;
+					Vector2Int? nextCell = StepFromExistingCell(P);
+					if (nextCell == null)
+						activePaths.Remove(P);
+					else
+					{
+						if (testCnt == 3)
+							previousP = P;
 
-					activePaths[activePaths.IndexOf(P)] = (Vector2Int)nextCell;
-					_mazeMapList[((Vector2Int)nextCell).y][((Vector2Int)nextCell).x] = 0;
+						activePaths[activePaths.IndexOf(P)] = (Vector2Int)nextCell;
+						_mazeMapList[((Vector2Int)nextCell).y][((Vector2Int)nextCell).x] = 0;
 
-					if (testCnt == 3)
-						activePaths.Add(previousP);
+						if (testCnt == 3)
+							activePaths.Add(previousP);
+					}
+
 				}
-
 			}
-		}
-		if (testCnt >= 1000)
-			Debug.LogError("Зациклились, абортнулись");
+			if (testCnt >= 1000)
+				Debug.LogError("Зациклились, абортнулись");
 
-		//StepAtPathContinuous(_mazeSize/2, _mazeSize/2);
-
-
-		/*string dbgStr = "";
-		for (int i = 0; i < _mazeSize; i++)
-		{
-			dbgStr = "";
-			for (int j = 0; j < _mazeSize; j++)
-				dbgStr += _mazeMapList[i][j] + " ";
-			Debug.Log(dbgStr);
-		};*/
+			//StepAtPathContinuous(_mazeSize/2, _mazeSize/2);
 
 
+			/*string dbgStr = "";
+			for (int i = 0; i < _mazeSize; i++)
+			{
+				dbgStr = "";
+				for (int j = 0; j < _mazeSize; j++)
+					dbgStr += _mazeMapList[i][j] + " ";
+				Debug.Log(dbgStr);
+			};*/
+		} // заканчивается 1==0
+
+		//_mazeMapList = catacombMazeMap.MazeMap; // тестовая строчка
 		return _mazeMapList;
 
 
@@ -841,6 +908,43 @@ public class MazeGenerator : MonoBehaviour
 	private void OnDestroy()
 	{
 		SavePlaytimeSettings();
+	}
+
+	private void TestPathClass()
+	{
+		PathProcess p1 = new PathProcess(new Vector2Int(MazeSize/2, MazeSize / 2));
+
+		Debug.Log(p1.IsActive);
+
+	}
+
+
+	private class PathProcess
+	{
+		bool isActive = true;
+		List<Vector2Int> pathSteps;
+		Vector2Int pathOrigin;
+
+		public bool IsActive 
+		{ 
+			get => isActive; 
+		}
+
+		public Vector2Int PathOrigin
+		{
+			get => pathOrigin;
+		}
+
+		public void StopPath()
+		{
+			isActive = false;
+		}
+
+		public PathProcess(Vector2Int origin)
+		{
+			pathOrigin = origin;
+			catacombMazeMap.DigPathAt(origin);
+		}
 	}
 
 }
