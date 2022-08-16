@@ -782,22 +782,19 @@ public class MazeGenerator : MonoBehaviour
 
 		// Vector2Int - порядок x, y
 
-		List<PathProcess> activePathProcesses = new List<PathProcess>();
-		//activePathProcesses.Add(new PathProcess(new Vector2Int(20, 20)));
-		//activePathProcesses.Add(new PathProcess(new Vector2Int(1, 1)));
-		//activePathProcesses.Add(new PathProcess(new Vector2Int(20, 1)));
-		//activePathProcesses.Add(new PathProcess(new Vector2Int(1, 20)));
-		activePathProcesses.Add(new PathProcess(new Vector2Int(10, 10)));
+		//List<PathProcess> activePathProcesses = new List<PathProcess>();
+		//new PathProcess(new Vector2Int(20, 20));
+		//new PathProcess(new Vector2Int(1, 1));
+		//new PathProcess(new Vector2Int(20, 1));
+		//new PathProcess(new Vector2Int(1, 20));
+		new PathProcess(new Vector2Int(11, 11));
 
 		// далее надо пройтись по всем и делать шаги, пока можно
-		while (activePathProcesses.Count > 0)
+		while (PathProcess.activePathProcesses.Count > 0)
 		{
-			foreach (PathProcess p in activePathProcesses.ToList())
+			foreach (PathProcess p in PathProcess.activePathProcesses.ToList())
 			{
-				if (p.IsActive)
-					p.MakeStep();
-				else
-					activePathProcesses.Remove(p);
+				p.MakeStep();
 			}
 		}
 
@@ -816,6 +813,9 @@ public class MazeGenerator : MonoBehaviour
 		Vector2Int pathOrigin;
 		Vector2Int currentCell;
 		direction currentDirection = direction.randomOrUnknown;
+		bool wannaBranch = false;
+
+		public static List<PathProcess> activePathProcesses = new List<PathProcess>();
 
 		public bool IsActive { get => isActive; }
 		public Vector2Int PathOrigin { get => pathOrigin; }
@@ -825,10 +825,12 @@ public class MazeGenerator : MonoBehaviour
 		public void StopPath()
 		{
 			isActive = false;
+			activePathProcesses.Remove(this);
 		}
 
 		public PathProcess(Vector2Int origin)
 		{
+			activePathProcesses.Add(this);
 			pathOrigin = origin;
 			currentCell = pathOrigin;
 			catacombMazeMap.DigPathAt(origin);
@@ -855,7 +857,7 @@ public class MazeGenerator : MonoBehaviour
 			bool directionDetermined = false;
 			List<direction> bannedDirections = new List<direction>();
 
-			bool wannaForward = Random.Range(0, 2) == 1 ? true : false;
+			bool wannaForward = Random.Range(0, 3) >= 1 ? true : false;
 			direction resultDirection = direction.randomOrUnknown;
 
 			while (!directionDetermined && desiredDirections.Count > bannedDirections.Count)
@@ -944,12 +946,64 @@ public class MazeGenerator : MonoBehaviour
 						}
 					}
 				}
-
 			}
-
 
 			if (directionDetermined)
 			{
+				// прежде, чем двигаться дальше, нужно решить, хотим ли мы здесь сделать развилку
+				if (!wannaBranch && Random.Range(0, 4) == 1)
+					wannaBranch = true;
+
+				if (wannaBranch)
+				{
+					if (desiredDirections.Count - bannedDirections.Count - 1 > 0)
+					{
+						desiredDirections = desiredDirections.Except(bannedDirections).ToList();
+						desiredDirections.Remove(resultDirection);
+
+						if (desiredDirections.Count == 1)
+						{
+							if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
+							{
+								new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0])).cell, desiredDirections[0]);
+								wannaBranch = false;
+							}
+						}
+						else
+						{
+							if (Random.Range(0, 2) == 1)
+							{
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0])).cell, desiredDirections[0]);
+									wannaBranch = false;
+								}
+								else if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1])).cell, desiredDirections[1]);
+									wannaBranch = false;
+								}
+							}
+							else
+							{
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1])).cell, desiredDirections[1]);
+									wannaBranch = false;
+								}
+								else if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0])).cell, desiredDirections[0]);
+									wannaBranch = false;
+								}
+							}
+						}
+
+					}
+
+				}
+				//
+
 				currentDirection = resultDirection;
 				Vector2Int nextCell = catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, resultDirection)).cell;
 				try
