@@ -659,7 +659,6 @@ public class MazeGenerator : MonoBehaviour
 	// CATACOMB GENERATION
 	// // // 
 
-
 	class CatacombMazeMap
 	{
 		List<List<int>> mazeMap = new List<List<int>>();
@@ -750,16 +749,12 @@ public class MazeGenerator : MonoBehaviour
 				return false;
 			}
 
-			Debug.Log("Проверяем клетку " + navCell.cell + ", направление " + navCell.direction);
 			Vector2Int cellToCheck = new Vector2Int();
 			cellToCheck = GetNeighbourCell(navCell.turnLeft()).cell;
-			Debug.Log("Клетка слева " + cellToCheck + ", значение " + mazeMap[cellToCheck.y][cellToCheck.x]);
 			if (mazeMap[cellToCheck.y][cellToCheck.x] == 0) return false;
 			cellToCheck = GetNeighbourCell(navCell).cell;
-			Debug.Log("Клетка прямо " + cellToCheck + ", значение " + mazeMap[cellToCheck.y][cellToCheck.x]);
 			if (mazeMap[cellToCheck.y][cellToCheck.x] == 0) return false;
 			cellToCheck = GetNeighbourCell(navCell.turnRight()).cell;
-			Debug.Log("Клетка справа " + cellToCheck + ", значение " + mazeMap[cellToCheck.y][cellToCheck.x]);
 			if (mazeMap[cellToCheck.y][cellToCheck.x] == 0) return false;
 
 			return true;
@@ -778,37 +773,21 @@ public class MazeGenerator : MonoBehaviour
 		}
 	}
 
-
 	static CatacombMazeMap catacombMazeMap;
 
 	private List<List<int>> _generateMaze2(int _mazeSize)
 	{
-		//Debug.Log(direction.left.directionToRight());
-
-		/* Юнит-тесты OK
-		TestDirectionRandomize(true, true, true);			//	250	500	250
-		TestDirectionRandomize(true, true, false);          //	500	500	0
-		TestDirectionRandomize(true, false, true);          //	500	0	500
-		TestDirectionRandomize(true, false, false);         //	all	0	0
-		TestDirectionRandomize(false, true, true);          //	0	500	500
-		TestDirectionRandomize(false, true, false);			//	0	all	0
-		TestDirectionRandomize(false, false, true);         //	0	0	all
-		TestDirectionRandomize(false, false, false);		//	0	0	0
-		*/
-
-
 		catacombMazeMap = new CatacombMazeMap(_mazeSize);
 		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // толща - 1, края - 2
 
 		// Vector2Int - порядок x, y
 
 		List<PathProcess> activePathProcesses = new List<PathProcess>();
-		activePathProcesses.Add(new PathProcess(new Vector2Int(20, 20)));
-		activePathProcesses.Add(new PathProcess(new Vector2Int(1, 1)));
-		activePathProcesses.Add(new PathProcess(new Vector2Int(20, 1)));
-		activePathProcesses.Add(new PathProcess(new Vector2Int(1, 20)));
+		//activePathProcesses.Add(new PathProcess(new Vector2Int(20, 20)));
+		//activePathProcesses.Add(new PathProcess(new Vector2Int(1, 1)));
+		//activePathProcesses.Add(new PathProcess(new Vector2Int(20, 1)));
+		//activePathProcesses.Add(new PathProcess(new Vector2Int(1, 20)));
 		activePathProcesses.Add(new PathProcess(new Vector2Int(10, 10)));
-
 
 		// далее надо пройтись по всем и делать шаги, пока можно
 		while (activePathProcesses.Count > 0)
@@ -822,340 +801,13 @@ public class MazeGenerator : MonoBehaviour
 			}
 		}
 
-		if (1 == 0)
-		{
-			/*уберём*/
-			List<Vector2Int> activePaths = new List<Vector2Int>();
-
-
-			activePaths.Add(new Vector2Int(_mazeSize / 2, _mazeSize / 2));
-			_mazeMapList[activePaths[0].y][activePaths[0].x] = 0;
-			//bool 
-
-
-
-			int testCnt = 0;
-			Vector2Int previousP = new Vector2Int(); // test
-			while (activePaths.Count > 0 && testCnt < 1000)
-			{
-				testCnt++;
-				foreach (Vector2Int P in activePaths.ToList()) // ToList - для того, чтобы удалять внутри foreach
-				{
-					//_mazeMapList[P.y][P.x] = 0;
-					Vector2Int? nextCell = StepFromExistingCell(P);
-					if (nextCell == null)
-						activePaths.Remove(P);
-					else
-					{
-						if (testCnt == 3)
-							previousP = P;
-
-						activePaths[activePaths.IndexOf(P)] = (Vector2Int)nextCell;
-						_mazeMapList[((Vector2Int)nextCell).y][((Vector2Int)nextCell).x] = 0;
-
-						if (testCnt == 3)
-							activePaths.Add(previousP);
-					}
-
-				}
-			}
-			if (testCnt >= 1000)
-				Debug.LogError("Зациклились, абортнулись");
-
-			//StepAtPathContinuous(_mazeSize/2, _mazeSize/2);
-
-
-			/*string dbgStr = "";
-			for (int i = 0; i < _mazeSize; i++)
-			{
-				dbgStr = "";
-				for (int j = 0; j < _mazeSize; j++)
-					dbgStr += _mazeMapList[i][j] + " ";
-				Debug.Log(dbgStr);
-			};*/
-		} // заканчивается 1==0
-
-		//_mazeMapList = catacombMazeMap.MazeMap; // тестовая строчка
 		return _mazeMapList;
-
-
-		//////////////
-		Vector2Int? StepFromExistingCell(Vector2Int currentCell) //, direction direction = direction.random)
-		{
-			List<direction> directionsAvailable = new List<direction>();
-
-			for (int i = 0; i < 4; i++)
-			{
-				direction direction = (direction)i;
-				if (CheckCellForPath(GetNeighbourCell(currentCell, direction), direction))
-					directionsAvailable.Add(direction);
-			}
-
-			direction furtherDirection = direction.randomOrUnknown;
-
-			if (directionsAvailable.Count == 0)
-				return null;
-			else if (directionsAvailable.Count == 1)
-				furtherDirection = directionsAvailable[0];
-			else if (directionsAvailable.Count >= 2)
-				furtherDirection = directionsAvailable[Random.Range(0, directionsAvailable.Count)];
-
-			Vector2Int newCell = currentCell;
-
-			switch (furtherDirection)
-			{
-				case direction.left: newCell.x--; break;
-				case direction.up: newCell.y--; break;
-				case direction.right: newCell.x++; break;
-				case direction.down: newCell.y++; break;
-			}
-
-			return newCell;
-		}
-
-		void CreatePathFromCell(int y, int x, direction direction = direction.randomOrUnknown)
-		{
-			if (direction == direction.randomOrUnknown)
-				direction = (direction)Random.Range(0, 4);
-			//Debug.Log(direction);
-
-			if (_mazeMapList[y][x] == 2)
-				Debug.LogError("I am on \"2\", don't want to! y = " + y + ", x = " + x);
-			_mazeMapList[y][x] = 0;
-
-			bool goFurther = true;
-			///
-			Vector2Int currentCell = new Vector2Int(x, y);
-			List<direction> directionsAvailable = new List<direction>();
-
-			if (CheckCellForPath(GetNeighbourCell(currentCell, direction.directionToLeft()), direction.directionToLeft()))
-				directionsAvailable.Add(direction.directionToLeft());
-			if (CheckCellForPath(GetNeighbourCell(currentCell, direction), direction))
-				directionsAvailable.Add(direction);
-			if (CheckCellForPath(GetNeighbourCell(currentCell, direction.directionToRight()), direction.directionToRight()))
-				directionsAvailable.Add(direction.directionToRight());
-
-			Debug.Log("At y:" + y + " x:" + x + ", direction: " + direction + "| directionsAvailable:");
-			foreach (direction D in directionsAvailable)
-				Debug.Log(D);
-
-			direction furtherDirection = direction;
-
-			if (directionsAvailable.Count == 0)
-				return;
-			else if (directionsAvailable.Count == 1)
-				furtherDirection = directionsAvailable[0];
-			else if (directionsAvailable.Count >= 2)
-				furtherDirection = directionsAvailable[Random.Range(0, directionsAvailable.Count)];
-
-			Debug.Log("furtherDirection: " + furtherDirection);
-			//int furtherBase = Random.Range(-1,/*2*/3);
-			/*switch (furtherBase)
-			{
-				case -1:
-					furtherDirection = direction.directionToLeft();
-					break;
-				case 0:
-					//furtherDirection = direction;
-					break;
-				case 1:
-					furtherDirection = direction.directionToRight();
-					break;
-				//for test
-				default:
-					goFurther = false;
-					break;
-			}*/
-
-
-			switch (furtherDirection)
-			{
-				case direction.left: x--; break;
-				case direction.up: y--; break;
-				case direction.right: x++; break;
-				case direction.down: y++; break;
-			}
-
-			if (goFurther) CreatePathFromCell(y, x, furtherDirection);
-
-		}
-
-		bool CheckCellForPath(Vector2Int cell, direction direction)
-		{
-			try
-			{
-				if (_mazeMapList[cell.y][cell.x] == 2)
-				{
-					Debug.Log("Detected \"2\": y = " + cell.y + ", x = " + cell.x);
-					return false;
-				}
-
-			}
-			catch
-			{
-				Debug.LogError("Exception with coords: y = " + cell.y + ", x = " + cell.x);
-				return false;
-			}
-
-			Vector2Int cellToCheck = new Vector2Int();
-			cellToCheck = GetNeighbourCell(cell, direction.directionToLeft());
-			if (_mazeMapList[cellToCheck.y][cellToCheck.x] == 0) return false;
-			cellToCheck = GetNeighbourCell(cell, direction);
-			if (_mazeMapList[cellToCheck.y][cellToCheck.x] == 0) return false;
-			cellToCheck = GetNeighbourCell(cell, direction.directionToRight());
-			if (_mazeMapList[cellToCheck.y][cellToCheck.x] == 0) return false;
-
-			return true;
-		};
-
-		Vector2Int GetNeighbourCell(Vector2Int cell, direction direction)
-		{
-			return new Vector2Int(
-				cell.x + (direction == direction.left ? -1 :
-							direction == direction.right ? 1
-															: 0),
-				cell.y + (direction == direction.up ? -1 :
-							direction == direction.down ? 1
-															: 0)
-															);
-		}
-
-		//Vector2Int cell = new Vector2Int();
-
 	}
-
-
 
 	private void OnDestroy()
 	{
 		SavePlaytimeSettings();
 	}
-
-	private void TestPathClass()
-	{
-		PathProcess p1 = new PathProcess(new Vector2Int(MazeSize/2, MazeSize / 2));
-
-		Debug.Log(p1.IsActive);
-
-	}
-
-	private void TestDirectionRandomize(bool left, bool forward, bool right)
-	{
-		int iterations = 10000;
-
-		List<direction> desiredDirections = new List<direction> { direction.left, direction.up, direction.right };
-
-		int[] tests = new int[3];
-
-		for (int i = 0; i < iterations; i++)
-		{
-
-			List<direction> bannedDirections = new List<direction>();
-
-			bool directionDetermined = false;
-			//direction resultDirection;
-
-			bool wannaForward = Random.Range(0, 2) == 1 ? true : false;
-			while (!directionDetermined && desiredDirections.Count > bannedDirections.Count)
-			{
-				
-				if (wannaForward && !bannedDirections.Contains(direction.up))
-				{
-					if (forward)
-					{
-						directionDetermined = true;
-						//resultDirection = direction.up;
-						tests[1]++;
-						break;
-					}
-					else
-					{
-						bannedDirections.Add(direction.up);
-					}
-				}
-				else
-				{
-					if (!bannedDirections.Contains(direction.left) && !bannedDirections.Contains(direction.right))
-					{
-						if (Random.Range(0, 2) == 1)
-						{
-							if (left)
-							{
-								directionDetermined = true;
-								//resultDirection = direction.left;
-								tests[0]++;
-								break;
-							}
-							else
-							{
-								bannedDirections.Add(direction.left);
-								// переходим на right
-								if (right)
-								{
-									directionDetermined = true;
-									//resultDirection = direction.right;
-									tests[2]++;
-									break;
-								}
-								else
-								{
-									bannedDirections.Add(direction.right);
-								}
-							}
-						}
-						else
-						{
-							if (right)
-							{
-								directionDetermined = true;
-								//resultDirection = direction.right;
-								tests[2]++;
-								break;
-							}
-							else
-							{
-								bannedDirections.Add(direction.right);
-								if (left)
-								{
-									directionDetermined = true;
-									//resultDirection = direction.left;
-									tests[0]++;
-									break;
-								}
-								else
-								{
-									bannedDirections.Add(direction.left);
-								}
-							}
-						}
-					}
-					else
-					{
-						if (!bannedDirections.Contains(direction.left))
-						{
-							directionDetermined = true;
-							//resultDirection = direction.left;
-							tests[0]++;
-						}
-						else if (!bannedDirections.Contains(direction.right))
-						{
-							directionDetermined = true;
-							//resultDirection = direction.right;
-							tests[2]++;
-						}
-						else
-						{
-							wannaForward = true;
-						}
-					}
-				}
-
-			}
-		}
-
-		Debug.Log(tests[0] + " | " + tests[1] + " | " + tests[2]);
-	}
-
 
 	private class PathProcess
 	{
@@ -1215,7 +867,6 @@ public class MazeGenerator : MonoBehaviour
 					{
 						directionDetermined = true;
 						resultDirection = desiredDirections[0];
-						//tests[1]++;
 						break;
 					}
 					else
@@ -1233,7 +884,6 @@ public class MazeGenerator : MonoBehaviour
 							{
 								directionDetermined = true;
 								resultDirection = desiredDirections[1];
-								//tests[0]++;
 								break;
 							}
 							else
@@ -1244,7 +894,6 @@ public class MazeGenerator : MonoBehaviour
 								{
 									directionDetermined = true;
 									resultDirection = desiredDirections[2];
-									//tests[2]++;
 									break;
 								}
 								else
@@ -1259,7 +908,6 @@ public class MazeGenerator : MonoBehaviour
 							{
 								directionDetermined = true;
 								resultDirection = desiredDirections[2];
-								//tests[2]++;
 								break;
 							}
 							else
@@ -1269,7 +917,6 @@ public class MazeGenerator : MonoBehaviour
 								{
 									directionDetermined = true;
 									resultDirection = desiredDirections[1];
-									//tests[0]++;
 									break;
 								}
 								else
@@ -1285,13 +932,11 @@ public class MazeGenerator : MonoBehaviour
 						{
 							directionDetermined = true;
 							resultDirection = desiredDirections[1];
-							//tests[0]++;
 						}
 						else if (!bannedDirections.Contains(desiredDirections[2]))
 						{
 							directionDetermined = true;
 							resultDirection = desiredDirections[2];
-							//tests[2]++;
 						}
 						else
 						{
@@ -1302,37 +947,6 @@ public class MazeGenerator : MonoBehaviour
 
 			}
 
-			//}
-
-
-			/////
-			/*
-			List<Vector2Int> possibleSteps = new List<Vector2Int>();
-
-			foreach (direction d in desiredDirections)
-			{
-				Vector2Int newCell = currentCell;
-				switch (d)
-				{
-					case direction.left: newCell.x--; break;
-					case direction.up: newCell.y--; break;
-					case direction.right: newCell.x++; break;
-					case direction.down: newCell.y++; break;
-				}
-				// if (newCell.x >= 1 && newCell.x <= MazeSize-2)
-				possibleSteps.Add(newCell);
-			}
-
-			catacombMazeMap.WeedOutCellsAvailableToDigFromList(ref possibleSteps);
-
-			if (possibleSteps.Count == 0)
-				isActive = false;
-			else
-			{
-				Vector2Int nextCell = possibleSteps[Random.Range(0, possibleSteps.Count)];
-				catacombMazeMap.DigPathAt(nextCell);
-				currentCell = nextCell;
-			}*/
 
 			if (directionDetermined)
 			{
