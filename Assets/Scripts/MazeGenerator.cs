@@ -787,15 +787,16 @@ public class MazeGenerator : MonoBehaviour
 		//new PathProcess(new Vector2Int(1, 1));
 		//new PathProcess(new Vector2Int(20, 1));
 		//new PathProcess(new Vector2Int(1, 20));
-		new PathProcess(new Vector2Int(11, 11));
+		new PathProcess(new Vector2Int(_mazeSize/2, _mazeSize/2));
 
 		// далее надо пройтись по всем и делать шаги, пока можно
 		while (PathProcess.activePathProcesses.Count > 0)
 		{
-			foreach (PathProcess p in PathProcess.activePathProcesses.ToList())
-			{
-				p.MakeStep();
-			}
+			//foreach (PathProcess p in PathProcess.activePathProcesses.ToList())
+			//{
+			//	p.MakeStep();
+			//}
+			PathProcess.activePathProcesses[Random.Range(0,PathProcess.activePathProcesses.Count)].MakeStep();
 		}
 
 		return _mazeMapList;
@@ -951,7 +952,7 @@ public class MazeGenerator : MonoBehaviour
 			if (directionDetermined)
 			{
 				// прежде, чем двигаться дальше, нужно решить, хотим ли мы здесь сделать развилку
-				if (!wannaBranch && Random.Range(0, 4) == 1)
+				if (!wannaBranch && Random.Range(0, 10) == 1)
 					wannaBranch = true;
 
 				if (wannaBranch)
@@ -971,7 +972,23 @@ public class MazeGenerator : MonoBehaviour
 						}
 						else
 						{
-							if (Random.Range(0, 2) == 1)
+							// иногда будем делать крестовые перекрёстки
+							if (Random.Range(0, 2) == 0)
+							{
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0])).cell, desiredDirections[0]);
+									wannaBranch = false;
+								}
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1])).cell, desiredDirections[1]);
+									wannaBranch = false;
+								}
+							}
+
+							// иначе - только один путь из двух
+							else if (Random.Range(0, 2) == 1)
 							{
 								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
 								{
@@ -1019,6 +1036,8 @@ public class MazeGenerator : MonoBehaviour
 			}
 			else
 				this.StopPath();
+
+			Debug.Log("Активных путепроцессов: " + activePathProcesses.Count);
 		}
 	}
 

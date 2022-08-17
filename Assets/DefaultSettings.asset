@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7267f4bcda385549b53132cc771402a, type: 3}
   m_Name: DefaultSettings
   m_EditorClassIdentifier: 
-  MazeSize: 22
+  MazeSize: 42
   WallHeight: 1
   LightIntensity: 0.05
   AdditionLightOn: 1

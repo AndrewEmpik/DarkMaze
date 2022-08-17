@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.039388746, g: 0.040807568, b: 0.04144443, a: 1}
+  m_IndirectSpecularColor: {r: 0.039366946, g: 0.04078892, b: 0.04142972, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -748,7 +748,7 @@ MonoBehaviour:
   CubeWallPrefab: {fileID: 4515130675700499803, guid: 1fcda275e1c901d4988665f8acc215ad, type: 3}
   ExitWallPrefab: {fileID: 720569946234762135, guid: 138148201352d3647a5466360b1d06bb, type: 3}
   MazeCenter: {x: 0, y: 0, z: 0}
-  MazeSize: 22
+  MazeSize: 42
   MainCamera: {fileID: 963194227}
   PlayerCamera: {fileID: 936436602}
   CellSize: 3
@@ -2057,11 +2057,15 @@ PrefabInstance:
     - target: {fileID: 6866678983910670978, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 719328054}
     - target: {fileID: 6866678983910670978, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 266789422}
+    - target: {fileID: 6866678983910670978, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangeSize
+      objectReference: {fileID: 0}
     - target: {fileID: 6866678983998508735, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -2241,11 +2245,15 @@ PrefabInstance:
     - target: {fileID: 6866678985361852639, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 719328054}
     - target: {fileID: 6866678985361852639, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 266789422}
+    - target: {fileID: 6866678985361852639, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangeSize
+      objectReference: {fileID: 0}
     - target: {fileID: 6866678985651103721, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
