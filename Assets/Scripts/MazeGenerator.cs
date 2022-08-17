@@ -160,15 +160,17 @@ public class MazeGenerator : MonoBehaviour
 
 		List<List<int>> _mazeMapList;
 
-		_mazeMapList = _generateMaze(MazeSize);
-
-		bool generateNewMaze = true;
-
-		_mazeMapList = _generateMaze2(MazeSize);
+		bool generateCatacombMaze = true;
 
 		//Vector3 _prevPoint = _mazeZeroPoint-new Vector3(10,0,-10);
-		if (generateNewMaze)
+
+		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * CellSize;
+		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
+
+		if (generateCatacombMaze)
 		{
+			_mazeMapList = _generateCatacombMaze(MazeSize);
+
 			// j - горизонталь, i - вертикаль
 			for (int i = 0; i < MazeSize; i++)
 				for (int j = 0; j < MazeSize; j++)
@@ -178,16 +180,12 @@ public class MazeGenerator : MonoBehaviour
 						_newWall = Instantiate(CubeWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.identity);
 						Walls.Add(_newWall);
 					}
-
 				}
-
 		}
 
 		else
 		{
-
-			float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * CellSize;
-			_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
+			_mazeMapList = _generateClassicMaze(MazeSize);
 
 			void RandomizeTorchAndLatticeHere()
 			{
@@ -501,7 +499,7 @@ public class MazeGenerator : MonoBehaviour
 		return (toAdd ? where | which : where & ~which);
 	}
 
-	private List<List<int>> _generateMaze(int _mazeSize)
+	private List<List<int>> _generateClassicMaze(int _mazeSize)
 	{
 		List<List<int>> _mazeMapList = new List<List<int>>();
 
@@ -775,7 +773,7 @@ public class MazeGenerator : MonoBehaviour
 
 	static CatacombMazeMap catacombMazeMap;
 
-	private List<List<int>> _generateMaze2(int _mazeSize)
+	private List<List<int>> _generateCatacombMaze(int _mazeSize)
 	{
 		catacombMazeMap = new CatacombMazeMap(_mazeSize);
 		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // толща - 1, края - 2
