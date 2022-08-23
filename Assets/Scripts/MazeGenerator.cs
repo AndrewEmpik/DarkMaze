@@ -180,6 +180,11 @@ public class MazeGenerator : MonoBehaviour
 						_newWall = Instantiate(CubeWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.identity);
 						Walls.Add(_newWall);
 					}
+					if (_mazeMapList[i][j] == 3)
+					{
+						Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), 
+							Quaternion.Euler(0f, i==0||i==MazeSize-1? 0 : -90f, 0f));
+					}
 				}
 		}
 
@@ -363,7 +368,9 @@ public class MazeGenerator : MonoBehaviour
 
 	public Vector3 PositionByCellAddress(int x,int y)
 	{
-		return _mazeZeroPoint + new Vector3( Mathf.Clamp(x+1,1,MazeSize-1) * CellSize, 0, -Mathf.Clamp(y+1, 1, MazeSize-1) * CellSize);
+		// ДЛЯ КЛАССИКИ return _mazeZeroPoint + new Vector3( Mathf.Clamp(x+1,1,MazeSize-1) * CellSize, 0, -Mathf.Clamp(y+1, 1, MazeSize-1) * CellSize);
+		// а это - для катакомб:
+		return _mazeZeroPoint + new Vector3(Mathf.Clamp(x, 0, MazeSize - 1) * CellSize, 0, -Mathf.Clamp(y, 0, MazeSize - 1) * CellSize);
 	}
 
 	public void RebuildMaze()
@@ -705,6 +712,33 @@ public class MazeGenerator : MonoBehaviour
 			}
 		}
 
+		public void PlaceExitNear(Vector2Int cell)
+		{
+			if ((cell.x > 1 && cell.x < mazeSize - 2) &&
+				(cell.y > 1 && cell.y < mazeSize - 2))
+				throw new System.ArgumentOutOfRangeException("cell", cell , "Клетка находится в толще, должна быть смежна с краем!");
+
+			else if (cell.x == 0 || cell.x == mazeSize - 1 ||
+				cell.y == 0 || cell.y == mazeSize - 1)
+				mazeMap[cell.y][cell.x] = 3;
+
+			else
+			{
+				if (cell.x == 1)
+					mazeMap[cell.y][0] = 3;
+				else if (cell.x == mazeSize - 2)
+					mazeMap[cell.y][mazeSize - 1] = 3;
+				else if (cell.y == 1)
+					mazeMap[0][cell.x] = 3;
+				else if (cell.y == mazeSize - 2)
+					mazeMap[mazeSize - 1][cell.x] = 3;
+				else
+					throw new System.Exception("Во время простановки выхода что-то пошло совсем не так");
+			}
+
+
+		}
+
 		public void WeedOutCellsAvailableToDigFromList(ref List<Vector2Int> cells)
 		{
 			foreach (Vector2Int c in cells.ToList())
@@ -797,7 +831,47 @@ public class MazeGenerator : MonoBehaviour
 			PathProcess.activePathProcesses[Random.Range(0,PathProcess.activePathProcesses.Count)].MakeStep();
 		}
 
+		Debug.Log("Всего путепроцессов: " + PathProcess.allPathProcesses.Count);
+
+		List<PathProcess> PathsEndingAtTheEdge = (from pr in PathProcess.allPathProcesses
+													where pr.IsEndingAtTheEdge
+													select pr).ToList();
+
+		foreach (PathProcess p in PathsEndingAtTheEdge)
+		{
+			Debug.Log(p.PathOrigin + " " + p.PathEnd);
+			Color curDbgColor = Color.white;
+			int rndCol = Random.Range(0, 9);
+			switch (rndCol)
+			{
+				case 0:	curDbgColor = Color.blue;	break;
+				case 1: curDbgColor = Color.white; break;
+				case 2: curDbgColor = Color.green; break;
+				case 3: curDbgColor = Color.red; break;
+				case 4: curDbgColor = Color.green; break;
+				case 5: curDbgColor = Color.yellow; break;
+				case 6: curDbgColor = Color.cyan; break;
+				case 7: curDbgColor = Color.gray; break;
+				case 8: curDbgColor = Color.magenta; break;
+					//case 9: curDbgColor = Color.;
+			}
+
+			for (int i = 0; i < p.PathLength-1; i++)
+				Debug.DrawLine(PositionByCellAddress(p.PathSteps(i).x, p.PathSteps(i).y), PositionByCellAddress(p.PathSteps(i+1).x, p.PathSteps(i+1).y), curDbgColor, 1000);
+		}
+
+		int rndForExit = Random.Range(0, PathsEndingAtTheEdge.Count);
+		catacombMazeMap.PlaceExitNear(PathsEndingAtTheEdge[rndForExit].PathEnd);
+
 		return _mazeMapList;
+	}
+
+	private void OnDrawGizmos()
+	{
+		foreach (PathProcess p in PathProcess.allPathProcesses)
+		{
+			Gizmos.DrawSphere(PositionByCellAddress(p.PathEnd.x, p.PathEnd.y), 1);
+		}
 	}
 
 	private void OnDestroy()
@@ -808,29 +882,51 @@ public class MazeGenerator : MonoBehaviour
 	private class PathProcess
 	{
 		bool isActive = true;
-		List<Vector2Int> pathSteps;
 		Vector2Int pathOrigin;
+		Vector2Int pathEnd;
+		//Vector2Int pathLength;
 		Vector2Int currentCell;
 		direction currentDirection = direction.randomOrUnknown;
 		bool wannaBranch = false;
 
+		List<Vector2Int> pathSteps = new List<Vector2Int>();
+
 		public static List<PathProcess> activePathProcesses = new List<PathProcess>();
+		public static List<PathProcess> allPathProcesses = new List<PathProcess>();
 
 		public bool IsActive { get => isActive; }
 		public Vector2Int PathOrigin { get => pathOrigin; }
+		public Vector2Int PathEnd { get => pathEnd; }
+		public int PathLength { get => pathSteps.Count; }
+		public Vector2Int PathSteps(int i) { return pathSteps[i]; }
 		public Vector2Int CurrentCell { get => currentCell; }
 		public direction CurrentDirection {	get => currentDirection; }
+
+		public bool IsEndingAtTheEdge
+		{
+			get
+			{
+				if (pathEnd.x == 1 || pathEnd.x == catacombMazeMap.MazeSize - 2 ||
+					pathEnd.y == 1 || pathEnd.y == catacombMazeMap.MazeSize - 2)
+					return true;
+				else
+					return false;
+			}
+		}
 
 		public void StopPath()
 		{
 			isActive = false;
+			pathEnd = currentCell;
 			activePathProcesses.Remove(this);
 		}
 
 		public PathProcess(Vector2Int origin)
 		{
 			activePathProcesses.Add(this);
+			allPathProcesses.Add(this);
 			pathOrigin = origin;
+			pathSteps.Add(pathOrigin);
 			currentCell = pathOrigin;
 			catacombMazeMap.DigPathAt(origin);
 		}
@@ -1025,6 +1121,7 @@ public class MazeGenerator : MonoBehaviour
 				{
 					catacombMazeMap.DigPathAt(nextCell);
 					currentCell = nextCell;
+					pathSteps.Add(currentCell);
 				}
 				catch (System.Exception e)
 				{
