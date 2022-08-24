@@ -73,6 +73,7 @@ public class MazeGenerator : MonoBehaviour
 	public GameObject WallPrefab;
 	public GameObject CubeWallPrefab;
 	public GameObject ExitWallPrefab;
+	public GameObject LatticePrefab;
 	private Material _curMaterial;
 	public Vector3 MazeCenter = new Vector3(40f, 0f, 10f);
 	public int MazeSize = 5;
@@ -175,17 +176,49 @@ public class MazeGenerator : MonoBehaviour
 			for (int i = 0; i < MazeSize; i++)
 				for (int j = 0; j < MazeSize; j++)
 				{
-					if (_mazeMapList[i][j] == 1 || _mazeMapList[i][j] == 2)
+					switch (_mazeMapList[i][j])
 					{
-						_newWall = Instantiate(CubeWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.identity);
-						Walls.Add(_newWall);
-					}
-					if (_mazeMapList[i][j] == 3)
-					{
-						Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), 
-							Quaternion.Euler(0f, i==0||i==MazeSize-1? 0 : -90f, 0f));
+						case (int)CatacombMazeMap.Legend.Wall:
+						case (int)CatacombMazeMap.Legend.EdgeOfTheMaze:
+
+							_newWall = Instantiate(CubeWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.identity);
+							Walls.Add(_newWall);
+							break;
+
+						case (int)CatacombMazeMap.Legend.ExitHorizontal:
+
+							Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, (-i+0.5f) * CellSize),
+								Quaternion.Euler(0f, 0f, 0f));
+							break;
+
+						case (int)CatacombMazeMap.Legend.ExitVertical:
+
+							Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3((j - 0.5f) * CellSize, 0, -i * CellSize),
+								Quaternion.Euler(0f, -90f, 0f));
+							break;
+
+						case (int)CatacombMazeMap.Legend.LatticeHorizontal:
+
+							Instantiate(LatticePrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize),
+								Quaternion.Euler(0f, 0f, 0f));
+							break;
+
+						case (int)CatacombMazeMap.Legend.LatticeVertical:
+
+							Instantiate(LatticePrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize),
+								Quaternion.Euler(0f, -90f, 0f));
+							break;
 					}
 				}
+
+			// проставляем факелы
+			List<Vector2Int> freeCells = catacombMazeMap.GetFreeCells;
+			for (int i = 0; i < 50; i++)
+			{
+				int rnd = Random.Range(0, freeCells.Count);
+				PlaceTorchInCell(freeCells[rnd]);
+				freeCells.RemoveAt(rnd);
+			}
 		}
 
 		else
@@ -265,7 +298,7 @@ public class MazeGenerator : MonoBehaviour
 		for (int i = 0; i < _matchboxCount; i++)
 		{
 			Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
-			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress.x, matchBoxCellAddress.y);
+			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress);
 			matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
 								Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
 			Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0,360), 0f)); 
@@ -371,6 +404,11 @@ public class MazeGenerator : MonoBehaviour
 		// ДЛЯ КЛАССИКИ return _mazeZeroPoint + new Vector3( Mathf.Clamp(x+1,1,MazeSize-1) * CellSize, 0, -Mathf.Clamp(y+1, 1, MazeSize-1) * CellSize);
 		// а это - для катакомб:
 		return _mazeZeroPoint + new Vector3(Mathf.Clamp(x, 0, MazeSize - 1) * CellSize, 0, -Mathf.Clamp(y, 0, MazeSize - 1) * CellSize);
+	}
+
+	public Vector3 PositionByCellAddress(Vector2Int cell)
+	{
+		return PositionByCellAddress(cell.x, cell.y);
 	}
 
 	public void RebuildMaze()
@@ -660,14 +698,36 @@ public class MazeGenerator : MonoBehaviour
 		return _mazeMapList;
 	}
 
+	void PlaceTorchInCell(Vector2Int cell)
+	{
+		GameObject _newTorch = Instantiate(TorchPrefab, PositionByCellAddress(cell), Quaternion.identity);
+		_newTorch.SetActive(_tglAddLight.isOn);
+		Torches.Add(_newTorch);
+	}
+
+
 	// // //
 	// CATACOMB GENERATION
 	// // // 
 
 	class CatacombMazeMap
 	{
+		public enum Legend
+		{
+			FreeCell,
+			Wall,
+			EdgeOfTheMaze,
+			ExitHorizontal,
+			ExitVertical,
+			LatticeHorizontal,
+			LatticeVertical
+		}
+
 		List<List<int>> mazeMap = new List<List<int>>();
 		int mazeSize;
+
+		List<Vector2Int> freeCells = new List<Vector2Int>();
+		List<Vector2Int> thinWalls = new List<Vector2Int>();
 
 		public int MazeSize
 		{
@@ -675,8 +735,61 @@ public class MazeGenerator : MonoBehaviour
 		}
 
 		public List<List<int>> MazeMap
-		{ 
+		{
 			get => mazeMap;
+		}
+
+		public List<Vector2Int> GetFreeCells {
+			get
+			{
+				if (freeCells.Count == 0)
+				{
+					for (int i = 0; i < mazeSize; i++)
+						for (int j = 0; j < mazeSize; j++)
+						{
+							if (mazeMap[i][j] == (int)Legend.FreeCell)
+								freeCells.Add(new Vector2Int(j, i));
+						}
+				}
+
+				return freeCells;
+			}
+		}
+
+		public List<Vector2Int> GetThinWalls
+		{
+			// только если 2 на 2, и только чередование
+			get
+			{
+				if (thinWalls.Count == 0)
+				{
+					for (int i = 0; i < mazeSize; i++)
+						for (int j = 0; j < mazeSize; j++)
+						{
+							if ( (mazeMap[i][j] == (int)Legend.Wall || mazeMap[i][j] == (int)Legend.EdgeOfTheMaze)
+								&&
+								(
+									(
+											(i != 0				&& (mazeMap[i - 1][j] == (int)Legend.Wall || mazeMap[i - 1][j] == (int)Legend.EdgeOfTheMaze))
+										&&	(i != mazeSize-1	&& (mazeMap[i + 1][j] == (int)Legend.Wall || mazeMap[i + 1][j] == (int)Legend.EdgeOfTheMaze))
+										&&	(j == 0				|| mazeMap[i][j - 1] == (int)Legend.FreeCell)
+										&&  (j == mazeSize-1	|| mazeMap[i][j + 1] == (int)Legend.FreeCell)
+									)
+									||
+									(
+											(i == 0				|| mazeMap[i - 1][j] == (int)Legend.FreeCell)
+										&&	(i == mazeSize-1	|| mazeMap[i + 1][j] == (int)Legend.FreeCell)
+										&&	(j != 0				&& (mazeMap[i][j - 1] == (int)Legend.Wall || mazeMap[i][j - 1] == (int)Legend.EdgeOfTheMaze))
+										&&	(j != mazeSize-1	&& (mazeMap[i][j + 1] == (int)Legend.Wall || mazeMap[i][j + 1] == (int)Legend.EdgeOfTheMaze))
+									)
+								)
+							)
+								thinWalls.Add(new Vector2Int(j, i));
+						}
+				}
+
+				return thinWalls;
+			}
 		}
 
 		// толща - 1, края - 2. Пустоты - 0, но их нет изначально
@@ -689,9 +802,9 @@ public class MazeGenerator : MonoBehaviour
 				for (int j = 0; j < mazeSize; j++)
 				{
 					if (i == 0 || i == mazeSize - 1 || j == 0 || j == mazeSize - 1) // внешняя граница
-						mazeMap[i].Add(2);
+						mazeMap[i].Add((int)Legend.EdgeOfTheMaze);
 					else
-						mazeMap[i].Add(1);
+						mazeMap[i].Add((int)Legend.Wall);
 				}
 			}
 		}
@@ -703,7 +816,7 @@ public class MazeGenerator : MonoBehaviour
 				throw new System.ArgumentOutOfRangeException("cell", cell, "Вылезли за границы размеров лабиринта");
 
 			if (mazeMap[cell.y][cell.x] >= 1)
-				mazeMap[cell.y][cell.x] = 0;
+				mazeMap[cell.y][cell.x] = (int)Legend.FreeCell;
 			else
 			{
 				PrintMazeMap();
@@ -720,23 +833,31 @@ public class MazeGenerator : MonoBehaviour
 
 			else if (cell.x == 0 || cell.x == mazeSize - 1 ||
 				cell.y == 0 || cell.y == mazeSize - 1)
-				mazeMap[cell.y][cell.x] = 3;
+				mazeMap[cell.y][cell.x] = (int)Legend.ExitHorizontal; // поделить по двум
 
 			else
 			{
 				if (cell.x == 1)
-					mazeMap[cell.y][0] = 3;
+					mazeMap[cell.y][0] = (int)Legend.ExitVertical;
 				else if (cell.x == mazeSize - 2)
-					mazeMap[cell.y][mazeSize - 1] = 3;
+					mazeMap[cell.y][mazeSize - 1] = (int)Legend.ExitVertical;
 				else if (cell.y == 1)
-					mazeMap[0][cell.x] = 3;
+					mazeMap[0][cell.x] = (int)Legend.ExitHorizontal;
 				else if (cell.y == mazeSize - 2)
-					mazeMap[mazeSize - 1][cell.x] = 3;
+					mazeMap[mazeSize - 1][cell.x] = (int)Legend.ExitHorizontal;
 				else
 					throw new System.Exception("Во время простановки выхода что-то пошло совсем не так");
 			}
+		}
 
-
+		public void PlaceLattice(Vector2Int cell)
+		{
+			if (!catacombMazeMap.GetThinWalls.Contains(cell))
+				throw new System.InvalidOperationException("Эта стена не является тонкой!");
+			else if (cell.y == 0 || mazeMap[cell.y - 1][cell.x] == (int)CatacombMazeMap.Legend.FreeCell)
+				mazeMap[cell.y][cell.x] = (int)CatacombMazeMap.Legend.LatticeHorizontal;
+			else
+				mazeMap[cell.y][cell.x] = (int)CatacombMazeMap.Legend.LatticeVertical;
 		}
 
 		public void WeedOutCellsAvailableToDigFromList(ref List<Vector2Int> cells)
@@ -813,21 +934,11 @@ public class MazeGenerator : MonoBehaviour
 		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // толща - 1, края - 2
 
 		// Vector2Int - порядок x, y
-
-		//List<PathProcess> activePathProcesses = new List<PathProcess>();
-		//new PathProcess(new Vector2Int(20, 20));
-		//new PathProcess(new Vector2Int(1, 1));
-		//new PathProcess(new Vector2Int(20, 1));
-		//new PathProcess(new Vector2Int(1, 20));
 		new PathProcess(new Vector2Int(_mazeSize/2, _mazeSize/2));
 
 		// далее надо пройтись по всем и делать шаги, пока можно
 		while (PathProcess.activePathProcesses.Count > 0)
 		{
-			//foreach (PathProcess p in PathProcess.activePathProcesses.ToList())
-			//{
-			//	p.MakeStep();
-			//}
 			PathProcess.activePathProcesses[Random.Range(0,PathProcess.activePathProcesses.Count)].MakeStep();
 		}
 
@@ -857,11 +968,20 @@ public class MazeGenerator : MonoBehaviour
 			}
 
 			for (int i = 0; i < p.PathLength-1; i++)
-				Debug.DrawLine(PositionByCellAddress(p.PathSteps(i).x, p.PathSteps(i).y), PositionByCellAddress(p.PathSteps(i+1).x, p.PathSteps(i+1).y), curDbgColor, 1000);
+				Debug.DrawLine(PositionByCellAddress(p.PathSteps(i)), PositionByCellAddress(p.PathSteps(i+1)), curDbgColor, 1000);
 		}
 
 		int rndForExit = Random.Range(0, PathsEndingAtTheEdge.Count);
 		catacombMazeMap.PlaceExitNear(PathsEndingAtTheEdge[rndForExit].PathEnd);
+
+		List<Vector2Int> thinWalls = catacombMazeMap.GetThinWalls;
+		foreach (Vector2Int t in thinWalls)
+		{
+			if (Random.Range(0, 10) == 1)
+			{
+				catacombMazeMap.PlaceLattice(t);
+			}
+		}
 
 		return _mazeMapList;
 	}
@@ -870,7 +990,12 @@ public class MazeGenerator : MonoBehaviour
 	{
 		foreach (PathProcess p in PathProcess.allPathProcesses)
 		{
-			Gizmos.DrawSphere(PositionByCellAddress(p.PathEnd.x, p.PathEnd.y), 1);
+			Gizmos.DrawSphere(PositionByCellAddress(p.PathEnd), 1);
+		}
+
+		foreach (Vector2Int cell in catacombMazeMap.GetThinWalls)
+		{
+			Gizmos.DrawCube(PositionByCellAddress(cell)+Vector3.up*3, Vector3.one);
 		}
 	}
 
