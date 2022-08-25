@@ -8,7 +8,14 @@ public class Flashlight : MonoBehaviour
 
 	public void Start()
 	{
-		Vector2Int flashlightCellAddress = new Vector2Int(Random.Range(0, _mazeGenerator.MazeSize), Random.Range(0, _mazeGenerator.MazeSize));
+		Vector2Int flashlightCellAddress = new Vector2Int();
+		if (_mazeGenerator.LevelType == LevelType.ClassicMaze)
+			flashlightCellAddress = new Vector2Int(Random.Range(0, _mazeGenerator.MazeSize), Random.Range(0, _mazeGenerator.MazeSize));
+		else if (_mazeGenerator.LevelType == LevelType.CatacombMaze)
+		{
+			List<Vector2Int> cellsForFlashlight = MazeGenerator.catacombMazeMap.GetFreeCells;
+			flashlightCellAddress = cellsForFlashlight[Random.Range(0, cellsForFlashlight.Count)];
+		}
 		Debug.Log(flashlightCellAddress);
 		Vector3 flashlightCoords = _mazeGenerator.PositionByCellAddress(flashlightCellAddress.x, flashlightCellAddress.y);
 		Debug.Log(flashlightCoords);

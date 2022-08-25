@@ -1,8 +1,108 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+public enum direction
+{
+	up,
+	right,
+	down,
+	left,
+	randomOrUnknown
+};
+
+public enum LevelType
+{
+	ClassicMaze,
+	CatacombMaze,
+	DemoLevel,
+	Other
+}
+
+public struct NavigateCell
+{
+	public Vector2Int cell;
+	public direction direction;
+	//bool mainDirection;
+
+	public NavigateCell (Vector2Int cell, direction direction)
+	{
+		this.cell = cell;
+		this.direction = direction;
+	}
+
+	public NavigateCell turnRight()
+	{
+		NavigateCell navCell = this;
+		navCell.direction = navCell.direction.directionToRight();
+		return navCell;
+	}
+	public NavigateCell turnLeft()
+	{
+		NavigateCell navCell = this;
+		navCell.direction = navCell.direction.directionToLeft();
+		return navCell;
+	}
+}
+
+static class Extensions
+{
+	public static direction directionToRight(this direction direction)
+	{
+		if (direction == direction.randomOrUnknown)
+			return direction.randomOrUnknown;
+		direction directionToRight = direction + 1;
+		if ((int)directionToRight > 3)
+			directionToRight = 0;
+		return directionToRight;
+	}
+
+	public static direction directionToLeft(this direction direction)
+	{
+		if (direction == direction.randomOrUnknown)
+			return direction.randomOrUnknown;
+		direction directionToLeft = direction - 1;
+		if ((int)directionToLeft < 0)
+			directionToLeft = (direction)3;
+		return directionToLeft;
+	}
+
+	public static Vector3 toVector3(this direction direction)
+	{
+		switch (direction)
+		{
+			case direction.up:
+				return Vector3.forward;
+			case direction.right:
+				return Vector3.right;
+			case direction.down:
+				return Vector3.back;
+			case direction.left:
+				return Vector3.left;
+		}
+		return Vector3.zero;
+	}
+
+	public static float toQuatornianDegrees(this direction direction)
+	{
+		switch (direction)
+		{
+			case direction.up:
+				return 0f;
+			case direction.right:
+				return 90f;
+			case direction.down:
+				return 180f;
+			case direction.left:
+				return -90f;
+		}
+		return 0f;
+	}
+}
+
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -11,8 +111,12 @@ public class MazeGenerator : MonoBehaviour
 
 	[SerializeField] private MenuManager _menuManager;
 
+	public LevelType LevelType;
+
 	public GameObject WallPrefab;
+	public GameObject CubeWallPrefab;
 	public GameObject ExitWallPrefab;
+	public GameObject LatticePrefab;
 	private Material _curMaterial;
 	public Vector3 MazeCenter = new Vector3(40f, 0f, 10f);
 	public int MazeSize = 5;
@@ -100,87 +204,163 @@ public class MazeGenerator : MonoBehaviour
 
 		List<List<int>> _mazeMapList;
 
-		_mazeMapList = _generateMaze(MazeSize);
+		//Vector3 _prevPoint = _mazeZeroPoint-new Vector3(10,0,-10);
 
 		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * CellSize;
 		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
 
-		void RandomizeTorchAndLatticeHere()
+		if (LevelType == LevelType.CatacombMaze)
 		{
-			bool torchPlaced = false;
-			for (int c = 1; c <= 2; c++)
-			{
-				if (Random.Range(1, TorchProbability) == 1)
+			_mazeMapList = _generateCatacombMaze(MazeSize);
+
+			// j - горизонталь, i - вертикаль
+			for (int i = 0; i < MazeSize; i++)
+				for (int j = 0; j < MazeSize; j++)
 				{
-					_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
-					_newTorch.SetActive(_tglAddLight.isOn);
-					Torches.Add(_newTorch);
-					torchPlaced = true;
-				}
-			}
-			if (!torchPlaced)
-			{
-				if (Random.Range(1, LatticeProbability) == 1)
-				{
-				_newWall.GetComponent<WallInternal>().ActivateLattice();
+					switch (_mazeMapList[i][j])
+					{
+						case (int)CatacombMazeMap.Legend.Wall:
+						case (int)CatacombMazeMap.Legend.EdgeOfTheMaze:
+
+							_newWall = Instantiate(CubeWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.identity);
+							Walls.Add(_newWall);
+							break;
+
+						case (int)CatacombMazeMap.Legend.ExitHorizontal:
+
+							Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, (-i+0.5f) * CellSize),
+								Quaternion.Euler(0f, 0f, 0f));
+							break;
+
+						case (int)CatacombMazeMap.Legend.ExitVertical:
+
+							Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3((j - 0.5f) * CellSize, 0, -i * CellSize),
+								Quaternion.Euler(0f, -90f, 0f));
+							break;
+
+						case (int)CatacombMazeMap.Legend.LatticeHorizontal:
+
+							Instantiate(LatticePrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize),
+								Quaternion.Euler(0f, 0f, 0f));
+							break;
+
+						case (int)CatacombMazeMap.Legend.LatticeVertical:
+
+							Instantiate(LatticePrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize),
+								Quaternion.Euler(0f, -90f, 0f));
+							break;
+					}
 				}
 
+			// проставляем факелы
+			List<Vector2Int> freeCells = catacombMazeMap.GetFreeCells;
+			// первым - ставим в самом старте
+			PlaceTorchInCell(PathProcess.allPathProcesses[0].PathOrigin);
+			freeCells.Remove(PathProcess.allPathProcesses[0].PathOrigin);
+
+			for (int i = 0; i < 75; i++)
+			{
+				int rnd = Random.Range(0, freeCells.Count);
+				PlaceTorchInCell(freeCells[rnd]);
+				freeCells.RemoveAt(rnd);
+			}
+
+			List<Vector2Int> cellsForMatchBox = catacombMazeMap.GetFreeCells;
+			for (int i = 0; i < _matchboxCount; i++)
+			{
+				Vector2Int matchBoxCellAddress = cellsForMatchBox[Random.Range(0,cellsForMatchBox.Count)];
+				cellsForMatchBox.Remove(matchBoxCellAddress);
+
+				Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress);
+				matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
+									Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
+				Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0, 360), 0f));
 			}
 		}
 
-		// j - горизонталь, i - вертикаль
-		for (int i = 0; i < MazeSize; i++)
-			for (int j = 0; j < MazeSize; j++)
+		else if (LevelType == LevelType.ClassicMaze)
+		{
+			_mazeMapList = _generateClassicMaze(MazeSize);
+
+			void RandomizeTorchAndLatticeHere()
 			{
-
-				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
+				bool torchPlaced = false;
+				for (int c = 1; c <= 2; c++)
 				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
-					Walls.Add(_newWall);
-
-					RandomizeTorchAndLatticeHere();
-
+					if (Random.Range(1, TorchProbability) == 1)
+					{
+						_newTorch = Instantiate(TorchPrefab, _newWall.transform.GetChild(c).position, _newWall.transform.GetChild(c).rotation);
+						_newTorch.SetActive(_tglAddLight.isOn);
+						Torches.Add(_newTorch);
+						torchPlaced = true;
+					}
 				}
-
-				if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 2) != 0)
+				if (!torchPlaced)
 				{
-					_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
-					Walls.Add(_newWall);
+					if (Random.Range(1, LatticeProbability) == 1)
+					{
+						_newWall.GetComponent<WallInternal>().ActivateLattice();
+					}
 
-					RandomizeTorchAndLatticeHere();
-
-				}
-
-
-				// ставим "выход"
-				if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
-				}
-				if (i == MazeSize-1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
-				}
-				if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
-				}
-				if (j == MazeSize-1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
-				{
-					_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
 				}
 			}
+
+			// j - горизонталь, i - вертикаль
+			for (int i = 0; i < MazeSize; i++)
+				for (int j = 0; j < MazeSize; j++)
+				{
+
+					if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 1) != 0)
+					{
+						_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
+						Walls.Add(_newWall);
+
+						RandomizeTorchAndLatticeHere();
+
+					}
+
+					if (_mazeMapList[i][j] > 0 && (_mazeMapList[i][j] & 2) != 0)
+					{
+						_newWall = Instantiate(WallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
+						Walls.Add(_newWall);
+
+						RandomizeTorchAndLatticeHere();
+
+					}
+
+
+					// ставим "выход"
+					if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
+					{
+						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
+					}
+					if (i == MazeSize - 1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
+					{
+						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
+					}
+					if (j == 0 && i >= 1 && _mazeMapList[i][j] == 0)
+					{
+						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
+					}
+					if (j == MazeSize - 1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
+					{
+						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
+					}
+				}
+
+			for (int i = 0; i < _matchboxCount; i++)
+			{
+				Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
+				Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress);
+				matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
+									Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
+				Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0, 360), 0f));
+			}
+
+		}
 
 		ApplyRestOfSettings();
 
-		for (int i = 0; i < _matchboxCount; i++)
-		{
-			Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
-			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress.x, matchBoxCellAddress.y);
-			matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
-								Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
-			Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0,360), 0f)); 
-		}
 
 	}
 
@@ -219,7 +399,7 @@ public class MazeGenerator : MonoBehaviour
 		SetWallsHeight(_curWallHeight);
 		_torchTypeDropdown.value = _curTorchType;
 
-		if (_curMaterial != null)
+		if (_curMaterial != null && LevelType == LevelType.ClassicMaze)
 			SetMaterial(_curMaterial);
 	}
 
@@ -279,7 +459,31 @@ public class MazeGenerator : MonoBehaviour
 
 	public Vector3 PositionByCellAddress(int x,int y)
 	{
-		return _mazeZeroPoint + new Vector3( Mathf.Clamp(x+1,1,MazeSize-1) * CellSize, 0, -Mathf.Clamp(y+1, 1, MazeSize-1) * CellSize);
+		int customOffset = LevelType == LevelType.ClassicMaze ? 1 : 0;
+		return _mazeZeroPoint + new Vector3(Mathf.Clamp(x + customOffset, customOffset, MazeSize - 1) * CellSize, 
+											0, 
+											-Mathf.Clamp(y + customOffset, customOffset, MazeSize - 1) * CellSize);
+	}
+
+	public Vector3 PositionByCellAddress(Vector2Int cell)
+	{
+		return PositionByCellAddress(cell.x, cell.y);
+	}
+
+	public direction middleOfThree(direction dir1, direction dir2, direction dir3)
+	{
+		if (dir1 == dir2 || dir2 == dir3 || dir3 == dir1)
+			throw new System.ArgumentException("Направления не должны повторяться!");
+		if (dir1 == direction.randomOrUnknown || dir2 == direction.randomOrUnknown || dir3 == direction.randomOrUnknown)
+			throw new System.ArgumentException("Передано значение randomOrUnknown");
+
+		List<direction> threeDirections = new List<direction> { dir1, dir2, dir3 };
+		for (direction tmpdir = direction.up; tmpdir != direction.left; tmpdir = tmpdir.directionToRight())
+		{
+			if (!threeDirections.Contains(tmpdir)) return tmpdir.directionToRight().directionToRight();
+		}
+
+		return direction.right;
 	}
 
 	public void RebuildMaze()
@@ -415,7 +619,7 @@ public class MazeGenerator : MonoBehaviour
 		return (toAdd ? where | which : where & ~which);
 	}
 
-	private List<List<int>> _generateMaze(int _mazeSize)
+	private List<List<int>> _generateClassicMaze(int _mazeSize)
 	{
 		List<List<int>> _mazeMapList = new List<List<int>>();
 
@@ -569,9 +773,604 @@ public class MazeGenerator : MonoBehaviour
 		return _mazeMapList;
 	}
 
+	void PlaceTorchInCell(Vector2Int cell)
+	{
+		List<direction> availableWalls = catacombMazeMap.GetWallsInCell(cell);
+		if (availableWalls.Count == 0) return;
+
+		direction chosenWall = direction.randomOrUnknown;
+
+		if (availableWalls.Count == 1)
+		{
+			chosenWall = availableWalls[0];
+		}
+		else if (availableWalls.Count == 2)
+		{
+			chosenWall = availableWalls[Random.Range(0,2)];
+		}
+		else if (availableWalls.Count == 3)
+		{
+			chosenWall = middleOfThree(availableWalls[0], availableWalls[1], availableWalls[2]);
+		}
+
+		GameObject _newTorch = Instantiate(TorchPrefab, 
+											PositionByCellAddress(cell)+chosenWall.toVector3()*(CellSize/2)+Vector3.up*1.15f,
+											Quaternion.Euler(0f, chosenWall.toQuatornianDegrees(), 0f)
+								);
+		_newTorch.SetActive(_tglAddLight.isOn);
+		Torches.Add(_newTorch);
+	}
+
+
+	// // //
+	// CATACOMB GENERATION
+	// // // 
+
+	public class CatacombMazeMap
+	{
+		public enum Legend
+		{
+			FreeCell,
+			Wall,
+			EdgeOfTheMaze,
+			ExitHorizontal,
+			ExitVertical,
+			LatticeHorizontal,
+			LatticeVertical
+		}
+
+		List<List<int>> mazeMap = new List<List<int>>();
+		int mazeSize;
+
+		List<Vector2Int> freeCells = new List<Vector2Int>();
+		List<Vector2Int> thinWalls = new List<Vector2Int>();
+
+		public int MazeSize
+		{
+			get => mazeSize;
+		}
+
+		public List<List<int>> MazeMap
+		{
+			get => mazeMap;
+		}
+
+		public List<Vector2Int> GetFreeCells {
+			get
+			{
+				if (freeCells.Count == 0)
+				{
+					for (int i = 0; i < mazeSize; i++)
+						for (int j = 0; j < mazeSize; j++)
+						{
+							if (mazeMap[i][j] == (int)Legend.FreeCell)
+								freeCells.Add(new Vector2Int(j, i));
+						}
+				}
+
+				return freeCells;
+			}
+		}
+
+		public List<Vector2Int> GetThinWalls
+		{
+			// только если 2 на 2, и только чередование
+			get
+			{
+				if (thinWalls.Count == 0)
+				{
+					for (int i = 0; i < mazeSize; i++)
+						for (int j = 0; j < mazeSize; j++)
+						{
+							if ( (mazeMap[i][j] == (int)Legend.Wall || mazeMap[i][j] == (int)Legend.EdgeOfTheMaze)
+								&&
+								(
+									(
+											(i != 0				&& (mazeMap[i - 1][j] == (int)Legend.Wall || mazeMap[i - 1][j] == (int)Legend.EdgeOfTheMaze))
+										&&	(i != mazeSize-1	&& (mazeMap[i + 1][j] == (int)Legend.Wall || mazeMap[i + 1][j] == (int)Legend.EdgeOfTheMaze))
+										&&	(j == 0				|| mazeMap[i][j - 1] == (int)Legend.FreeCell)
+										&&  (j == mazeSize-1	|| mazeMap[i][j + 1] == (int)Legend.FreeCell)
+									)
+									||
+									(
+											(i == 0				|| mazeMap[i - 1][j] == (int)Legend.FreeCell)
+										&&	(i == mazeSize-1	|| mazeMap[i + 1][j] == (int)Legend.FreeCell)
+										&&	(j != 0				&& (mazeMap[i][j - 1] == (int)Legend.Wall || mazeMap[i][j - 1] == (int)Legend.EdgeOfTheMaze))
+										&&	(j != mazeSize-1	&& (mazeMap[i][j + 1] == (int)Legend.Wall || mazeMap[i][j + 1] == (int)Legend.EdgeOfTheMaze))
+									)
+								)
+							)
+								thinWalls.Add(new Vector2Int(j, i));
+						}
+				}
+
+				return thinWalls;
+			}
+		}
+
+		public List<direction> GetWallsInCell(Vector2Int cell)
+		{
+			List<direction> directions = new List<direction>();
+			if (cell.y != 0 && (mazeMap[cell.y - 1][cell.x] == (int)Legend.Wall || mazeMap[cell.y - 1][cell.x] == (int)Legend.EdgeOfTheMaze))
+				directions.Add(direction.up);
+			if (cell.x != mazeSize-1 && (mazeMap[cell.y][cell.x + 1] == (int)Legend.Wall || mazeMap[cell.y][cell.x + 1] == (int)Legend.EdgeOfTheMaze))
+				directions.Add(direction.right);
+			if (cell.y != mazeSize-1 && (mazeMap[cell.y + 1][cell.x] == (int)Legend.Wall || mazeMap[cell.y + 1][cell.x] == (int)Legend.EdgeOfTheMaze))
+				directions.Add(direction.down);
+			if (cell.x != 0 && (mazeMap[cell.y][cell.x - 1] == (int)Legend.Wall || mazeMap[cell.y][cell.x - 1] == (int)Legend.EdgeOfTheMaze))
+				directions.Add(direction.left);
+
+			return directions;
+		}
+		// толща - 1, края - 2. Пустоты - 0, но их нет изначально
+		public CatacombMazeMap(int mazeSize)
+		{
+			this.mazeSize = mazeSize;
+			for (int i = 0; i < mazeSize; i++)
+			{
+				mazeMap.Add(new List<int>());
+				for (int j = 0; j < mazeSize; j++)
+				{
+					if (i == 0 || i == mazeSize - 1 || j == 0 || j == mazeSize - 1) // внешняя граница
+						mazeMap[i].Add((int)Legend.EdgeOfTheMaze);
+					else
+						mazeMap[i].Add((int)Legend.Wall);
+				}
+			}
+		}
+
+		public void DigPathAt(Vector2Int cell)
+		{
+			if (cell.x > mazeSize - 1 || cell.x < 0 ||
+				cell.y > mazeSize - 1 || cell.y < 0)
+				throw new System.ArgumentOutOfRangeException("cell", cell, "Вылезли за границы размеров лабиринта");
+
+			if (mazeMap[cell.y][cell.x] >= 1)
+				mazeMap[cell.y][cell.x] = (int)Legend.FreeCell;
+			else
+			{
+				PrintMazeMap();
+				Debug.Log(cell.x + ", " + cell.y + ": " + mazeMap[cell.y][cell.x]);
+				throw new System.Exception("Тут уже было пробурено!");
+			}
+		}
+
+		public void PlaceExitNear(Vector2Int cell)
+		{
+			if ((cell.x > 1 && cell.x < mazeSize - 2) &&
+				(cell.y > 1 && cell.y < mazeSize - 2))
+				throw new System.ArgumentOutOfRangeException("cell", cell , "Клетка находится в толще, должна быть смежна с краем!");
+
+			else if (cell.x == 0 || cell.x == mazeSize - 1 ||
+				cell.y == 0 || cell.y == mazeSize - 1)
+				mazeMap[cell.y][cell.x] = (int)Legend.ExitHorizontal; // поделить по двум
+
+			else
+			{
+				if (cell.x == 1)
+					mazeMap[cell.y][0] = (int)Legend.ExitVertical;
+				else if (cell.x == mazeSize - 2)
+					mazeMap[cell.y][mazeSize - 1] = (int)Legend.ExitVertical;
+				else if (cell.y == 1)
+					mazeMap[0][cell.x] = (int)Legend.ExitHorizontal;
+				else if (cell.y == mazeSize - 2)
+					mazeMap[mazeSize - 1][cell.x] = (int)Legend.ExitHorizontal;
+				else
+					throw new System.Exception("Во время простановки выхода что-то пошло совсем не так");
+			}
+		}
+
+		public void PlaceLattice(Vector2Int cell)
+		{
+			if (!catacombMazeMap.GetThinWalls.Contains(cell))
+				throw new System.InvalidOperationException("Эта стена не является тонкой!");
+			else if (cell.y == 0 || mazeMap[cell.y - 1][cell.x] == (int)CatacombMazeMap.Legend.FreeCell)
+				mazeMap[cell.y][cell.x] = (int)CatacombMazeMap.Legend.LatticeHorizontal;
+			else
+				mazeMap[cell.y][cell.x] = (int)CatacombMazeMap.Legend.LatticeVertical;
+		}
+
+		public void WeedOutCellsAvailableToDigFromList(ref List<Vector2Int> cells)
+		{
+			foreach (Vector2Int c in cells.ToList())
+			{
+				if (c.x < 1 || c.x > mazeSize - 2 ||
+					c.y < 1 || c.y > mazeSize - 2 ||
+					mazeMap[c.x][c.y] != 1) // TODO добавить проверку на коридорность
+					cells.Remove(c);
+			}
+		}
+
+		public NavigateCell GetNeighbourCell(NavigateCell navCell) // Vector2Int cell, direction direction)
+		{
+			return new NavigateCell(
+				new Vector2Int(
+					navCell.cell.x + (	navCell.direction == direction.left ? -1 :
+										navCell.direction == direction.right ? 1
+																			: 0),
+					navCell.cell.y + (	navCell.direction == direction.up ? -1 :
+										navCell.direction == direction.down ? 1
+																			: 0)
+																),
+				navCell.direction);
+		}
+
+		public bool CheckCellForPath(NavigateCell navCell) //Vector2Int cell, direction direction)
+		{
+			try
+			{
+				if (mazeMap[navCell.cell.y][navCell.cell.x] == 2)
+				{
+					Debug.Log("Detected \"2\": y = " + navCell.cell.y + ", x = " + navCell.cell.x);
+					return false;
+				}
+
+			}
+			catch
+			{
+				Debug.LogError("Exception with coords: y = " + navCell.cell.y + ", x = " + navCell.cell.x);
+				return false;
+			}
+
+			Vector2Int cellToCheck = new Vector2Int();
+			cellToCheck = GetNeighbourCell(navCell.turnLeft()).cell;
+			if (mazeMap[cellToCheck.y][cellToCheck.x] == 0) return false;
+			cellToCheck = GetNeighbourCell(navCell).cell;
+			if (mazeMap[cellToCheck.y][cellToCheck.x] == 0) return false;
+			cellToCheck = GetNeighbourCell(navCell.turnRight()).cell;
+			if (mazeMap[cellToCheck.y][cellToCheck.x] == 0) return false;
+
+			return true;
+		}
+
+		public void PrintMazeMap()
+		{
+			string dbgStr = "";
+			for (int i = 0; i < mazeSize; i++)
+			{
+				dbgStr = "";
+				for (int j = 0; j < mazeSize; j++)
+					dbgStr += mazeMap[i][j] + " ";
+				Debug.Log(dbgStr);
+			};
+		}
+	}
+
+	public static CatacombMazeMap catacombMazeMap;
+
+	private List<List<int>> _generateCatacombMaze(int _mazeSize)
+	{
+		catacombMazeMap = new CatacombMazeMap(_mazeSize);
+		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // толща - 1, края - 2
+
+		// Vector2Int - порядок x, y
+		new PathProcess(new Vector2Int(_mazeSize/2, _mazeSize/2));
+
+		// далее надо пройтись по всем и делать шаги, пока можно
+		while (PathProcess.activePathProcesses.Count > 0)
+		{
+			PathProcess.activePathProcesses[Random.Range(0,PathProcess.activePathProcesses.Count)].MakeStep();
+		}
+
+		Debug.Log("Всего путепроцессов: " + PathProcess.allPathProcesses.Count);
+
+		List<PathProcess> PathsEndingAtTheEdge = (from pr in PathProcess.allPathProcesses
+													where pr.IsEndingAtTheEdge
+													select pr).ToList();
+
+		foreach (PathProcess p in PathProcess.allPathProcesses)//PathsEndingAtTheEdge)
+		{
+			Debug.Log(p.PathOrigin + " " + p.PathEnd);
+			Color curDbgColor = Color.white;
+			int rndCol = Random.Range(0, 9);
+			switch (rndCol)
+			{
+				case 0:	curDbgColor = Color.blue;	break;
+				case 1: curDbgColor = Color.white; break;
+				case 2: curDbgColor = Color.green; break;
+				case 3: curDbgColor = Color.red; break;
+				case 4: curDbgColor = Color.green; break;
+				case 5: curDbgColor = Color.yellow; break;
+				case 6: curDbgColor = Color.cyan; break;
+				case 7: curDbgColor = Color.gray; break;
+				case 8: curDbgColor = Color.magenta; break;
+					//case 9: curDbgColor = Color.;
+			}
+
+			for (int i = 0; i < p.PathLength-1; i++)
+				Debug.DrawLine(PositionByCellAddress(p.PathSteps(i)), PositionByCellAddress(p.PathSteps(i+1)), curDbgColor, 1000);
+		}
+
+		int rndForExit = Random.Range(0, PathsEndingAtTheEdge.Count);
+		catacombMazeMap.PlaceExitNear(PathsEndingAtTheEdge[rndForExit].PathEnd);
+
+		List<Vector2Int> thinWalls = catacombMazeMap.GetThinWalls;
+		foreach (Vector2Int t in thinWalls)
+		{
+			if (Random.Range(0, 10) == 1)
+			{
+				catacombMazeMap.PlaceLattice(t);
+			}
+		}
+
+		return _mazeMapList;
+	}
+
+	private void OnDrawGizmos()
+	{
+	
+		foreach (PathProcess p in PathProcess.allPathProcesses)
+		{
+			Gizmos.DrawSphere(PositionByCellAddress(p.PathEnd), 1);
+		}
+
+		/*foreach (Vector2Int cell in catacombMazeMap.GetThinWalls)
+		{
+			Gizmos.DrawCube(PositionByCellAddress(cell)+Vector3.up*3, Vector3.one);
+		}*/
+	
+	}
+
 	private void OnDestroy()
 	{
 		SavePlaytimeSettings();
+	}
+
+	private class PathProcess
+	{
+		bool isActive = true;
+		Vector2Int pathOrigin;
+		Vector2Int pathEnd;
+		//Vector2Int pathLength;
+		Vector2Int currentCell;
+		direction currentDirection = direction.randomOrUnknown;
+		bool wannaBranch = false;
+
+		List<Vector2Int> pathSteps = new List<Vector2Int>();
+
+		public static List<PathProcess> activePathProcesses = new List<PathProcess>();
+		public static List<PathProcess> allPathProcesses = new List<PathProcess>();
+
+		public bool IsActive { get => isActive; }
+		public Vector2Int PathOrigin { get => pathOrigin; }
+		public Vector2Int PathEnd { get => pathEnd; }
+		public int PathLength { get => pathSteps.Count; }
+		public Vector2Int PathSteps(int i) { return pathSteps[i]; }
+		public Vector2Int CurrentCell { get => currentCell; }
+		public direction CurrentDirection {	get => currentDirection; }
+
+		public bool IsEndingAtTheEdge
+		{
+			get
+			{
+				if (pathEnd.x == 1 || pathEnd.x == catacombMazeMap.MazeSize - 2 ||
+					pathEnd.y == 1 || pathEnd.y == catacombMazeMap.MazeSize - 2)
+					return true;
+				else
+					return false;
+			}
+		}
+
+		public void StopPath()
+		{
+			isActive = false;
+			pathEnd = currentCell;
+			activePathProcesses.Remove(this);
+		}
+
+		public PathProcess(Vector2Int origin)
+		{
+			activePathProcesses.Add(this);
+			allPathProcesses.Add(this);
+			pathOrigin = origin;
+			pathSteps.Add(pathOrigin);
+			currentCell = pathOrigin;
+			catacombMazeMap.DigPathAt(origin);
+		}
+		public PathProcess(Vector2Int origin, direction direction) : this(origin)
+		{
+			currentDirection = direction;
+		}
+
+		public void MakeStep()
+		{
+			// определить, куда можно сделать step
+
+			List<direction> desiredDirections = new List<direction>();
+			if (currentDirection == direction.randomOrUnknown)
+			{
+				currentDirection = (direction)Random.Range(0, 4);
+			}
+
+			desiredDirections.Add(currentDirection);
+			desiredDirections.Add(currentDirection.directionToLeft());
+			desiredDirections.Add(currentDirection.directionToRight());
+
+			bool directionDetermined = false;
+			List<direction> bannedDirections = new List<direction>();
+
+			bool wannaForward = Random.Range(0, 3) >= 1 ? true : false;
+			direction resultDirection = direction.randomOrUnknown;
+
+			while (!directionDetermined && desiredDirections.Count > bannedDirections.Count)
+			{
+
+				if (wannaForward && !bannedDirections.Contains(desiredDirections[0])) // то есть "вперёд"
+				{
+					if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell,currentDirection))))
+					{
+						directionDetermined = true;
+						resultDirection = desiredDirections[0];
+						break;
+					}
+					else
+					{
+						bannedDirections.Add(desiredDirections[0]);
+					}
+				}
+				else
+				{
+					if (!bannedDirections.Contains(desiredDirections[1]) && !bannedDirections.Contains(desiredDirections[2]))
+					{
+						if (Random.Range(0, 2) == 1)
+						{
+							if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1]))))
+							{
+								directionDetermined = true;
+								resultDirection = desiredDirections[1];
+								break;
+							}
+							else
+							{
+								bannedDirections.Add(desiredDirections[1]);
+								// переходим на right
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[2]))))
+								{
+									directionDetermined = true;
+									resultDirection = desiredDirections[2];
+									break;
+								}
+								else
+								{
+									bannedDirections.Add(desiredDirections[2]);
+								}
+							}
+						}
+						else
+						{
+							if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[2]))))
+							{
+								directionDetermined = true;
+								resultDirection = desiredDirections[2];
+								break;
+							}
+							else
+							{
+								bannedDirections.Add(desiredDirections[2]);
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1]))))
+								{
+									directionDetermined = true;
+									resultDirection = desiredDirections[1];
+									break;
+								}
+								else
+								{
+									bannedDirections.Add(desiredDirections[1]);
+								}
+							}
+						}
+					}
+					else
+					{
+						if (!bannedDirections.Contains(desiredDirections[1]))
+						{
+							directionDetermined = true;
+							resultDirection = desiredDirections[1];
+						}
+						else if (!bannedDirections.Contains(desiredDirections[2]))
+						{
+							directionDetermined = true;
+							resultDirection = desiredDirections[2];
+						}
+						else
+						{
+							wannaForward = true;
+						}
+					}
+				}
+			}
+
+			if (directionDetermined)
+			{
+				// прежде, чем двигаться дальше, нужно решить, хотим ли мы здесь сделать развилку
+				if (!wannaBranch && Random.Range(0, 10) == 1)
+					wannaBranch = true;
+
+				if (wannaBranch)
+				{
+					if (desiredDirections.Count - bannedDirections.Count - 1 > 0)
+					{
+						desiredDirections = desiredDirections.Except(bannedDirections).ToList();
+						desiredDirections.Remove(resultDirection);
+
+						if (desiredDirections.Count == 1)
+						{
+							if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
+							{
+								new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0])).cell, desiredDirections[0]);
+								wannaBranch = false;
+							}
+						}
+						else
+						{
+							// иногда будем делать крестовые перекрёстки
+							if (Random.Range(0, 2) == 0)
+							{
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0])).cell, desiredDirections[0]);
+									wannaBranch = false;
+								}
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1])).cell, desiredDirections[1]);
+									wannaBranch = false;
+								}
+							}
+
+							// иначе - только один путь из двух
+							else if (Random.Range(0, 2) == 1)
+							{
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0])).cell, desiredDirections[0]);
+									wannaBranch = false;
+								}
+								else if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1])).cell, desiredDirections[1]);
+									wannaBranch = false;
+								}
+							}
+							else
+							{
+								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[1])).cell, desiredDirections[1]);
+									wannaBranch = false;
+								}
+								else if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
+								{
+									new PathProcess(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0])).cell, desiredDirections[0]);
+									wannaBranch = false;
+								}
+							}
+						}
+
+					}
+
+				}
+				//
+
+				currentDirection = resultDirection;
+				Vector2Int nextCell = catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, resultDirection)).cell;
+				try
+				{
+					catacombMazeMap.DigPathAt(nextCell);
+					currentCell = nextCell;
+					pathSteps.Add(currentCell);
+				}
+				catch (System.Exception e)
+				{
+					Debug.LogError("Вещаем из catch: " + e.ToString());
+					Debug.LogWarning("currentCell: " + currentCell + ", resultDirection: " + resultDirection + ", nextCell: " + nextCell);
+				}
+			}
+			else
+				this.StopPath();
+
+			Debug.Log("Активных путепроцессов: " + activePathProcesses.Count);
+		}
 	}
 
 }
