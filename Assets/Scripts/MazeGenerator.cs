@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-enum direction
+public enum direction
 {
 	up,
 	right,
@@ -13,6 +13,14 @@ enum direction
 	left,
 	randomOrUnknown
 };
+
+public enum LevelType
+{
+	ClassicMaze,
+	CatacombMaze,
+	DemoLevel,
+	Other
+}
 
 struct NavigateCell
 {
@@ -61,7 +69,40 @@ static class Extensions
 			directionToLeft = (direction)3;
 		return directionToLeft;
 	}
+
+	public static Vector3 toVector3(this direction direction)
+	{
+		switch (direction)
+		{
+			case direction.up:
+				return Vector3.forward;
+			case direction.right:
+				return Vector3.right;
+			case direction.down:
+				return Vector3.back;
+			case direction.left:
+				return Vector3.left;
+		}
+		return Vector3.zero;
+	}
+
+	public static float toQuatornianDegrees(this direction direction)
+	{
+		switch (direction)
+		{
+			case direction.up:
+				return 0f;
+			case direction.right:
+				return 90f;
+			case direction.down:
+				return 180f;
+			case direction.left:
+				return -90f;
+		}
+		return 0f;
+	}
 }
+
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -69,6 +110,8 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField] private PlaytimeSettings _playtimeSettings;
 
 	[SerializeField] private MenuManager _menuManager;
+
+	public LevelType LevelType;
 
 	public GameObject WallPrefab;
 	public GameObject CubeWallPrefab;
@@ -161,14 +204,12 @@ public class MazeGenerator : MonoBehaviour
 
 		List<List<int>> _mazeMapList;
 
-		bool generateCatacombMaze = true;
-
 		//Vector3 _prevPoint = _mazeZeroPoint-new Vector3(10,0,-10);
 
 		float _mazeZeroPointSingle = (Mathf.Floor(MazeSize / 2f)) * CellSize;
 		_mazeZeroPoint = MazeCenter - new Vector3(_mazeZeroPointSingle, 0f, -_mazeZeroPointSingle);
 
-		if (generateCatacombMaze)
+		if (LevelType == LevelType.CatacombMaze)
 		{
 			_mazeMapList = _generateCatacombMaze(MazeSize);
 
@@ -221,7 +262,7 @@ public class MazeGenerator : MonoBehaviour
 			}
 		}
 
-		else
+		else if (LevelType == LevelType.ClassicMaze)
 		{
 			_mazeMapList = _generateClassicMaze(MazeSize);
 
@@ -401,14 +442,31 @@ public class MazeGenerator : MonoBehaviour
 
 	public Vector3 PositionByCellAddress(int x,int y)
 	{
-		// ДЛЯ КЛАССИКИ return _mazeZeroPoint + new Vector3( Mathf.Clamp(x+1,1,MazeSize-1) * CellSize, 0, -Mathf.Clamp(y+1, 1, MazeSize-1) * CellSize);
-		// а это - для катакомб:
-		return _mazeZeroPoint + new Vector3(Mathf.Clamp(x, 0, MazeSize - 1) * CellSize, 0, -Mathf.Clamp(y, 0, MazeSize - 1) * CellSize);
+		int customOffset = LevelType == LevelType.ClassicMaze ? 1 : 0;
+		return _mazeZeroPoint + new Vector3(Mathf.Clamp(x + customOffset, customOffset, MazeSize - 1) * CellSize, 
+											0, 
+											-Mathf.Clamp(y + customOffset, customOffset, MazeSize - 1) * CellSize);
 	}
 
 	public Vector3 PositionByCellAddress(Vector2Int cell)
 	{
 		return PositionByCellAddress(cell.x, cell.y);
+	}
+
+	public direction middleOfThree(direction dir1, direction dir2, direction dir3)
+	{
+		if (dir1 == dir2 || dir2 == dir3 || dir3 == dir1)
+			throw new System.ArgumentException("Направления не должны повторяться!");
+		if (dir1 == direction.randomOrUnknown || dir2 == direction.randomOrUnknown || dir3 == direction.randomOrUnknown)
+			throw new System.ArgumentException("Передано значение randomOrUnknown");
+
+		List<direction> threeDirections = new List<direction> { dir1, dir2, dir3 };
+		for (direction tmpdir = direction.up; tmpdir != direction.left; tmpdir = tmpdir.directionToRight())
+		{
+			if (!threeDirections.Contains(tmpdir)) return tmpdir.directionToRight().directionToRight();
+		}
+
+		return direction.right;
 	}
 
 	public void RebuildMaze()
@@ -700,7 +758,28 @@ public class MazeGenerator : MonoBehaviour
 
 	void PlaceTorchInCell(Vector2Int cell)
 	{
-		GameObject _newTorch = Instantiate(TorchPrefab, PositionByCellAddress(cell), Quaternion.identity);
+		List<direction> availableWalls = catacombMazeMap.GetWallsInCell(cell);
+		if (availableWalls.Count == 0) return;
+
+		direction chosenWall = direction.randomOrUnknown;
+
+		if (availableWalls.Count == 1)
+		{
+			chosenWall = availableWalls[0];
+		}
+		else if (availableWalls.Count == 2)
+		{
+			chosenWall = availableWalls[Random.Range(0,2)];
+		}
+		else if (availableWalls.Count == 3)
+		{
+			chosenWall = middleOfThree(availableWalls[0], availableWalls[1], availableWalls[2]);
+		}
+
+		GameObject _newTorch = Instantiate(TorchPrefab, 
+											PositionByCellAddress(cell)+chosenWall.toVector3()*(CellSize/2)+Vector3.up*1.5f,
+											Quaternion.Euler(0f, chosenWall.toQuatornianDegrees(), 0f)
+								);
 		_newTorch.SetActive(_tglAddLight.isOn);
 		Torches.Add(_newTorch);
 	}
@@ -792,6 +871,20 @@ public class MazeGenerator : MonoBehaviour
 			}
 		}
 
+		public List<direction> GetWallsInCell(Vector2Int cell)
+		{
+			List<direction> directions = new List<direction>();
+			if (cell.y != 0 && (mazeMap[cell.y - 1][cell.x] == (int)Legend.Wall || mazeMap[cell.y - 1][cell.x] == (int)Legend.EdgeOfTheMaze))
+				directions.Add(direction.up);
+			if (cell.x != mazeSize-1 && (mazeMap[cell.y][cell.x + 1] == (int)Legend.Wall || mazeMap[cell.y][cell.x + 1] == (int)Legend.EdgeOfTheMaze))
+				directions.Add(direction.right);
+			if (cell.y != mazeSize-1 && (mazeMap[cell.y + 1][cell.x] == (int)Legend.Wall || mazeMap[cell.y + 1][cell.x] == (int)Legend.EdgeOfTheMaze))
+				directions.Add(direction.down);
+			if (cell.x != 0 && (mazeMap[cell.y][cell.x - 1] == (int)Legend.Wall || mazeMap[cell.y][cell.x - 1] == (int)Legend.EdgeOfTheMaze))
+				directions.Add(direction.left);
+
+			return directions;
+		}
 		// толща - 1, края - 2. Пустоты - 0, но их нет изначально
 		public CatacombMazeMap(int mazeSize)
 		{
@@ -988,6 +1081,7 @@ public class MazeGenerator : MonoBehaviour
 
 	private void OnDrawGizmos()
 	{
+	/*
 		foreach (PathProcess p in PathProcess.allPathProcesses)
 		{
 			Gizmos.DrawSphere(PositionByCellAddress(p.PathEnd), 1);
@@ -997,6 +1091,7 @@ public class MazeGenerator : MonoBehaviour
 		{
 			Gizmos.DrawCube(PositionByCellAddress(cell)+Vector3.up*3, Vector3.one);
 		}
+	*/
 	}
 
 	private void OnDestroy()

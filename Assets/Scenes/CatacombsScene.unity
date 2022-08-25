@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.039388746, g: 0.040807568, b: 0.04144443, a: 1}
+  m_IndirectSpecularColor: {r: 0.039370727, g: 0.040791206, b: 0.041433156, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -744,6 +744,7 @@ MonoBehaviour:
   _defaultSettings: {fileID: 11400000, guid: 2884f616c0db6a4478bfa0264e3b9793, type: 2}
   _playtimeSettings: {fileID: 11400000, guid: 7189ecb8c2631144cb81779de6b0d798, type: 2}
   _menuManager: {fileID: 8209862}
+  LevelType: 1
   WallPrefab: {fileID: 7758314666711883648, guid: 2851a5bfc190f8b44b1e0d5b0b45bca0, type: 3}
   CubeWallPrefab: {fileID: 4515130675700499803, guid: 1fcda275e1c901d4988665f8acc215ad, type: 3}
   ExitWallPrefab: {fileID: 720569946234762135, guid: 138148201352d3647a5466360b1d06bb, type: 3}
@@ -1695,9 +1696,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 266789422}
     - target: {fileID: 2054495421792224877, guid: 28e4b78125fe13f45983e94a94aa2496, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2054495421792224877, guid: 28e4b78125fe13f45983e94a94aa2496, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 719328054}
     - target: {fileID: 2054495421792224877, guid: 28e4b78125fe13f45983e94a94aa2496, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -1706,6 +1711,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
       objectReference: {fileID: 852237361}
+    - target: {fileID: 2054495421792224877, guid: 28e4b78125fe13f45983e94a94aa2496, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RebuildMaze
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 28e4b78125fe13f45983e94a94aa2496, type: 3}
 --- !u!1001 &4565788889112423877
@@ -1862,13 +1871,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 6099837642724789186, guid: 106156d3cdb8f094e9675ba142394b3d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099837642724789186, guid: 106156d3cdb8f094e9675ba142394b3d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 719328054}
     - target: {fileID: 6099837642724789186, guid: 106156d3cdb8f094e9675ba142394b3d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 266789422}
+    - target: {fileID: 6099837642724789186, guid: 106156d3cdb8f094e9675ba142394b3d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RebuildMaze
+      objectReference: {fileID: 0}
     - target: {fileID: 6099837642773621260, guid: 106156d3cdb8f094e9675ba142394b3d, type: 3}
       propertyPath: m_Name
       value: WinCanvas
