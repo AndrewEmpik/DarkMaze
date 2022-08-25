@@ -254,7 +254,7 @@ public class MazeGenerator : MonoBehaviour
 
 			// проставляем факелы
 			List<Vector2Int> freeCells = catacombMazeMap.GetFreeCells;
-			for (int i = 0; i < 50; i++)
+			for (int i = 0; i < 75; i++)
 			{
 				int rnd = Random.Range(0, freeCells.Count);
 				PlaceTorchInCell(freeCells[rnd]);
@@ -382,7 +382,7 @@ public class MazeGenerator : MonoBehaviour
 		SetWallsHeight(_curWallHeight);
 		_torchTypeDropdown.value = _curTorchType;
 
-		if (_curMaterial != null)
+		if (_curMaterial != null && LevelType == LevelType.ClassicMaze)
 			SetMaterial(_curMaterial);
 	}
 
@@ -777,7 +777,7 @@ public class MazeGenerator : MonoBehaviour
 		}
 
 		GameObject _newTorch = Instantiate(TorchPrefab, 
-											PositionByCellAddress(cell)+chosenWall.toVector3()*(CellSize/2)+Vector3.up*1.5f,
+											PositionByCellAddress(cell)+chosenWall.toVector3()*(CellSize/2)+Vector3.up*1.15f,
 											Quaternion.Euler(0f, chosenWall.toQuatornianDegrees(), 0f)
 								);
 		_newTorch.SetActive(_tglAddLight.isOn);
