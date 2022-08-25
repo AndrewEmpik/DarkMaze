@@ -22,7 +22,7 @@ public enum LevelType
 	Other
 }
 
-struct NavigateCell
+public struct NavigateCell
 {
 	public Vector2Int cell;
 	public direction direction;
@@ -254,11 +254,27 @@ public class MazeGenerator : MonoBehaviour
 
 			// проставляем факелы
 			List<Vector2Int> freeCells = catacombMazeMap.GetFreeCells;
+			// первым - ставим в самом старте
+			PlaceTorchInCell(PathProcess.allPathProcesses[0].PathOrigin);
+			freeCells.Remove(PathProcess.allPathProcesses[0].PathOrigin);
+
 			for (int i = 0; i < 75; i++)
 			{
 				int rnd = Random.Range(0, freeCells.Count);
 				PlaceTorchInCell(freeCells[rnd]);
 				freeCells.RemoveAt(rnd);
+			}
+
+			List<Vector2Int> cellsForMatchBox = catacombMazeMap.GetFreeCells;
+			for (int i = 0; i < _matchboxCount; i++)
+			{
+				Vector2Int matchBoxCellAddress = cellsForMatchBox[Random.Range(0,cellsForMatchBox.Count)];
+				cellsForMatchBox.Remove(matchBoxCellAddress);
+
+				Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress);
+				matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
+									Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
+				Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0, 360), 0f));
 			}
 		}
 
@@ -332,18 +348,19 @@ public class MazeGenerator : MonoBehaviour
 					}
 				}
 
+			for (int i = 0; i < _matchboxCount; i++)
+			{
+				Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
+				Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress);
+				matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
+									Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
+				Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0, 360), 0f));
+			}
+
 		}
 
 		ApplyRestOfSettings();
 
-		for (int i = 0; i < _matchboxCount; i++)
-		{
-			Vector2Int matchBoxCellAddress = new Vector2Int(Random.Range(0, MazeSize), Random.Range(0, MazeSize));
-			Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress);
-			matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
-								Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
-			Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0,360), 0f)); 
-		}
 
 	}
 
@@ -789,7 +806,7 @@ public class MazeGenerator : MonoBehaviour
 	// CATACOMB GENERATION
 	// // // 
 
-	class CatacombMazeMap
+	public class CatacombMazeMap
 	{
 		public enum Legend
 		{
@@ -1019,7 +1036,7 @@ public class MazeGenerator : MonoBehaviour
 		}
 	}
 
-	static CatacombMazeMap catacombMazeMap;
+	public static CatacombMazeMap catacombMazeMap;
 
 	private List<List<int>> _generateCatacombMaze(int _mazeSize)
 	{
@@ -1041,7 +1058,7 @@ public class MazeGenerator : MonoBehaviour
 													where pr.IsEndingAtTheEdge
 													select pr).ToList();
 
-		foreach (PathProcess p in PathsEndingAtTheEdge)
+		foreach (PathProcess p in PathProcess.allPathProcesses)//PathsEndingAtTheEdge)
 		{
 			Debug.Log(p.PathOrigin + " " + p.PathEnd);
 			Color curDbgColor = Color.white;
@@ -1081,17 +1098,17 @@ public class MazeGenerator : MonoBehaviour
 
 	private void OnDrawGizmos()
 	{
-	/*
+	
 		foreach (PathProcess p in PathProcess.allPathProcesses)
 		{
 			Gizmos.DrawSphere(PositionByCellAddress(p.PathEnd), 1);
 		}
 
-		foreach (Vector2Int cell in catacombMazeMap.GetThinWalls)
+		/*foreach (Vector2Int cell in catacombMazeMap.GetThinWalls)
 		{
 			Gizmos.DrawCube(PositionByCellAddress(cell)+Vector3.up*3, Vector3.one);
-		}
-	*/
+		}*/
+	
 	}
 
 	private void OnDestroy()
