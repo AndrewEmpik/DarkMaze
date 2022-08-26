@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,8 +31,6 @@ public class MenuManager : MonoBehaviour
 
 	private void Awake()
 	{
-		Time.timeScale = FirstLoad ? 0f : 1f;
-		MenuActive = FirstLoad;
 
 		//if (Instance == null)
 		//{
@@ -44,6 +43,7 @@ public class MenuManager : MonoBehaviour
 
 	void Start()
 	{
+		SetMenuOff();
 
 		// для удобства, если в редакторе они были включены, в игре выключить
 		if (_winCanvas.gameObject.activeInHierarchy)
@@ -94,8 +94,24 @@ public class MenuManager : MonoBehaviour
 	public void ToggleMenuActive()
 	{
 		MenuActive = !MenuActive;
-		_menuCanvas.gameObject.SetActive(MenuActive);
-		Time.timeScale = MenuActive ? 0f : 1f;
+		if (MenuActive)
+			SetMenuOn();
+		else
+			SetMenuOff();
+	}
+
+	public void SetMenuOn()
+	{
+		MenuActive = true;
+		_menuCanvas.gameObject.SetActive(true);
+		Time.timeScale = 0f;
+	}
+
+	public void SetMenuOff()
+	{
+		MenuActive = false;
+		_menuCanvas.gameObject.SetActive(false);
+		Time.timeScale = 1f;
 	}
 
 	public void Win()
@@ -116,6 +132,11 @@ public class MenuManager : MonoBehaviour
 		_failMenuActive = true;
 		_failCanvas.gameObject.SetActive(true);
 		MenuActive = true;
+	}
+
+	public void LoadSceneMainMenu()
+	{
+		SceneManager.LoadScene(0);
 	}
 
 	public void QuitApplication()

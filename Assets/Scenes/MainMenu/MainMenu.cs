@@ -17,6 +17,7 @@ public class MainMenu : MonoBehaviour
 
 	void Start()
     {
+		Time.timeScale = 1;
 		_startMusicVolume = _music.volume;
 		StartCoroutine(DarkOutCoroutine(false));
 	}
