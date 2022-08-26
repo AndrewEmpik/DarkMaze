@@ -9,7 +9,9 @@ public class MainMenu : MonoBehaviour
 	[SerializeField] RawImage _imageForDarkEffect;
 	[SerializeField] float _darkEffectDuration = 0.5f;
 	[SerializeField] AudioSource _music;
+	[SerializeField] GameObject _musicCrossOut;
 	float _startMusicVolume;
+	bool _musicIsOn = true;
 
 	Color _imageForDarkEffectStartColor = new Color(35f/255, 31f / 255, 32f / 255, 0);
 
@@ -54,6 +56,13 @@ public class MainMenu : MonoBehaviour
 
 		if (!on)
 			_imageForDarkEffect.gameObject.SetActive(false);
+	}
+
+	public void ToggleMusic()
+	{
+		_musicIsOn = !_musicIsOn;
+		_music.enabled = _musicIsOn;
+		_musicCrossOut.SetActive(!_musicIsOn);
 	}
 
 	// потом унифицировать где-то, чтобы не плодить код
