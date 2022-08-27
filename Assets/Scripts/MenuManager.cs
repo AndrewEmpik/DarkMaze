@@ -15,6 +15,8 @@ public class MenuManager : MonoBehaviour
 	[SerializeField] Canvas _winCanvas;
 	[SerializeField] Canvas _failCanvas;
 
+	[SerializeField] DarkOutEffect darkOutEffect;
+
 	public static bool MenuActive = true;
 
 	bool _winMenuActive = false;
@@ -44,6 +46,8 @@ public class MenuManager : MonoBehaviour
 	void Start()
 	{
 		SetMenuOff();
+		Debug.Log("Стартуем darkOutEffect.ShowDarkOutEffect(false)");
+		darkOutEffect.ShowDarkOutEffect(false);
 
 		// для удобства, если в редакторе они были включены, в игре выключить
 		if (_winCanvas.gameObject.activeInHierarchy)
@@ -70,6 +74,7 @@ public class MenuManager : MonoBehaviour
 		fps = 1.0f / Time.smoothDeltaTime;  //Mathf.Lerp(fps, newFPS, 0.0005f);
 		GUI.Label(new Rect(0, 0, 200, 100), "FPS: " + ((int)fps).ToString());
 	}
+
 	public void NextCameraDropdownValue()
 	{
 		if (_drpCamera.value >= _drpCamera.options.Count - 1)
@@ -132,6 +137,31 @@ public class MenuManager : MonoBehaviour
 		_failMenuActive = true;
 		_failCanvas.gameObject.SetActive(true);
 		MenuActive = true;
+	}
+
+	public void RestartSceneWithDarkOut()
+	{
+		StartCoroutine(RestartSceneWithDarkOutCoroutine());
+	}
+
+	private IEnumerator RestartSceneWithDarkOutCoroutine()
+	{
+		darkOutEffect.gameObject.SetActive(true);
+		yield return StartCoroutine(darkOutEffect.ShowDarkOutEffectAsCoroutine(true));
+		//_loadingBadge.SetActive(true);
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+	}
+	public void LoadSceneMainMenuWithDarkOut()
+	{
+		StartCoroutine(LoadSceneMainMenuWithDarkOutCoroutine());
+	}
+
+	private IEnumerator LoadSceneMainMenuWithDarkOutCoroutine()
+	{
+		darkOutEffect.gameObject.SetActive(true);
+		yield return StartCoroutine(darkOutEffect.ShowDarkOutEffectAsCoroutine(true));
+		//_loadingBadge.SetActive(true);
+		LoadSceneMainMenu();
 	}
 
 	public void LoadSceneMainMenu()

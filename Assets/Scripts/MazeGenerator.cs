@@ -486,12 +486,6 @@ public class MazeGenerator : MonoBehaviour
 		return direction.right;
 	}
 
-	public void RebuildMaze()
-	{
-		//_playtimeSettings.CheckString = "Changed " + MazeSize.ToString();
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-	}
-
 	public void ToggleTorch(bool val)
 	{
 		foreach (GameObject T in Torches)

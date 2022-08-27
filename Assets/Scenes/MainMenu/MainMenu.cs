@@ -2,24 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-	[SerializeField] RawImage _imageForDarkEffect;
-	[SerializeField] float _darkEffectDuration = 0.5f;
 	[SerializeField] AudioSource _music;
 	[SerializeField] GameObject _musicCrossOut;
 	float _startMusicVolume;
 	bool _musicIsOn = true;
+	[SerializeField] DarkOutEffect darkOutEffect;
+	[SerializeField] GameObject _loadingBadge;
 
 	Color _imageForDarkEffectStartColor = new Color(35f/255, 31f / 255, 32f / 255, 0);
 
 	void Start()
     {
 		Time.timeScale = 1;
-		_startMusicVolume = _music.volume;
-		StartCoroutine(DarkOutCoroutine(false));
+		darkOutEffect.ShowDarkOutEffect(false);
 	}
 
 	public void LoadSceneByIndex(int index)
@@ -29,34 +27,10 @@ public class MainMenu : MonoBehaviour
 
 	private IEnumerator LoadSceneByIndexCoroutine(int index)
 	{
-		yield return StartCoroutine(DarkOutCoroutine(true));
+		darkOutEffect.gameObject.SetActive(true);
+		yield return StartCoroutine(darkOutEffect.ShowDarkOutEffectAsCoroutine(true));
+		_loadingBadge.SetActive(true);
 		SceneManager.LoadScene(index);
-	}
-
-	IEnumerator DarkOutCoroutine(bool on)
-	{
-		if (on)
-			_imageForDarkEffect.gameObject.SetActive(true);
-
-		float ratio;
-
-		for (float t = 0; t <= _darkEffectDuration; t += Time.deltaTime)
-		{
-			ratio = t / _darkEffectDuration;
-			if (!on)
-				ratio = 1 - ratio;
-
-			_imageForDarkEffect.color = _imageForDarkEffectStartColor + new Color(0, 0, 0, ratio);
-			if (on)
-				_music.volume = _startMusicVolume * (1-ratio);
-			yield return null;
-		}
-
-		if (on)
-			_imageForDarkEffect.color = _imageForDarkEffectStartColor + Color.black;
-
-		if (!on)
-			_imageForDarkEffect.gameObject.SetActive(false);
 	}
 
 	public void ToggleMusic()
