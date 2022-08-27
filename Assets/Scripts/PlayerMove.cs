@@ -78,6 +78,10 @@ public class PlayerMove : MonoBehaviour
 					ToggleFlashlight();
 			}
 		}
+		else
+		{
+			FootstepsAudio.Pause();
+		}
 
 		//
 
@@ -241,13 +245,7 @@ public class PlayerMove : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (!MenuManager.MenuActive)
-			KeyboardMovement();
-		else
-		{
-			Rigidbody.velocity = Vector3.zero;
-			FootstepsAudio.Pause();
-		}
+		KeyboardMovement();
 
 		/*float y = Input.GetAxis("Mouse X") * turnSpeed;
 		_playerRotationsList.Add(y);
@@ -298,7 +296,6 @@ public class PlayerMove : MonoBehaviour
     void KeyboardMovement()
     {
 		float boost = Input.GetKey(KeyCode.LeftShift) ? 2f : 1f;
-
 
 		Vector3 dir = new Vector3(0, 0, 0);
         dir.x = Input.GetAxis("Horizontal");
