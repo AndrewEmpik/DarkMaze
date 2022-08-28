@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
@@ -12,12 +13,20 @@ public class MainMenu : MonoBehaviour
 	[SerializeField] DarkOutEffect darkOutEffect;
 	[SerializeField] GameObject _loadingBadge;
 
+	[SerializeField] Slider _masterVolumeSlider;
+	[SerializeField] Slider _musicVolumeSlider;
+
 	Color _imageForDarkEffectStartColor = new Color(35f/255, 31f / 255, 32f / 255, 0);
+
+	public static float MusicVolume = 0.5f;
+
 
 	void Start()
     {
 		Time.timeScale = 1;
 		darkOutEffect.ShowDarkOutEffect(false);
+		_masterVolumeSlider.value = AudioListener.volume;
+		_musicVolumeSlider.value = MusicVolume;
 	}
 
 	public void LoadSceneByIndex(int index)
@@ -38,6 +47,16 @@ public class MainMenu : MonoBehaviour
 		_musicIsOn = !_musicIsOn;
 		_music.enabled = _musicIsOn;
 		_musicCrossOut.SetActive(!_musicIsOn);
+	}
+
+	public void SetMasterVolume(float value)
+	{
+		AudioListener.volume = value;
+	}
+	public void SetMusicVolume(float value)
+	{
+		MusicVolume = value;
+		_music.volume = MusicVolume;
 	}
 
 	// потом унифицировать где-то, чтобы не плодить код
