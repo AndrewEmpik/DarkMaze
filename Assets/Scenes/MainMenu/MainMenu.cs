@@ -9,7 +9,6 @@ public class MainMenu : MonoBehaviour
 	[SerializeField] AudioSource _music;
 	[SerializeField] GameObject _musicCrossOut;
 	float _startMusicVolume;
-	bool _musicIsOn = true;
 	[SerializeField] DarkOutEffect darkOutEffect;
 	[SerializeField] GameObject _loadingBadge;
 
@@ -18,8 +17,8 @@ public class MainMenu : MonoBehaviour
 
 	Color _imageForDarkEffectStartColor = new Color(35f/255, 31f / 255, 32f / 255, 0);
 
+	public static bool MusicIsOn = true;
 	public static float MusicVolume = 0.5f;
-
 
 	void Start()
     {
@@ -27,6 +26,11 @@ public class MainMenu : MonoBehaviour
 		darkOutEffect.ShowDarkOutEffect(false);
 		_masterVolumeSlider.value = AudioListener.volume;
 		_musicVolumeSlider.value = MusicVolume;
+		if (MusicIsOn)
+			SetMusicOn();
+		else
+			SetMusicOff();
+
 	}
 
 	public void LoadSceneByIndex(int index)
@@ -44,9 +48,23 @@ public class MainMenu : MonoBehaviour
 
 	public void ToggleMusic()
 	{
-		_musicIsOn = !_musicIsOn;
-		_music.enabled = _musicIsOn;
-		_musicCrossOut.SetActive(!_musicIsOn);
+		MusicIsOn = !MusicIsOn;
+		if (MusicIsOn)
+			SetMusicOn();
+		else
+			SetMusicOff();
+	}
+	public void SetMusicOn()
+	{
+		MusicIsOn = true;
+		_music.enabled = MusicIsOn;
+		_musicCrossOut.SetActive(!MusicIsOn);
+	}
+	public void SetMusicOff()
+	{
+		MusicIsOn = false;
+		_music.enabled = MusicIsOn;
+		_musicCrossOut.SetActive(!MusicIsOn);
 	}
 
 	public void SetMasterVolume(float value)
