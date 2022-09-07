@@ -674,20 +674,9 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 2
     m_TransformParent: {fileID: 5679139631010323897}
     m_Modifications:
-    - target: {fileID: 2132159631071320019, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5864130855927476506, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6270881094752483289, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 7134113716430209106, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
       propertyPath: m_Name
       value: Lattice
@@ -697,12 +686,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7490497670750472089, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7490497670750472089, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
       propertyPath: m_VersionIndex
-      value: 15220
+      value: 15226
       objectReference: {fileID: 0}
     - target: {fileID: 7867864408250720075, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
       propertyPath: m_RootOrder
@@ -749,22 +734,15 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8353906522211676648, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8353906522211676648, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
       propertyPath: m_VersionIndex
-      value: 15231
-      objectReference: {fileID: 0}
-    - target: {fileID: 8559513841773837377, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
-      propertyPath: m_Mesh
-      value: 
+      value: 15237
       objectReference: {fileID: 0}
     - target: {fileID: 8559513841773837377, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
       propertyPath: m_VersionIndex
-      value: 2784
+      value: 2790
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
 --- !u!4 &4638856068586343853 stripped
 Transform:

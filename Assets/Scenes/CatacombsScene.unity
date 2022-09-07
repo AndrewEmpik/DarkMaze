@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.03937007, g: 0.040790133, b: 0.04143227, a: 1}
+  m_IndirectSpecularColor: {r: 0.039368104, g: 0.040789932, b: 0.041430034, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -854,7 +854,7 @@ MonoBehaviour:
   WallPrefab: {fileID: 7758314666711883648, guid: 2851a5bfc190f8b44b1e0d5b0b45bca0, type: 3}
   CubeWallPrefab: {fileID: 4515130675700499803, guid: 1fcda275e1c901d4988665f8acc215ad, type: 3}
   ExitWallPrefab: {fileID: 720569946234762135, guid: 138148201352d3647a5466360b1d06bb, type: 3}
-  LatticePrefab: {fileID: 7134113716430209106, guid: 61931139c2c368a4db07e68ca96ce344, type: 3}
+  LatticePrefab: {fileID: 7134113716430209106, guid: 5ef95b2a9b5dea046bedf9d85fa465d0, type: 3}
   MazeCenter: {x: 0, y: 0, z: 0}
   MazeSize: 42
   MainCamera: {fileID: 963194227}
@@ -1541,7 +1541,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a43aa16e15b5e3b489a20a182b20e711, type: 3}
+  m_Script: {fileID: 11500000, guid: f01e0c29cfa5efa448f2dc8ff763524f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1541628118 stripped
