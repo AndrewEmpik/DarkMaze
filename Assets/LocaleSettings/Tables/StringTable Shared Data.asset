@@ -91,6 +91,102 @@ MonoBehaviour:
     m_Key: key_loading
     m_Metadata:
       m_Items: []
+  - m_Id: 85726438596608
+    m_Key: key_toMainMenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85777105788928
+    m_Key: key_quit2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85859398033408
+    m_Key: key_toGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85933163257856
+    m_Key: key_rebuild
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85957083373568
+    m_Key: key_mazeSize2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85992432967680
+    m_Key: key_wallHeight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86132317200384
+    m_Key: key_m
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86190991319040
+    m_Key: key_lightIntensity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86224336035840
+    m_Key: key_additionalLighting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86277737914368
+    m_Key: key_matteLamp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86627689668608
+    m_Key: key_redLantern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86636397043712
+    m_Key: key_blueLantern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86637676306432
+    m_Key: key_fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86639370805248
+    m_Key: key_cameraPosition
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86683863982080
+    m_Key: key_player
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86876873269248
+    m_Key: key_angled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86877615661056
+    m_Key: key_fromAbove
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86992761888768
+    m_Key: key_wallMaterial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87067672158208
+    m_Key: key_yippee
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87080234098688
+    m_Key: key_ohNo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87517049888768
+    m_Key: key_restart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87580052529152
+    m_Key: key_return
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87644862914560
+    m_Key: key_flashlight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 114486068092928
+    m_Key: key_pick
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

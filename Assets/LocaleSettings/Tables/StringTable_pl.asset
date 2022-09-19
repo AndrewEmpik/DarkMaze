@@ -96,6 +96,104 @@ MonoBehaviour:
     m_Localized: "Trudno\u015B\u0107"
     m_Metadata:
       m_Items: []
+  - m_Id: 87644862914560
+    m_Localized: "Latarka \u2013 <b>L</b>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87580052529152
+    m_Localized: "Powr\xF3t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87517049888768
+    m_Localized: Uruchom ponownie
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87080234098688
+    m_Localized: 'O nie!..
+
+      :('
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87067672158208
+    m_Localized: "Hura!\nWolno\u015B\u0107!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85777105788928
+    m_Localized: "WYJD\u0179 <b>X</b>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85726438596608
+    m_Localized: "Do menu g\u0142\xF3wnego"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85859398033408
+    m_Localized: DO GRY!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85933163257856
+    m_Localized: "Odbudowa\u0107"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85957083373568
+    m_Localized: 'Rozmiar labiryntu:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85992432967680
+    m_Localized: "Wysoko\u015B\u0107 \u015Bcian:"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86132317200384
+    m_Localized: m
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86190991319040
+    m_Localized: "Intensywno\u015B\u0107\n\u015Bwiat\u0142a:"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86224336035840
+    m_Localized: "Dodatkowe o\u015Bwietlenie"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86277737914368
+    m_Localized: Matowa lampa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86627689668608
+    m_Localized: Czerwona latarnia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86636397043712
+    m_Localized: Niebieska latarnia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86637676306432
+    m_Localized: "Ogie\u0144"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86639370805248
+    m_Localized: "Po\u0142o\u017Cenie kamery:"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86683863982080
+    m_Localized: Gracz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86876873269248
+    m_Localized: "Pod k\u0105tem"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86877615661056
+    m_Localized: "Od g\xF3ry"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86992761888768
+    m_Localized: "Materia\u0142 \u015Bcian:"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 114486068092928
+    m_Localized: <i>Odbierz</i> <b>[E]</b>
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
