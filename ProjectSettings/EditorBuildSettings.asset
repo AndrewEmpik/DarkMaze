@@ -7,11 +7,11 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/MainMenu/MainMenu.unity
-    guid: a4de78138cee4b74c9c8ac46e1422ff8
+    guid: e3ee04903ae7604429c1e33a6bc2953e
   - enabled: 1
     path: Assets/Scenes/InterfaceScene.unity
     guid: 2202627cd0d351540a805648b6319d4b
   - enabled: 1
     path: Assets/Scenes/CatacombsScene.unity
-    guid: a2cc377666cbf3d47a7fe46ed3570b38
+    guid: a6e72b970b6c4bc438ff2d69bfcc64a9
   m_configObjects: {}
