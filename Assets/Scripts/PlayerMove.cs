@@ -36,6 +36,7 @@ public class PlayerMove : MonoBehaviour
 	[SerializeField] Transform MatchFlame;
 	[SerializeField] GameObject BurnedMatchPrefab;
 	[SerializeField] Light Flashlight;
+	[SerializeField] FlashlightClickManager _flashlightClickManager;
 	public int MatchesCount = 10;
 
 
@@ -208,6 +209,7 @@ public class PlayerMove : MonoBehaviour
 	public void ToggleFlashlight()
 	{
 		Flashlight.gameObject.SetActive(!Flashlight.gameObject.activeInHierarchy);
+		_flashlightClickManager.PlayClickSound();
 	}
 
 	Coroutine matchLifeCoroutine;
