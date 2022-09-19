@@ -16,19 +16,79 @@ MonoBehaviour:
   m_TableCollectionNameGuidString: dda1d0d1b2c7ab042b8513298eb2587c
   m_Entries:
   - m_Id: 38473015296
-    m_Key: playGame
+    m_Key: key_playGame
     m_Metadata:
       m_Items: []
   - m_Id: 372230561792
-    m_Key: options
+    m_Key: key_options
     m_Metadata:
       m_Items: []
   - m_Id: 391264313344
-    m_Key: quit
+    m_Key: key_quit
     m_Metadata:
       m_Items: []
   - m_Id: 589986242560
-    m_Key: back
+    m_Key: key_back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33109146574848
+    m_Key: key_classicMaze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33189819817984
+    m_Key: key_catacombsMaze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33228457746432
+    m_Key: key_specialMaze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33260074409984
+    m_Key: key_tutorialLevel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35986032271360
+    m_Key: key_sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35995955994624
+    m_Key: key_graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35998548074496
+    m_Key: key_gameOptions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36000120938496
+    m_Key: key_language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75293736542208
+    m_Key: key_generalVolume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75466604781568
+    m_Key: key_musicVolume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76625495171072
+    m_Key: key_postEffects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76698958405632
+    m_Key: key_gamma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76735247523840
+    m_Key: key_mazeSize
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76802746458112
+    m_Key: key_difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76850150481920
+    m_Key: key_loading
     m_Metadata:
       m_Items: []
   m_Metadata:

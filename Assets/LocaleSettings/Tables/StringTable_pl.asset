@@ -19,7 +19,7 @@ MonoBehaviour:
     m_Items: []
   m_TableData:
   - m_Id: 38473015296
-    m_Localized: Grac<i>'</i>
+    m_Localized: "Gra\u0107"
     m_Metadata:
       m_Items: []
   - m_Id: 372230561792
@@ -32,6 +32,68 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 589986242560
     m_Localized: Wstecz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33109146574848
+    m_Localized: Klasyczny
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33189819817984
+    m_Localized: Katakumby
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33228457746432
+    m_Localized: Osobliwy (???)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33260074409984
+    m_Localized: Samouczek
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36000120938496
+    m_Localized: "J\u0119zyk\nLanguage"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35998548074496
+    m_Localized: Gra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35995955994624
+    m_Localized: Grafika
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35986032271360
+    m_Localized: "D\u017Awi\u0119k"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75293736542208
+    m_Localized: "Og\xF3lna g\u0142osno\u015B\u0107"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75466604781568
+    m_Localized: 'Muzyka
+
+      w menu'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76850150481920
+    m_Localized: "\u0141ad\u043Ewanie..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76625495171072
+    m_Localized: Post efekty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76698958405632
+    m_Localized: Gamma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76735247523840
+    m_Localized: Rozmiar labiryntu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76802746458112
+    m_Localized: "Trudno\u015B\u0107"
     m_Metadata:
       m_Items: []
   references:
