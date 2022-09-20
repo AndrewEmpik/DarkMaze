@@ -14,4 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CatacombsScene.unity
     guid: a6e72b970b6c4bc438ff2d69bfcc64a9
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 81617d5d36d3623499f8db7c252b013a, type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: 89e68c9cd32c5234aa1c6e8fe1cee90b, type: 2}

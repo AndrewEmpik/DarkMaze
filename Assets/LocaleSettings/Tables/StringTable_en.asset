@@ -1,0 +1,203 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: StringTable_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: dda1d0d1b2c7ab042b8513298eb2587c, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 38473015296
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 372230561792
+    m_Localized: Options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 391264313344
+    m_Localized: Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 589986242560
+    m_Localized: Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33109146574848
+    m_Localized: Classic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33189819817984
+    m_Localized: Catacombs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33228457746432
+    m_Localized: Special (???)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33260074409984
+    m_Localized: Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35986032271360
+    m_Localized: Sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35995955994624
+    m_Localized: Graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35998548074496
+    m_Localized: Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36000120938496
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75293736542208
+    m_Localized: General volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75466604781568
+    m_Localized: 'Music
+
+      in menu'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76850150481920
+    m_Localized: "L\u043Eading..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76625495171072
+    m_Localized: Post effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76698958405632
+    m_Localized: Gamma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76735247523840
+    m_Localized: Maze size
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76802746458112
+    m_Localized: Difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87644862914560
+    m_Localized: "Flashlight \u2013 <b>L</b>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87580052529152
+    m_Localized: Return
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87517049888768
+    m_Localized: Restart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87080234098688
+    m_Localized: 'Oh no!..
+
+      :('
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87067672158208
+    m_Localized: 'Yippee!
+
+      Freedom!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85777105788928
+    m_Localized: QUIT <b>X</b>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85726438596608
+    m_Localized: To main menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85859398033408
+    m_Localized: TO THE GAME!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85933163257856
+    m_Localized: Rebuild
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85957083373568
+    m_Localized: 'Maze size:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85992432967680
+    m_Localized: 'Wall height:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86132317200384
+    m_Localized: m
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86190991319040
+    m_Localized: 'Light
+
+      intensity:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86224336035840
+    m_Localized: Additional lighting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86277737914368
+    m_Localized: Matte lamp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86627689668608
+    m_Localized: Red lantern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86636397043712
+    m_Localized: Blue lantern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86637676306432
+    m_Localized: Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86639370805248
+    m_Localized: 'Camera position:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86683863982080
+    m_Localized: Player
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86876873269248
+    m_Localized: Angled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86877615661056
+    m_Localized: From above
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86992761888768
+    m_Localized: 'Wall material:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 114486068092928
+    m_Localized: <i>Pick up</i> <b>[E]</b>
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

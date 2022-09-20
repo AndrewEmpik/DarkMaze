@@ -1,0 +1,200 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: StringTable Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: StringTable
+  m_TableCollectionNameGuidString: dda1d0d1b2c7ab042b8513298eb2587c
+  m_Entries:
+  - m_Id: 38473015296
+    m_Key: key_playGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 372230561792
+    m_Key: key_options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 391264313344
+    m_Key: key_quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 589986242560
+    m_Key: key_back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33109146574848
+    m_Key: key_classicMaze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33189819817984
+    m_Key: key_catacombsMaze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33228457746432
+    m_Key: key_specialMaze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33260074409984
+    m_Key: key_tutorialLevel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35986032271360
+    m_Key: key_sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35995955994624
+    m_Key: key_graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35998548074496
+    m_Key: key_gameOptions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36000120938496
+    m_Key: key_language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75293736542208
+    m_Key: key_generalVolume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75466604781568
+    m_Key: key_musicVolume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76625495171072
+    m_Key: key_postEffects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76698958405632
+    m_Key: key_gamma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76735247523840
+    m_Key: key_mazeSize
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76802746458112
+    m_Key: key_difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76850150481920
+    m_Key: key_loading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85726438596608
+    m_Key: key_toMainMenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85777105788928
+    m_Key: key_quit2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85859398033408
+    m_Key: key_toGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85933163257856
+    m_Key: key_rebuild
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85957083373568
+    m_Key: key_mazeSize2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85992432967680
+    m_Key: key_wallHeight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86132317200384
+    m_Key: key_m
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86190991319040
+    m_Key: key_lightIntensity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86224336035840
+    m_Key: key_additionalLighting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86277737914368
+    m_Key: key_matteLamp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86627689668608
+    m_Key: key_redLantern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86636397043712
+    m_Key: key_blueLantern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86637676306432
+    m_Key: key_fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86639370805248
+    m_Key: key_cameraPosition
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86683863982080
+    m_Key: key_player
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86876873269248
+    m_Key: key_angled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86877615661056
+    m_Key: key_fromAbove
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86992761888768
+    m_Key: key_wallMaterial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87067672158208
+    m_Key: key_yippee
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87080234098688
+    m_Key: key_ohNo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87517049888768
+    m_Key: key_restart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87580052529152
+    m_Key: key_return
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87644862914560
+    m_Key: key_flashlight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 114486068092928
+    m_Key: key_pick
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5271648523495932027
+  references:
+    version: 2
+    RefIds:
+    - rid: 5271648523495932027
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1663599986894
