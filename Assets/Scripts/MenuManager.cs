@@ -124,12 +124,14 @@ public class MenuManager : MonoBehaviour
 		_winMenuActive = true;
 		_winCanvas.gameObject.SetActive(true);
 		MenuActive = true;
+		Time.timeScale = 0f;
 	}
 	public void HideWinMenu()
 	{
 		_winMenuActive = false;
 		_winCanvas.gameObject.SetActive(false);
 		MenuActive = false;
+		Time.timeScale = 1f;
 	}
 
 	public void Lose()
