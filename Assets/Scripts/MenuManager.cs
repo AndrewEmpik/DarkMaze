@@ -17,6 +17,8 @@ public class MenuManager : MonoBehaviour
 
 	[SerializeField] DarkOutEffect darkOutEffect;
 
+	[SerializeField] GameObject _crosshair;
+
 	public static bool MenuActive = true;
 
 	bool _winMenuActive = false;
@@ -86,6 +88,11 @@ public class MenuManager : MonoBehaviour
 	public void SetCameraDropdownValue(int value)
 	{
 		_drpCamera.value = value;
+	}
+
+	public void ToggleCrosshair(bool val)
+	{
+		_crosshair.SetActive(val);
 	}
 
 	public void NextLightDropdownValue()

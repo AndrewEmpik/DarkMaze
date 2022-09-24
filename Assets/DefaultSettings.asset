@@ -19,4 +19,6 @@ MonoBehaviour:
   TypeOfAddLight: 3
   CameraPosition: 0
   PostEffectsOn: 1
+  ReflectionsOn: 0
+  CrosshairOn: 1
   WallMaterial: {fileID: 2100000, guid: 65d3c5602cc240f47aa30e01f4c2aba8, type: 2}

@@ -10,6 +10,8 @@ public class CameraPosition : MonoBehaviour
 	public MazeGenerator MazeGenerator;
 	int _curCameraPosition = 0;
 
+	[SerializeField] GameObject inGameUI;
+
 	public void SetCameraPosition (int index)
 	{
 		_curCameraPosition = index;
@@ -46,12 +48,15 @@ public class CameraPosition : MonoBehaviour
 
 	void SetActiveCamera(int index)
 	{
-		MainCamera.enabled = (index == 0 ? true : false);
-		MainCamera.gameObject.SetActive(index == 0 ? true : false);
+		bool isPlayerCamera = index == 1 ? true : false;
 
-		PlayerCamera.enabled = (index == 1 ? true : false);
-		PlayerCamera.gameObject.SetActive(index == 1 ? true : false);
+		MainCamera.enabled = !isPlayerCamera;
+		MainCamera.gameObject.SetActive( !isPlayerCamera );
 
-		RenderSettings.fog = (index == 1 ? true : false);
+		PlayerCamera.enabled = isPlayerCamera;
+		PlayerCamera.gameObject.SetActive(isPlayerCamera);
+
+		RenderSettings.fog = isPlayerCamera;
+		inGameUI.SetActive(isPlayerCamera);
 	}
 }

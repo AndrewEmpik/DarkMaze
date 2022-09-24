@@ -161,9 +161,11 @@ public class MazeGenerator : MonoBehaviour
 
 	private bool _postEffectsOn = true;
 	private bool _reflectionsOn = false;
+	private bool _crosshairOn = true;
 	private bool _addLightOn = true;
 	[SerializeField] Toggle _postEffectsToggle;
 	[SerializeField] Toggle _reflectionsToggle;
+	[SerializeField] Toggle _crosshairToggle;
 	[SerializeField] Toggle _addLightToggle;
 	[SerializeField] Dropdown _torchTypeDropdown;
 	[SerializeField] AudioSource _clickSound;
@@ -381,6 +383,7 @@ public class MazeGenerator : MonoBehaviour
 		_cameraPosition = settings.CameraPosition;
 		_postEffectsOn = settings.PostEffectsOn;
 		_reflectionsOn = settings.ReflectionsOn;
+		_crosshairOn = settings.CrosshairOn;
 		_curMaterial = settings.WallMaterial;
 		DefineCurMaterialsToggleGroupIndex();
 
@@ -392,6 +395,8 @@ public class MazeGenerator : MonoBehaviour
 		_sliderHeight.value = _curWallHeight;
 		_postEffectsToggle.isOn = _postEffectsOn;
 		_reflectionsToggle.isOn = _reflectionsOn;
+		_crosshairToggle.isOn = _crosshairOn;
+		ToggleCrosshair(_crosshairOn);
 		PostProcessVolume.SetActive(_postEffectsOn);
 		_addLightToggle.isOn = _addLightOn;
 		_materialToggles[_curMaterialsToggleGroupIndex].isOn = true;
@@ -418,6 +423,7 @@ public class MazeGenerator : MonoBehaviour
 		_playtimeSettings.CameraPosition = _cameraPosition;
 		_playtimeSettings.PostEffectsOn = _postEffectsOn;
 		_playtimeSettings.ReflectionsOn = _reflectionsOn;
+		_playtimeSettings.CrosshairOn = _crosshairOn;
 		_playtimeSettings.WallMaterial = _curMaterial;
 	}
 
@@ -502,7 +508,7 @@ public class MazeGenerator : MonoBehaviour
 	{
 		_postEffectsOn = val;
 	}
-	public void SetReflections(bool val)
+	public void ToggleReflections(bool val)
 	{
 		_reflectionsOn = val;
 		ReflectionProbe[] reflectionProbes = FindObjectsOfType<ReflectionProbe>();
@@ -513,6 +519,12 @@ public class MazeGenerator : MonoBehaviour
 			if (val) RP.RenderProbe();
 		}
 	}
+	public void ToggleCrosshair(bool val)
+	{
+		_crosshairOn = val;
+		_menuManager.ToggleCrosshair(val);
+	}
+
 	public void SetCameraPositionValue(int value)
 	{
 		_cameraPosition = value;

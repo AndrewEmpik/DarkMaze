@@ -191,6 +191,10 @@ MonoBehaviour:
     m_Key: key_reflections
     m_Metadata:
       m_Items: []
+  - m_Id: 1792541970898944
+    m_Key: key_crosshair
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

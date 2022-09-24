@@ -13,5 +13,6 @@ public class PlaytimeSettings : ScriptableObject
 	public int CameraPosition;
 	public bool PostEffectsOn;
 	public bool ReflectionsOn;
+	public bool CrosshairOn;
 	public Material WallMaterial;
 }

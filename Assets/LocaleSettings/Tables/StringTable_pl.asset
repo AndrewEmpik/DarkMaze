@@ -198,6 +198,10 @@ MonoBehaviour:
     m_Localized: Odbicia
     m_Metadata:
       m_Items: []
+  - m_Id: 1792541970898944
+    m_Localized: Celownik
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
