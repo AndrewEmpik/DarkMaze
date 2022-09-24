@@ -443,7 +443,9 @@ public class MazeGenerator : MonoBehaviour
 
 	public void ApplyRestOfSettings()
 	{
-		SetWallsHeight(_curWallHeight);
+		if (LevelType == LevelType.ClassicMaze)
+			SetWallsHeight(_curWallHeight);
+	
 		_torchTypeDropdown.value = _curTorchType;
 
 		if (_curMaterial != null && LevelType == LevelType.ClassicMaze)
