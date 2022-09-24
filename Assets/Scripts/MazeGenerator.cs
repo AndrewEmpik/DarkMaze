@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -215,7 +216,9 @@ public class MazeGenerator : MonoBehaviour
 
 		if (LevelType == LevelType.CatacombMaze)
 		{
-			_mazeMapList = _generateCatacombMaze(MazeSize);
+			_mazeMapList = null;
+			while (_mazeMapList == null)
+				_mazeMapList = _generateCatacombMaze(MazeSize);
 
 			// j - горизонталь, i - вертикаль
 			for (int i = 0; i < MazeSize; i++)
@@ -259,26 +262,59 @@ public class MazeGenerator : MonoBehaviour
 			// проставляем факелы
 			List<Vector2Int> freeCells = catacombMazeMap.GetFreeCells;
 			// первым - ставим в самом старте
-			PlaceTorchInCell(PathProcess.allPathProcesses[0].PathOrigin);
+			try
+			{
+				PlaceTorchInCell(PathProcess.allPathProcesses[0].PathOrigin);
+			}
+			catch (System.ArgumentOutOfRangeException e)
+			{
+				Debug.LogError("Неудачный PlaceTorchInCell (стартовый): " + e.ToString() 
+					+ "; " + e.ActualValue 
+					+ "; allPathProcesses.Count = " 
+					+ PathProcess.allPathProcesses.Count 
+					+ "; PathProcess.allPathProcesses[0].PathOrigin = " + PathProcess.allPathProcesses[0].PathOrigin.ToString());
+			}
 			freeCells.Remove(PathProcess.allPathProcesses[0].PathOrigin);
 
 			for (int i = 0; i < 75; i++)
 			{
-				int rnd = Random.Range(0, freeCells.Count);
-				PlaceTorchInCell(freeCells[rnd]);
-				freeCells.RemoveAt(rnd);
+				if (freeCells.Count > 0)
+				{
+					int rnd = Random.Range(0, freeCells.Count);
+					try
+					{
+						PlaceTorchInCell(freeCells[rnd]);
+					}
+					catch (System.ArgumentOutOfRangeException e)
+					{
+						Debug.LogError("Неудачный PlaceTorchInCell: " + e.ToString() + "; " + e.ActualValue + "; freeCells.Count = " + freeCells.Count + "; rnd (index) = " + rnd);
+					}
+					freeCells.RemoveAt(rnd);
+				}
+				else break;
 			}
 
 			List<Vector2Int> cellsForMatchBox = catacombMazeMap.GetFreeCells;
 			for (int i = 0; i < _matchboxCount; i++)
 			{
-				Vector2Int matchBoxCellAddress = cellsForMatchBox[Random.Range(0,cellsForMatchBox.Count)];
-				cellsForMatchBox.Remove(matchBoxCellAddress);
+				if (cellsForMatchBox.Count > 0)
+				{
+					try
+					{
+						Vector2Int matchBoxCellAddress = cellsForMatchBox[Random.Range(0, cellsForMatchBox.Count)];
+						cellsForMatchBox.Remove(matchBoxCellAddress);
+						Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress);
+						matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
+											Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
+						Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0, 360), 0f));
+					}
+					catch (System.ArgumentOutOfRangeException e)
+					{
+						Debug.LogError("Неудачный cellsForMatchBox: " + e.ToString() + "; " + e.ActualValue + "; cellsForMatchBox.Count = " + cellsForMatchBox.Count);
+					}
+				}
+				else break;
 
-				Vector3 matchBoxCoords = PositionByCellAddress(matchBoxCellAddress);
-				matchBoxCoords += (Vector3.right * Random.Range(-1f, 1f) +
-									Vector3.forward * Random.Range(-1f, 1f)) * CellSize / 2 * 0.9f;
-				Instantiate(_matchboxPrefab, matchBoxCoords, Quaternion.Euler(0f, Random.Range(0, 360), 0f));
 			}
 		}
 
@@ -375,16 +411,16 @@ public class MazeGenerator : MonoBehaviour
 
 	public void ApplySettings(PlaytimeSettings settings)
 	{
-		MazeSize = settings.MazeSize;
-		_curWallHeight = settings.WallHeight;
-		_curDayTime = settings.LightIntensity;
+		MazeSize = LevelType == LevelType.ClassicMaze ? settings.Classic_MazeSize : settings.Catacombs_MazeSize;
+		_curWallHeight = settings.Classic_WallHeight;
+		_curDayTime = settings.Classic_LightIntensity;
 		_addLightOn = settings.AdditionLightOn;
 		_curTorchType = settings.TypeOfAddLight;
 		_cameraPosition = settings.CameraPosition;
 		_postEffectsOn = settings.PostEffectsOn;
 		_reflectionsOn = settings.ReflectionsOn;
 		_crosshairOn = settings.CrosshairOn;
-		_curMaterial = settings.WallMaterial;
+		_curMaterial = settings.Classic_WallMaterial;
 		DefineCurMaterialsToggleGroupIndex();
 
 		SetDayTime(_curDayTime);
@@ -415,16 +451,24 @@ public class MazeGenerator : MonoBehaviour
 	public void SavePlaytimeSettings()
 	{
 		Debug.Log("Saving playtime settings...");
-		_playtimeSettings.MazeSize = MazeSize;
-		_playtimeSettings.WallHeight = _curWallHeight;
-		_playtimeSettings.LightIntensity = _curDayTime;
+		switch (LevelType)
+		{
+			case LevelType.ClassicMaze:
+				_playtimeSettings.Classic_MazeSize = MazeSize;
+				_playtimeSettings.Classic_WallHeight = _curWallHeight;
+				_playtimeSettings.Classic_LightIntensity = _curDayTime;
+				_playtimeSettings.Classic_WallMaterial = _curMaterial;
+				break;
+			case LevelType.CatacombMaze:
+				_playtimeSettings.Catacombs_MazeSize = MazeSize;
+				break;
+		}
 		_playtimeSettings.AdditionLightOn = _addLightOn;
 		_playtimeSettings.TypeOfAddLight = _curTorchType;
 		_playtimeSettings.CameraPosition = _cameraPosition;
 		_playtimeSettings.PostEffectsOn = _postEffectsOn;
 		_playtimeSettings.ReflectionsOn = _reflectionsOn;
 		_playtimeSettings.CrosshairOn = _crosshairOn;
-		_playtimeSettings.WallMaterial = _curMaterial;
 	}
 
 	void DefineCurMaterialsToggleGroupIndex()
@@ -551,7 +595,7 @@ public class MazeGenerator : MonoBehaviour
 		
 		_curWallHeight = val;
 
-		_playtimeSettings.WallHeight = _curWallHeight;
+		_playtimeSettings.Classic_WallHeight = _curWallHeight;
 	}
 
 	[SerializeField] Toggle[] _materialToggles = new Toggle[3];
@@ -631,7 +675,7 @@ public class MazeGenerator : MonoBehaviour
 	public void ChangeSize(int val)
 	{
 		int res = MazeSize + val;
-		res = Mathf.Clamp(res, 2, 51);
+		res = Mathf.Clamp(res, LevelType == LevelType.CatacombMaze ? 21 : 4, 51);
 		MazeSize = res;
 		MazeSizeText.text = (res - 1).ToString();
 	}
@@ -1063,6 +1107,9 @@ public class MazeGenerator : MonoBehaviour
 
 	private List<List<int>> _generateCatacombMaze(int _mazeSize)
 	{
+		if (PathProcess.allPathProcesses.Count > 0) PathProcess.allPathProcesses.Clear();
+		if (PathProcess.activePathProcesses.Count > 0) PathProcess.activePathProcesses.Clear();
+
 		catacombMazeMap = new CatacombMazeMap(_mazeSize);
 		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // толща - 1, края - 2
 
@@ -1105,7 +1152,15 @@ public class MazeGenerator : MonoBehaviour
 		}
 
 		int rndForExit = Random.Range(0, PathsEndingAtTheEdge.Count);
-		catacombMazeMap.PlaceExitNear(PathsEndingAtTheEdge[rndForExit].PathEnd);
+		try
+		{
+			catacombMazeMap.PlaceExitNear(PathsEndingAtTheEdge[rndForExit].PathEnd);
+		}
+		catch (System.ArgumentOutOfRangeException e)
+		{
+			Debug.LogWarning("Неудачный PlaceExitNear: " + e.ToString() + "; " + e.ActualValue + "; PathsEndingAtTheEdge.Count = " + PathsEndingAtTheEdge.Count + "; rndForExit = " + rndForExit);
+			return null; // возвращаем null, намекая на то, что случился фейл
+		}
 
 		List<Vector2Int> thinWalls = catacombMazeMap.GetThinWalls;
 		foreach (Vector2Int t in thinWalls)
@@ -1137,6 +1192,9 @@ public class MazeGenerator : MonoBehaviour
 	private void OnDestroy()
 	{
 		SavePlaytimeSettings();
+
+		PathProcess.allPathProcesses.Clear();
+		PathProcess.activePathProcesses.Clear();
 	}
 
 	private class PathProcess

@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7267f4bcda385549b53132cc771402a, type: 3}
   m_Name: DefaultSettings
   m_EditorClassIdentifier: 
-  MazeSize: 42
-  WallHeight: 1
-  LightIntensity: 0.05
+  Classic_MazeSize: 21
+  Catacombs_MazeSize: 42
+  Classic_WallHeight: 1
+  Classic_LightIntensity: 0.05
   AdditionLightOn: 1
   TypeOfAddLight: 3
   CameraPosition: 0
   PostEffectsOn: 1
   ReflectionsOn: 0
   CrosshairOn: 1
-  WallMaterial: {fileID: 2100000, guid: 65d3c5602cc240f47aa30e01f4c2aba8, type: 2}
+  Classic_WallMaterial: {fileID: 2100000, guid: 65d3c5602cc240f47aa30e01f4c2aba8, type: 2}
