@@ -51,5 +51,7 @@ public class CameraPosition : MonoBehaviour
 
 		PlayerCamera.enabled = (index == 1 ? true : false);
 		PlayerCamera.gameObject.SetActive(index == 1 ? true : false);
+
+		RenderSettings.fog = (index == 1 ? true : false);
 	}
 }
