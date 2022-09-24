@@ -240,6 +240,8 @@ public class PlayerMove : MonoBehaviour
 	public void Die()
 	{
 		Dead = true;
+		Rigidbody.isKinematic = true;
+		Rigidbody.transform.position = new Vector3(Rigidbody.transform.position.x, -0.86f, Rigidbody.transform.position.z);
 		MenuManager.Instance.Lose();
 	}
 
@@ -247,7 +249,8 @@ public class PlayerMove : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		KeyboardMovement();
+		if (!Dead)
+			KeyboardMovement();
 
 		/*float y = Input.GetAxis("Mouse X") * turnSpeed;
 		_playerRotationsList.Add(y);
