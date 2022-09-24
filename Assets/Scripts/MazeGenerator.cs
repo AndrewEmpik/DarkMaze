@@ -197,6 +197,8 @@ public class MazeGenerator : MonoBehaviour
 	{
 		if (MenuManager.FirstLoad)
 		{
+			RestoreDefaultSettings();
+
 			ApplySettings(_defaultSettings);
 
 			MenuCanvas.SetActive(true);
@@ -469,6 +471,21 @@ public class MazeGenerator : MonoBehaviour
 		_playtimeSettings.PostEffectsOn = _postEffectsOn;
 		_playtimeSettings.ReflectionsOn = _reflectionsOn;
 		_playtimeSettings.CrosshairOn = _crosshairOn;
+	}
+
+	private void RestoreDefaultSettings()
+	{
+		_playtimeSettings.Classic_MazeSize			= _defaultSettings.Classic_MazeSize;
+		_playtimeSettings.Catacombs_MazeSize		= _defaultSettings.Catacombs_MazeSize;
+		_playtimeSettings.Classic_WallHeight		= _defaultSettings.Classic_WallHeight;
+		_playtimeSettings.Classic_LightIntensity	= _defaultSettings.Classic_LightIntensity;
+		_playtimeSettings.Classic_WallMaterial		= _defaultSettings.Classic_WallMaterial;
+		_playtimeSettings.AdditionLightOn			= _defaultSettings.AdditionLightOn;
+		_playtimeSettings.TypeOfAddLight			= _defaultSettings.TypeOfAddLight;
+		_playtimeSettings.CameraPosition			= _defaultSettings.CameraPosition;
+		_playtimeSettings.PostEffectsOn				= _defaultSettings.PostEffectsOn;
+		_playtimeSettings.ReflectionsOn				= _defaultSettings.ReflectionsOn;
+		_playtimeSettings.CrosshairOn				= _defaultSettings.CrosshairOn;
 	}
 
 	void DefineCurMaterialsToggleGroupIndex()
