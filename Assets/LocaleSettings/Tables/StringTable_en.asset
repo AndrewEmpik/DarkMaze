@@ -198,6 +198,10 @@ MonoBehaviour:
     m_Localized: <i>Pick up</i> <b>[E]</b>
     m_Metadata:
       m_Items: []
+  - m_Id: 1729434825236480
+    m_Localized: Reflections
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
