@@ -6027,7 +6027,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: <b>Horror Maze</b> alpha 0.4...
+  m_Text: <b>DarkMaze</b> alpha 0.X...
 --- !u!114 &6866678984729319810
 MonoBehaviour:
   m_ObjectHideFlags: 0
