@@ -160,8 +160,10 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField] GameObject MenuCanvas;
 
 	private bool _postEffectsOn = true;
+	private bool _reflectionsOn = false;
 	private bool _addLightOn = true;
 	[SerializeField] Toggle _postEffectsToggle;
+	[SerializeField] Toggle _reflectionsToggle;
 	[SerializeField] Toggle _addLightToggle;
 	[SerializeField] Dropdown _torchTypeDropdown;
 	[SerializeField] AudioSource _clickSound;
@@ -378,6 +380,7 @@ public class MazeGenerator : MonoBehaviour
 		_curTorchType = settings.TypeOfAddLight;
 		_cameraPosition = settings.CameraPosition;
 		_postEffectsOn = settings.PostEffectsOn;
+		_reflectionsOn = settings.ReflectionsOn;
 		_curMaterial = settings.WallMaterial;
 		DefineCurMaterialsToggleGroupIndex();
 
@@ -388,6 +391,7 @@ public class MazeGenerator : MonoBehaviour
 		_sliderLight.value = _curDayTime;
 		_sliderHeight.value = _curWallHeight;
 		_postEffectsToggle.isOn = _postEffectsOn;
+		_reflectionsToggle.isOn = _reflectionsOn;
 		PostProcessVolume.SetActive(_postEffectsOn);
 		_addLightToggle.isOn = _addLightOn;
 		_materialToggles[_curMaterialsToggleGroupIndex].isOn = true;
@@ -405,6 +409,7 @@ public class MazeGenerator : MonoBehaviour
 
 	public void SavePlaytimeSettings()
 	{
+		Debug.Log("Saving playtime settings...");
 		_playtimeSettings.MazeSize = MazeSize;
 		_playtimeSettings.WallHeight = _curWallHeight;
 		_playtimeSettings.LightIntensity = _curDayTime;
@@ -412,6 +417,7 @@ public class MazeGenerator : MonoBehaviour
 		_playtimeSettings.TypeOfAddLight = _curTorchType;
 		_playtimeSettings.CameraPosition = _cameraPosition;
 		_playtimeSettings.PostEffectsOn = _postEffectsOn;
+		_playtimeSettings.ReflectionsOn = _reflectionsOn;
 		_playtimeSettings.WallMaterial = _curMaterial;
 	}
 
@@ -495,6 +501,17 @@ public class MazeGenerator : MonoBehaviour
 	public void TogglePostEffectsValue(bool val)
 	{
 		_postEffectsOn = val;
+	}
+	public void SetReflections(bool val)
+	{
+		_reflectionsOn = val;
+		ReflectionProbe[] reflectionProbes = FindObjectsOfType<ReflectionProbe>();
+		Debug.Log(reflectionProbes.Length);
+		foreach (ReflectionProbe RP in FindObjectsOfType<ReflectionProbe>())
+		{
+			RP.enabled = val;
+			if (val) RP.RenderProbe();
+		}
 	}
 	public void SetCameraPositionValue(int value)
 	{

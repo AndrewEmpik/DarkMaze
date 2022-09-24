@@ -12,5 +12,6 @@ public class PlaytimeSettings : ScriptableObject
 	public int TypeOfAddLight;
 	public int CameraPosition;
 	public bool PostEffectsOn;
+	public bool ReflectionsOn;
 	public Material WallMaterial;
 }
