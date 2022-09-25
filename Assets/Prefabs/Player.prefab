@@ -243,7 +243,7 @@ GameObject:
   - component: {fileID: 4565788887800820085}
   - component: {fileID: 4565788887800820087}
   - component: {fileID: 4565788887800820084}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -533,7 +533,7 @@ GameObject:
   - component: {fileID: 4565788888504091952}
   - component: {fileID: 4565788888504091965}
   - component: {fileID: 4565788888504091954}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -614,7 +614,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4565788888529411549}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: MatchBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -776,7 +776,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4565788888720042884}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: BurntPart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -939,7 +939,7 @@ GameObject:
   - component: {fileID: 4565788889182975954}
   - component: {fileID: 4565788889182975955}
   - component: {fileID: 4565788889182975953}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13523,7 +13523,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 126
+  m_VersionIndex: 129
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []

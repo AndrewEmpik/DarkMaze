@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.039372757, g: 0.040794037, b: 0.04143335, a: 1}
+  m_IndirectSpecularColor: {r: 0.03937187, g: 0.04079064, b: 0.041433685, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -778,6 +778,8 @@ MonoBehaviour:
   _sliderLight: {fileID: 539987156}
   _sliderHeight: {fileID: 619883550}
   _materialsToggleGroup: {fileID: 1077008029}
+  _darkSkybox: {fileID: 2100000, guid: 2039a0ad0a9d05549928b70362f54902, type: 2}
+  _defaultSkybox: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   _materialToggles:
   - {fileID: 1710330350}
   - {fileID: 823299832}

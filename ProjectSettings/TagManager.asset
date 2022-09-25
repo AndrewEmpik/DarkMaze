@@ -14,8 +14,8 @@ TagManager:
   - Exit
   - Player
   - Enemy
-  - 
-  - 
+  - TransparentForTopCamera
+  - MatchInHand
   - 
   - 
   - 

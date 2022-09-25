@@ -177,6 +177,9 @@ public class MazeGenerator : MonoBehaviour
 	int _cameraPosition = 0;
 	[SerializeField] ToggleGroup _materialsToggleGroup;
 
+	[SerializeField] Material _darkSkybox;
+	[SerializeField] Material _defaultSkybox;
+
 	public static int _curMaterialsToggleGroupIndex = 0;
 
 	public enum PinnedPosition
@@ -425,7 +428,9 @@ public class MazeGenerator : MonoBehaviour
 		_curMaterial = settings.Classic_WallMaterial;
 		DefineCurMaterialsToggleGroupIndex();
 
-		SetDayTime(_curDayTime);
+		if (LevelType == LevelType.ClassicMaze)
+			SetDayTime(_curDayTime);
+
 		MainCamera.GetComponent<CameraPosition>().SetCameraPosition(_cameraPosition);
 		_menuManager.SetCameraDropdownValue(_cameraPosition);
 		MazeSizeText.text = (MazeSize - 1).ToString();
@@ -680,9 +685,15 @@ public class MazeGenerator : MonoBehaviour
 		_globalLight.transform.rotation = Quaternion.Euler(Mathf.Lerp(-30, 50, val), -30, 0f);
 
 		if (Mathf.Lerp(-30, 50, val) < -5f)
+		{
+			RenderSettings.skybox = _darkSkybox;
 			_globalLight.SetActive(false);
+		}
 		else
+		{
+			RenderSettings.skybox = _defaultSkybox;
 			_globalLight.SetActive(true);
+		}
 		//_globalLight.GetComponent<Light>().intensity = val;
 
 		RenderSettings.ambientIntensity = val;
