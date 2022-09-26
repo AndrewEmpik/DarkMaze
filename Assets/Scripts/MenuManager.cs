@@ -63,7 +63,7 @@ public class MenuManager : MonoBehaviour
 		Cursor.visible = MenuActive;
 		Cursor.lockState = MenuActive ? CursorLockMode.None : CursorLockMode.Locked;
 
-		if (Input.GetKeyDown(KeyCode.Escape))
+		if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Q)) // Q as an alternative for WebGL
 		{
 			if (!_winMenuActive && !_failMenuActive)
 				ToggleMenuActive();
