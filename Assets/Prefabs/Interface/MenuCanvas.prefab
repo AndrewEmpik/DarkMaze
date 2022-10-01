@@ -745,7 +745,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 0.6
-  m_Text: "Do menu g\u0142\xF3wnego"
+  m_Text: To main menu
 --- !u!114 &6904475295370942614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1156,7 +1156,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u041E\u0433\u043E\u043D\u044C"
+  m_Text: Fire
 --- !u!114 &212112612715041536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1351,7 +1351,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0412\u044B\u0441\u043E\u0442\u0430 \u0441\u0442\u0435\u043D:"
+  m_Text: 'Wall height:'
 --- !u!114 &5834318816835864385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2571,7 +2571,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u041F\u043E\u0441\u0442-\u0435\u0444\u0435\u043A\u0442\u0438"
+  m_Text: Post effects
 --- !u!114 &8574047391546391050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3608,7 +3608,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u041F\u0435\u0440\u0435\u0431\u0443\u0434\u0443\u0432\u0430\u0442\u0438"
+  m_Text: Rebuild
 --- !u!114 &4192432804880267251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5034,7 +5034,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u0406\u043D\u0442\u0435\u043D\u0441\u0438\u0432\u043D\u0456\u0441\u0442\u044C\n\u043E\u0441\u0432\u0456\u0442\u043B\u0435\u043D\u043D\u044F:"
+  m_Text: 'Light
+
+    intensity:'
 --- !u!114 &7575273952733215056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5155,7 +5157,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u043D\u044F \u043A\u0430\u043C\u0435\u0440\u0438:"
+  m_Text: 'Camera position:'
 --- !u!114 &8594162834098965648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5619,7 +5621,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0412\u0418\u0425\u0406\u0414 <b>\u0425</b>"
+  m_Text: QUIT <b>X</b>
 --- !u!114 &4028713914371567660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6079,7 +6081,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u0420\u043E\u0437\u043C\u0456\u0440 \u043B\u0430\u0431\u0456\u0440\u0438\u043D\u0442\u0443:"
+  m_Text: 'Maze size:'
 --- !u!114 &2904134883246450064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6570,13 +6572,13 @@ MonoBehaviour:
   m_Value: 3
   m_Options:
     m_Options:
-    - m_Text: "\u041C\u0430\u0442\u043E\u0432\u0430\u044F \u043B\u0430\u043C\u043F\u0430"
+    - m_Text: Matte lamp
       m_Image: {fileID: 1920175776, guid: fe5cc2fd4773d1f4a84abebb7f42ad1d, type: 3}
-    - m_Text: "\u041A\u0440\u0430\u0441\u043D\u044B\u0439 \u0444\u043E\u043D\u0430\u0440\u0438\u043A"
+    - m_Text: Red lantern
       m_Image: {fileID: 1167496920, guid: fe5cc2fd4773d1f4a84abebb7f42ad1d, type: 3}
-    - m_Text: "\u0421\u0438\u043D\u0438\u0439 \u0444\u043E\u043D\u0430\u0440\u0438\u043A"
+    - m_Text: Blue lantern
       m_Image: {fileID: -794548793, guid: fe5cc2fd4773d1f4a84abebb7f42ad1d, type: 3}
-    - m_Text: "\u041E\u0433\u043E\u043D\u044C"
+    - m_Text: Fire
       m_Image: {fileID: -1681215157, guid: fe5cc2fd4773d1f4a84abebb7f42ad1d, type: 3}
     - m_Text: RANDOM
       m_Image: {fileID: -580005408, guid: fe5cc2fd4773d1f4a84abebb7f42ad1d, type: 3}
@@ -6902,7 +6904,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u0418\u0433\u0440\u043E\u043A"
+  m_Text: Player
 --- !u!114 &947295064869281751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7075,11 +7077,11 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: "\u0418\u0433\u0440\u043E\u043A"
+    - m_Text: Player
       m_Image: {fileID: 0}
-    - m_Text: "\u041F\u043E\u0434 \u0443\u0433\u043B\u043E\u043C"
+    - m_Text: Angled
       m_Image: {fileID: 0}
-    - m_Text: "\u0421\u0432\u0435\u0440\u0445\u0443"
+    - m_Text: From above
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7217,7 +7219,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u0414\u041E \u0413\u0420\u0418!"
+  m_Text: TO THE GAME!
 --- !u!114 &6428583449282575736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7767,7 +7769,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u041C\u0430\u0442\u0435\u0440\u0456\u0430\u043B \u0441\u0442\u0456\u043D:"
+  m_Text: 'Wall material:'
 --- !u!114 &8312639471446834077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8339,7 +8341,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u043C"
+  m_Text: m
 --- !u!114 &2443425452851529096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8606,7 +8608,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u0414\u043E\u0434\u0430\u0442\u043A\u043E\u0432\u0435 \u043E\u0441\u0432\u0456\u0442\u043B\u0435\u043D\u043D\u044F"
+  m_Text: Additional lighting
 --- !u!114 &1151275790390476147
 MonoBehaviour:
   m_ObjectHideFlags: 0

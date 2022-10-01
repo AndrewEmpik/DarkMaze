@@ -80,7 +80,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0412\u042B\u0425\u041E\u0414 <b>\u0425</b>"
+  m_Text: QUIT <b>X</b>
 --- !u!114 &6682289040915848469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,7 +384,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0420\u0435\u0441\u0442\u0430\u0440\u0442"
+  m_Text: Restart
 --- !u!114 &2366361219659577516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -746,7 +746,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u041E \u043D\u0435\u0442!..\n:("
+  m_Text: 'Oh no!..
+
+    :('
 --- !u!114 &2054495420891344047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1055,7 +1057,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0412 \u0433\u043B\u0430\u0432\u043D\u043E\u0435 \u043C\u0435\u043D\u044E"
+  m_Text: To main menu
 --- !u!114 &5863083914527685184
 MonoBehaviour:
   m_ObjectHideFlags: 0
