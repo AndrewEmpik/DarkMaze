@@ -8939,7 +8939,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1551127117}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: QuitApplication
+        m_MethodName: QuitApplicationWithEffect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

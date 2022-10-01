@@ -77,6 +77,17 @@ public class MainMenu : MonoBehaviour
 		_music.volume = MusicVolume;
 	}
 
+	public void QuitApplicationWithEffect()
+	{
+		StartCoroutine(QuitApplicationWithEffectCoroutine());
+	}
+	private IEnumerator QuitApplicationWithEffectCoroutine()
+	{
+		darkOutEffect.gameObject.SetActive(true);
+		yield return StartCoroutine(darkOutEffect.ShowDarkOutEffectAsCoroutine(true));
+		QuitApplication();
+	}
+
 	// потом унифицировать где-то, чтобы не плодить код
 	public void QuitApplication()
 	{

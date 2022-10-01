@@ -177,7 +177,16 @@ public class MenuManager : MonoBehaviour
 	{
 		SceneManager.LoadScene(0);
 	}
-
+	public void QuitApplicationWithEffect()
+	{
+		StartCoroutine(QuitApplicationWithEffectCoroutine());
+	}
+	private IEnumerator QuitApplicationWithEffectCoroutine()
+	{
+		darkOutEffect.gameObject.SetActive(true);
+		yield return StartCoroutine(darkOutEffect.ShowDarkOutEffectAsCoroutine(true));
+		QuitApplication();
+	}
 	public void QuitApplication()
 	{
 #if UNITY_EDITOR

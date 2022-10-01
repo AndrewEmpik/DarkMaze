@@ -3360,6 +3360,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 266789422}
+    - target: {fileID: 6866678983687259655, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: QuitApplicationWithEffect
+      objectReference: {fileID: 0}
     - target: {fileID: 6866678983713492115, guid: 3f8cf889c0983204e88023d282d96c1f, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
