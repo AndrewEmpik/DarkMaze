@@ -891,6 +891,7 @@ MonoBehaviour:
   _materialsToggleGroup: {fileID: 1077008029}
   _darkSkybox: {fileID: 2100000, guid: 2039a0ad0a9d05549928b70362f54902, type: 2}
   _defaultSkybox: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  _additionalCeilingForWEBGL: {fileID: 1468223896}
   _materialToggles:
   - {fileID: 1710330350}
   - {fileID: 823299832}
@@ -1539,7 +1540,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-55384
+  m_Name: pb_Mesh26074
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -1737,7 +1738,7 @@ GameObject:
   - component: {fileID: 1468223898}
   - component: {fileID: 1468223897}
   m_Layer: 9
-  m_Name: Ceiling_cube
+  m_Name: Ceiling_cube_forWEBGL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1751,7 +1752,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1468223896}
   m_Enabled: 1
-  m_CastShadows: 3
+  m_CastShadows: 2
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -1801,7 +1802,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1468223896}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5, y: 3.3, z: 1.5}
+  m_LocalPosition: {x: -1.5, y: 3.55, z: 1.5}
   m_LocalScale: {x: 123.5, y: 0.4, z: 123.5}
   m_ConstrainProportionsScale: 0
   m_Children: []

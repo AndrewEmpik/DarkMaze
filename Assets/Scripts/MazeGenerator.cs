@@ -180,6 +180,8 @@ public class MazeGenerator : MonoBehaviour
 	[SerializeField] Material _darkSkybox;
 	[SerializeField] Material _defaultSkybox;
 
+	[SerializeField] GameObject _additionalCeilingForWEBGL;
+
 	public static int _curMaterialsToggleGroupIndex = 0;
 
 	public enum PinnedPosition
@@ -406,6 +408,10 @@ public class MazeGenerator : MonoBehaviour
 
 		ApplyRestOfSettings();
 
+#if UNITY_WEBGL
+		if (LevelType == LevelType.CatacombMaze)
+			_additionalCeilingForWEBGL.SetActive(true);
+#endif
 
 	}
 

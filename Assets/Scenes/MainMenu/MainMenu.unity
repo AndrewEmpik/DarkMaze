@@ -6936,7 +6936,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Loading...
+  m_text: "L\u043Eading..."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5e51810c3510a0141bfad20d898ed41e, type: 2}
   m_sharedMaterial: {fileID: 8002876420131428174, guid: 5e51810c3510a0141bfad20d898ed41e, type: 2}
