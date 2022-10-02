@@ -18,7 +18,9 @@ public class DropdownLocalize : MonoBehaviour
 			{
 				for (int i = 0; i < Mathf.Min(_localizeKeys.Length, dropdown.options.Count); i++)
 				{
-					dropdown.options[i].text = LocalizationSettings.StringDatabase.GetLocalizedString(_stringTableName, _localizeKeys[i]);
+					string localizedString = LocalizationSettings.StringDatabase.GetLocalizedString(_stringTableName, _localizeKeys[i]);
+					if (localizedString != null && localizedString.Length > 0) 
+						dropdown.options[i].text = localizedString;
 				}
 			}
 		}
