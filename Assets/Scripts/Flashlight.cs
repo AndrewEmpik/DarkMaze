@@ -16,9 +16,9 @@ public class Flashlight : MonoBehaviour
 			List<Vector2Int> cellsForFlashlight = MazeGenerator.catacombMazeMap.GetFreeCells;
 			flashlightCellAddress = cellsForFlashlight[Random.Range(0, cellsForFlashlight.Count)];
 		}
-		Debug.Log(flashlightCellAddress);
+		//Debug.Log(flashlightCellAddress);
 		Vector3 flashlightCoords = _mazeGenerator.PositionByCellAddress(flashlightCellAddress.x, flashlightCellAddress.y);
-		Debug.Log(flashlightCoords);
+		//Debug.Log(flashlightCoords);
 		flashlightCoords += (Vector3.right * Random.Range(-1f, 1f) +
 									Vector3.forward * Random.Range(-1f, 1f)) * _mazeGenerator.CellSize / 2 * 0.75f;
 		transform.position = flashlightCoords;

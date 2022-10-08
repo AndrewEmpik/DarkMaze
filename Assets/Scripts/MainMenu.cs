@@ -15,7 +15,7 @@ public class MainMenu : MonoBehaviour
 	[SerializeField] Slider _masterVolumeSlider;
 	[SerializeField] Slider _musicVolumeSlider;
 
-	Color _imageForDarkEffectStartColor = new Color(35f/255, 31f / 255, 32f / 255, 0);
+	Color _imageForDarkEffectStartColor = new Color(35f/255, 31f / 255, 32f / 255, 0); // maybe change it later, looks not good
 
 	public static bool MusicIsOn = true;
 	public static float MusicVolume = 0.5f;
@@ -30,7 +30,6 @@ public class MainMenu : MonoBehaviour
 			SetMusicOn();
 		else
 			SetMusicOff();
-
 	}
 
 	public void LoadSceneByIndex(int index)
@@ -88,13 +87,13 @@ public class MainMenu : MonoBehaviour
 		QuitApplication();
 	}
 
-	// потом унифицировать где-то, чтобы не плодить код
+	// need to unificate somewhere not to duplicate the code
 	public void QuitApplication()
 	{
 #if UNITY_EDITOR
-		UnityEditor.EditorApplication.isPlaying = false; // работает только в редакторе
+		UnityEditor.EditorApplication.isPlaying = false; // works in editor only
 #else
-			Application.Quit(); // работает только в билде
+			Application.Quit(); // works in build only
 #endif
 	}
 

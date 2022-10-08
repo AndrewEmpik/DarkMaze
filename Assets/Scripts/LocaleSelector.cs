@@ -5,8 +5,6 @@ using UnityEngine.Localization.Settings;
 
 public class LocaleSelector : MonoBehaviour
 {
-
-
 	private bool _localeChangingInProgress = false;
 
 	// 0 = English,

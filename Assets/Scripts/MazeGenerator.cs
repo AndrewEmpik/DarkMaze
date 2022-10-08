@@ -6,6 +6,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <remarks>
+/// WARNING!
+/// This is an extremely large file, 
+/// it is strongly needed to divide it by several particular scripts in future.
+/// So:
+/// TODO rewrite this file!
+/// </remarks>
+
 public enum direction
 {
 	up,
@@ -227,7 +235,7 @@ public class MazeGenerator : MonoBehaviour
 			while (_mazeMapList == null)
 				_mazeMapList = _generateCatacombMaze(MazeSize);
 
-			// j - горизонталь, i - вертикаль
+			// j - horizontal, i - vertical
 			for (int i = 0; i < MazeSize; i++)
 				for (int j = 0; j < MazeSize; j++)
 				{
@@ -266,16 +274,16 @@ public class MazeGenerator : MonoBehaviour
 					}
 				}
 
-			// проставляем факелы
+			// placing torches
 			List<Vector2Int> freeCells = catacombMazeMap.GetFreeCells;
-			// первым - ставим в самом старте
+			// first one we place in the start point
 			try
 			{
 				PlaceTorchInCell(PathProcess.allPathProcesses[0].PathOrigin);
 			}
 			catch (System.ArgumentOutOfRangeException e)
 			{
-				Debug.LogError("Неудачный PlaceTorchInCell (стартовый): " + e.ToString() 
+				Debug.LogError("Failed PlaceTorchInCell (in start): " + e.ToString() 
 					+ "; " + e.ActualValue 
 					+ "; allPathProcesses.Count = " 
 					+ PathProcess.allPathProcesses.Count 
@@ -294,7 +302,7 @@ public class MazeGenerator : MonoBehaviour
 					}
 					catch (System.ArgumentOutOfRangeException e)
 					{
-						Debug.LogError("Неудачный PlaceTorchInCell: " + e.ToString() + "; " + e.ActualValue + "; freeCells.Count = " + freeCells.Count + "; rnd (index) = " + rnd);
+						Debug.LogError("Failed PlaceTorchInCell: " + e.ToString() + "; " + e.ActualValue + "; freeCells.Count = " + freeCells.Count + "; rnd (index) = " + rnd);
 					}
 					freeCells.RemoveAt(rnd);
 				}
@@ -317,7 +325,7 @@ public class MazeGenerator : MonoBehaviour
 					}
 					catch (System.ArgumentOutOfRangeException e)
 					{
-						Debug.LogError("Неудачный cellsForMatchBox: " + e.ToString() + "; " + e.ActualValue + "; cellsForMatchBox.Count = " + cellsForMatchBox.Count);
+						Debug.LogError("Failed cellsForMatchBox: " + e.ToString() + "; " + e.ActualValue + "; cellsForMatchBox.Count = " + cellsForMatchBox.Count);
 					}
 				}
 				else break;
@@ -352,7 +360,7 @@ public class MazeGenerator : MonoBehaviour
 				}
 			}
 
-			// j - горизонталь, i - вертикаль
+			// j - horizontal, i - vertical
 			for (int i = 0; i < MazeSize; i++)
 				for (int j = 0; j < MazeSize; j++)
 				{
@@ -376,12 +384,12 @@ public class MazeGenerator : MonoBehaviour
 					}
 
 
-					// ставим "выход"
+					// placing "exit"
 					if (i == 0 && j >= 1 && _mazeMapList[i][j] == 0)
 					{
 						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
 					}
-					if (i == MazeSize - 1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 или 1
+					if (i == MazeSize - 1 && j >= 1 && _mazeMapList[i][j] <= 1) // 0 or 1
 					{
 						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, 0f, 0f));
 					}
@@ -389,7 +397,7 @@ public class MazeGenerator : MonoBehaviour
 					{
 						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
 					}
-					if (j == MazeSize - 1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 или 2, лень делать бинарное "или", уже и так выше его применял
+					if (j == MazeSize - 1 && i >= 1 && (_mazeMapList[i][j] == 0 || _mazeMapList[i][j] == 2)) // 0 or 2, don't want to do binary "or" here, made it upwards already
 					{
 						_exitWall = Instantiate(ExitWallPrefab, _mazeZeroPoint + new Vector3(j * CellSize, 0, -i * CellSize), Quaternion.Euler(0f, -90f, 0f));
 					}
@@ -410,6 +418,7 @@ public class MazeGenerator : MonoBehaviour
 
 #if UNITY_WEBGL
 		if (LevelType == LevelType.CatacombMaze)
+		// a workaround for fixing lighting issues
 			_additionalCeilingForWEBGL.SetActive(true);
 #endif
 
@@ -449,7 +458,7 @@ public class MazeGenerator : MonoBehaviour
 		PostProcessVolume.SetActive(_postEffectsOn);
 		_addLightToggle.isOn = _addLightOn;
 		_materialToggles[_curMaterialsToggleGroupIndex].isOn = true;
-		_clickSound.Stop(); // нужно, чтобы на предыдущих шагах звук не срабатывал
+		_clickSound.Stop(); // it is needed for the click sound did not play at the previous steps
 	}
 
 	public void ApplyRestOfSettings()
@@ -559,9 +568,9 @@ public class MazeGenerator : MonoBehaviour
 	public direction middleOfThree(direction dir1, direction dir2, direction dir3)
 	{
 		if (dir1 == dir2 || dir2 == dir3 || dir3 == dir1)
-			throw new System.ArgumentException("Направления не должны повторяться!");
+			throw new System.ArgumentException("Directions should not duplicate!");
 		if (dir1 == direction.randomOrUnknown || dir2 == direction.randomOrUnknown || dir3 == direction.randomOrUnknown)
-			throw new System.ArgumentException("Передано значение randomOrUnknown");
+			throw new System.ArgumentException("Passed the randomOrUnknown value");
 
 		List<direction> threeDirections = new List<direction> { dir1, dir2, dir3 };
 		for (direction tmpdir = direction.up; tmpdir != direction.left; tmpdir = tmpdir.directionToRight())
@@ -619,7 +628,7 @@ public class MazeGenerator : MonoBehaviour
 			}
 			catch
 			{
-				Debug.LogWarning("Баг с факелом! Надо исправить!");
+				Debug.LogWarning("Torch bug, need to fix it!");
 			}
 		}
 		
@@ -637,7 +646,6 @@ public class MazeGenerator : MonoBehaviour
 		Renderer rend;
 		foreach (GameObject W in Walls)
 		{
-			//Debug.Log(W.);
 			rend = W.transform.GetChild(0).GetComponent<Renderer>();
 			rend.material = material;
 		}
@@ -647,28 +655,28 @@ public class MazeGenerator : MonoBehaviour
 	{
 		switch (index)
 		{
-			case 0: // обычная лампа
+			case 0: // matte lamp
 				foreach (GameObject T in Torches)
 				{
 					for (int c = 1; c <= 4; c++) T.transform.GetChild(0).GetChild(c).gameObject.SetActive(false);
 					T.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
 				}
 				break;
-			case 1: // красный фонарик
+			case 1: // red
 				foreach (GameObject T in Torches)
 				{
 					for (int c = 1; c <= 4; c++) T.transform.GetChild(0).GetChild(c).gameObject.SetActive(false);
 					T.transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
 				}
 				break;
-			case 2: // синий фонарик
+			case 2: // blue
 				foreach (GameObject T in Torches)
 				{
 					for (int c = 1; c <= 4; c++) T.transform.GetChild(0).GetChild(c).gameObject.SetActive(false);
 					T.transform.GetChild(0).GetChild(3).gameObject.SetActive(true);
 				}
 				break;
-			case 3: // огонь
+			case 3: // fire
 				foreach (GameObject T in Torches)
 				{
 					for (int c = 1; c <= 3; c++) T.transform.GetChild(0).GetChild(c).gameObject.SetActive(false);
@@ -716,7 +724,7 @@ public class MazeGenerator : MonoBehaviour
 		MazeSizeText.text = (res - 1).ToString();
 	}
 
-	private int manageWall(int where, int which, bool toAdd = true) // 1 пр, 2 лев, 3 всё
+	private int manageWall(int where, int which, bool toAdd = true) // 1 right, 2 left, 3 all
 	{
 		if (where < 0 || where > 3) where = 0;
 		return (toAdd ? where | which : where & ~which);
@@ -735,7 +743,7 @@ public class MazeGenerator : MonoBehaviour
 			}
 		}
 
-		// границы
+		// borders
 		_mazeMapList[0][0] = 0;
 		for (int i = 1; i < _mazeSize; i++)
 		{
@@ -749,20 +757,20 @@ public class MazeGenerator : MonoBehaviour
 		}
 		_mazeMapList[_mazeSize - 1][_mazeSize - 1] = 3;
 
-		// непосредственно генерация при помощи алгоритма Эллера
+		// direct generation using the Eller algorithm
 		List<int> rowSets = new List<int>();
 		int curCnt = 0;
 		bool curHasExit = false;
-		for (int i = 0; i < _mazeSize; i++) rowSets.Add(i); // создание множеств
+		for (int i = 0; i < _mazeSize; i++) rowSets.Add(i); // creating sets
 		for (int i = 1; i < _mazeSize - 1; i++)
-		{ // создание стенок справа
+		{ // creating right walls
 			if (Random.Range(0, 2) == 1)
 				_mazeMapList[1][i] = manageWall(_mazeMapList[1][i], 1, true);
 			else
 				rowSets[i + 1] = rowSets[i];
 		};
 		for (int i = 1; i < _mazeSize; i++)
-		{ // создание стенок снизу
+		{ // creating bottom walls
 			if (rowSets[i] != rowSets[i - 1])
 			{
 				if (i == _mazeSize - 1 || rowSets[i] != rowSets[i + 1])
@@ -782,16 +790,16 @@ public class MazeGenerator : MonoBehaviour
 				curHasExit = true;
 		};
 
-		// следующие строки
+		// next rows
 		for (int r = 2; r < _mazeSize; r++)
 		{
 
 			for (int i = 1; i < _mazeSize; i++)
 				if (_mazeMapList[r - 1][i] == 2 || _mazeMapList[r - 1][i] == 3)
-					rowSets[i] = i + _mazeSize * r; // присваиваем уникальное множество тем ячейкам, у которых была граница снизу
+					rowSets[i] = i + _mazeSize * r; // assigning a unique set to those cells that had a bottom border
 
 			for (int i = 1; i < _mazeSize - 1; i++)
-			{ // создание стенок справа
+			{ // creating right walls
 				if (rowSets[i] == rowSets[i + 1] || Random.Range(0, 2) == 1)
 					_mazeMapList[r][i] = manageWall(_mazeMapList[r][i], 1, true);
 				else
@@ -799,12 +807,12 @@ public class MazeGenerator : MonoBehaviour
 			};
 
 			for (int i = 1; i < _mazeSize; i++)
-			{ // создание стенок снизу
+			{ // creating bottom walls
 				if (rowSets[i] != rowSets[i - 1])
 				{
 					if (i == _mazeSize - 1 || rowSets[i] != rowSets[i + 1])
 					{
-						//Debug.Log("Не строим стенку для rowSets[" + i + "], = " + rowSets[i]);
+						//Debug.Log("Do not build the wall for rowSets[" + i + "], = " + rowSets[i]);
 						continue;
 					}
 
@@ -823,7 +831,7 @@ public class MazeGenerator : MonoBehaviour
 			};
 		};
 
-		// последняя строка
+		// the last row
 		bool allTheSameSet = false;
 		while (!allTheSameSet)
 		{
@@ -842,7 +850,7 @@ public class MazeGenerator : MonoBehaviour
 				}
 			}
 
-			allTheSameSet = true; // *пока не доказано обратное
+			allTheSameSet = true; // *until proven otherwise
 			for (int i = 1; i < _mazeSize - 1; i++)
 			{
 				if (rowSets[i + 1] != rowSets[i])
@@ -850,7 +858,7 @@ public class MazeGenerator : MonoBehaviour
 			}
 		}
 
-		// выход
+		// exit
 		int exitAt = Random.Range(0, (_mazeSize - 1) * 4);
 		int exitAtOffset = (exitAt % (_mazeSize - 1)) + 1;
 		switch (exitAt / (_mazeSize - 1))
@@ -957,7 +965,7 @@ public class MazeGenerator : MonoBehaviour
 
 		public List<Vector2Int> GetThinWalls
 		{
-			// только если 2 на 2, и только чередование
+			// only if 2x2, and only an alternation
 			get
 			{
 				if (thinWalls.Count == 0)
@@ -1005,7 +1013,7 @@ public class MazeGenerator : MonoBehaviour
 
 			return directions;
 		}
-		// толща - 1, края - 2. Пустоты - 0, но их нет изначально
+		// inside area - 1, borders - 2. Empty cells - 0, though there are no them in the beginning
 		public CatacombMazeMap(int mazeSize)
 		{
 			this.mazeSize = mazeSize;
@@ -1014,7 +1022,7 @@ public class MazeGenerator : MonoBehaviour
 				mazeMap.Add(new List<int>());
 				for (int j = 0; j < mazeSize; j++)
 				{
-					if (i == 0 || i == mazeSize - 1 || j == 0 || j == mazeSize - 1) // внешняя граница
+					if (i == 0 || i == mazeSize - 1 || j == 0 || j == mazeSize - 1) // outside border
 						mazeMap[i].Add((int)Legend.EdgeOfTheMaze);
 					else
 						mazeMap[i].Add((int)Legend.Wall);
@@ -1026,7 +1034,7 @@ public class MazeGenerator : MonoBehaviour
 		{
 			if (cell.x > mazeSize - 1 || cell.x < 0 ||
 				cell.y > mazeSize - 1 || cell.y < 0)
-				throw new System.ArgumentOutOfRangeException("cell", cell, "Вылезли за границы размеров лабиринта");
+				throw new System.ArgumentOutOfRangeException("cell", cell, "We got out of the boundaries of the dimensions of the maze");
 
 			if (mazeMap[cell.y][cell.x] >= 1)
 				mazeMap[cell.y][cell.x] = (int)Legend.FreeCell;
@@ -1034,7 +1042,7 @@ public class MazeGenerator : MonoBehaviour
 			{
 				PrintMazeMap();
 				Debug.Log(cell.x + ", " + cell.y + ": " + mazeMap[cell.y][cell.x]);
-				throw new System.Exception("Тут уже было пробурено!");
+				throw new System.Exception("It has already been drilled here!");
 			}
 		}
 
@@ -1042,11 +1050,11 @@ public class MazeGenerator : MonoBehaviour
 		{
 			if ((cell.x > 1 && cell.x < mazeSize - 2) &&
 				(cell.y > 1 && cell.y < mazeSize - 2))
-				throw new System.ArgumentOutOfRangeException("cell", cell , "Клетка находится в толще, должна быть смежна с краем!");
+				throw new System.ArgumentOutOfRangeException("cell", cell , "The cell is in the inside area, must be adjacent to the edge!");
 
 			else if (cell.x == 0 || cell.x == mazeSize - 1 ||
 				cell.y == 0 || cell.y == mazeSize - 1)
-				mazeMap[cell.y][cell.x] = (int)Legend.ExitHorizontal; // поделить по двум
+				mazeMap[cell.y][cell.x] = (int)Legend.ExitHorizontal; // share between two ("поделить по двум")
 
 			else
 			{
@@ -1059,14 +1067,14 @@ public class MazeGenerator : MonoBehaviour
 				else if (cell.y == mazeSize - 2)
 					mazeMap[mazeSize - 1][cell.x] = (int)Legend.ExitHorizontal;
 				else
-					throw new System.Exception("Во время простановки выхода что-то пошло совсем не так");
+					throw new System.Exception("Something went completely wrong while placing up the exit.");
 			}
 		}
 
 		public void PlaceLattice(Vector2Int cell)
 		{
 			if (!catacombMazeMap.GetThinWalls.Contains(cell))
-				throw new System.InvalidOperationException("Эта стена не является тонкой!");
+				throw new System.InvalidOperationException("This wall is not thin!");
 			else if (cell.y == 0 || mazeMap[cell.y - 1][cell.x] == (int)CatacombMazeMap.Legend.FreeCell)
 				mazeMap[cell.y][cell.x] = (int)CatacombMazeMap.Legend.LatticeHorizontal;
 			else
@@ -1079,7 +1087,7 @@ public class MazeGenerator : MonoBehaviour
 			{
 				if (c.x < 1 || c.x > mazeSize - 2 ||
 					c.y < 1 || c.y > mazeSize - 2 ||
-					mazeMap[c.x][c.y] != 1) // TODO добавить проверку на коридорность
+					mazeMap[c.x][c.y] != 1) // TODO add the check for the "corridority"
 					cells.Remove(c);
 			}
 		}
@@ -1147,18 +1155,18 @@ public class MazeGenerator : MonoBehaviour
 		if (PathProcess.activePathProcesses.Count > 0) PathProcess.activePathProcesses.Clear();
 
 		catacombMazeMap = new CatacombMazeMap(_mazeSize);
-		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // толща - 1, края - 2
+		List<List<int>> _mazeMapList = catacombMazeMap.MazeMap; // inside area - 1, borders - 2
 
-		// Vector2Int - порядок x, y
+		// Vector2Int - order x, y
 		new PathProcess(new Vector2Int(_mazeSize/2, _mazeSize/2));
 
-		// далее надо пройтись по всем и делать шаги, пока можно
+		// then we need to go through everyone and make steps while we can
 		while (PathProcess.activePathProcesses.Count > 0)
 		{
 			PathProcess.activePathProcesses[Random.Range(0,PathProcess.activePathProcesses.Count)].MakeStep();
 		}
 
-		Debug.Log("Всего путепроцессов: " + PathProcess.allPathProcesses.Count);
+		Debug.Log("Pathprocesses overall count: " + PathProcess.allPathProcesses.Count);
 
 		List<PathProcess> PathsEndingAtTheEdge = (from pr in PathProcess.allPathProcesses
 													where pr.IsEndingAtTheEdge
@@ -1194,8 +1202,8 @@ public class MazeGenerator : MonoBehaviour
 		}
 		catch (System.ArgumentOutOfRangeException e)
 		{
-			Debug.LogWarning("Неудачный PlaceExitNear: " + e.ToString() + "; " + e.ActualValue + "; PathsEndingAtTheEdge.Count = " + PathsEndingAtTheEdge.Count + "; rndForExit = " + rndForExit);
-			return null; // возвращаем null, намекая на то, что случился фейл
+			Debug.LogWarning("Failed PlaceExitNear: " + e.ToString() + "; " + e.ActualValue + "; PathsEndingAtTheEdge.Count = " + PathsEndingAtTheEdge.Count + "; rndForExit = " + rndForExit);
+			return null; // a hint of fail
 		}
 
 		List<Vector2Int> thinWalls = catacombMazeMap.GetThinWalls;
@@ -1291,7 +1299,7 @@ public class MazeGenerator : MonoBehaviour
 
 		public void MakeStep()
 		{
-			// определить, куда можно сделать step
+			// determine where we can make a step
 
 			List<direction> desiredDirections = new List<direction>();
 			if (currentDirection == direction.randomOrUnknown)
@@ -1312,7 +1320,7 @@ public class MazeGenerator : MonoBehaviour
 			while (!directionDetermined && desiredDirections.Count > bannedDirections.Count)
 			{
 
-				if (wannaForward && !bannedDirections.Contains(desiredDirections[0])) // то есть "вперёд"
+				if (wannaForward && !bannedDirections.Contains(desiredDirections[0])) // means "forward"
 				{
 					if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell,currentDirection))))
 					{
@@ -1340,7 +1348,7 @@ public class MazeGenerator : MonoBehaviour
 							else
 							{
 								bannedDirections.Add(desiredDirections[1]);
-								// переходим на right
+								// switch to right
 								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[2]))))
 								{
 									directionDetermined = true;
@@ -1399,7 +1407,7 @@ public class MazeGenerator : MonoBehaviour
 
 			if (directionDetermined)
 			{
-				// прежде, чем двигаться дальше, нужно решить, хотим ли мы здесь сделать развилку
+				// before moving on, we need to decide if we want to make a fork here
 				if (!wannaBranch && Random.Range(0, 10) == 1)
 					wannaBranch = true;
 
@@ -1420,7 +1428,7 @@ public class MazeGenerator : MonoBehaviour
 						}
 						else
 						{
-							// иногда будем делать крестовые перекрёстки
+							// sometimes we will make crossways
 							if (Random.Range(0, 2) == 0)
 							{
 								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
@@ -1435,7 +1443,7 @@ public class MazeGenerator : MonoBehaviour
 								}
 							}
 
-							// иначе - только один путь из двух
+							// otherwise - only one way out of two
 							else if (Random.Range(0, 2) == 1)
 							{
 								if (catacombMazeMap.CheckCellForPath(catacombMazeMap.GetNeighbourCell(new NavigateCell(currentCell, desiredDirections[0]))))
@@ -1479,14 +1487,14 @@ public class MazeGenerator : MonoBehaviour
 				}
 				catch (System.Exception e)
 				{
-					Debug.LogError("Вещаем из catch: " + e.ToString());
+					Debug.LogError("Broadcasting from catch: " + e.ToString());
 					Debug.LogWarning("currentCell: " + currentCell + ", resultDirection: " + resultDirection + ", nextCell: " + nextCell);
 				}
 			}
 			else
 				this.StopPath();
 
-			Debug.Log("Активных путепроцессов: " + activePathProcesses.Count);
+			Debug.Log("Active pathprocesses count: " + activePathProcesses.Count);
 		}
 	}
 

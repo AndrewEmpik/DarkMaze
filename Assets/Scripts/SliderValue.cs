@@ -15,7 +15,7 @@ public class SliderValue : MonoBehaviour
     }
     public void SetText(float value)
     {
-		// Multiplier - то, что видно пользователю в интерфейсе
+		// Multiplier - the value that the user sees
 		Text.text = (value * Multiplier).ToString("0.0"); 
     }
 }

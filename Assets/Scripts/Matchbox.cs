@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Matchbox : MonoBehaviour
 {
-
+	// an empty script for utilitary purposes
 }

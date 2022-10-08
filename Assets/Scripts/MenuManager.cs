@@ -35,7 +35,6 @@ public class MenuManager : MonoBehaviour
 
 	private void Awake()
 	{
-
 		//if (Instance == null)
 		//{
 		Instance = this;
@@ -48,10 +47,9 @@ public class MenuManager : MonoBehaviour
 	void Start()
 	{
 		SetMenuOff();
-		Debug.Log("Стартуем darkOutEffect.ShowDarkOutEffect(false)");
 		darkOutEffect.ShowDarkOutEffect(false);
 
-		// для удобства, если в редакторе они были включены, в игре выключить
+		// for convenience, if they were enabled in editor, disable in game
 		if (_winCanvas.gameObject.activeInHierarchy)
 			_winCanvas.gameObject.SetActive(false);
 		if (_failCanvas.gameObject.activeInHierarchy)
@@ -190,9 +188,9 @@ public class MenuManager : MonoBehaviour
 	public void QuitApplication()
 	{
 #if UNITY_EDITOR
-		UnityEditor.EditorApplication.isPlaying = false; // работает только в редакторе
+		UnityEditor.EditorApplication.isPlaying = false; // works in editor only
 #else
-			Application.Quit(); // работает только в билде
+			Application.Quit(); // works in build only
 #endif
 	}
 }

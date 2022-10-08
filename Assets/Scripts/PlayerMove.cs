@@ -84,8 +84,6 @@ public class PlayerMove : MonoBehaviour
 			FootstepsAudio.Pause();
 		}
 
-		//
-
 		// Create ray from center of the screen
 		var ray = _playerCamera.ViewportPointToRay(Vector3.one * 0.5f);
 		RaycastHit hit;
@@ -99,7 +97,6 @@ public class PlayerMove : MonoBehaviour
 			Debug.DrawLine(ray.origin, hit.point, Color.yellow);
 			// Check if object is pickable
 			Matchbox matchbox = hit.transform.GetComponent<Matchbox>();
-			// If object has PickableItem class
 			if (matchbox)
 			{
 				PickUIText.gameObject.SetActive(true);
@@ -120,6 +117,7 @@ public class PlayerMove : MonoBehaviour
 		}
 
 		if (Input.GetMouseButton(1))
+			// improve to a pretty coroutine in future
 			_playerCamera.fieldOfView = 30;
 		else
 			_playerCamera.fieldOfView = 60;
@@ -181,7 +179,7 @@ public class PlayerMove : MonoBehaviour
 													Mathf.Lerp(FlameTopPosition.z, FlameBottomPosition.z, (baseTime - t) / baseTime));
 			yield return null;
 		}
-		PutOutMatch(); // переделать на выключение
+		PutOutMatch(); // TODO remake to the switching off
 	}
 
 	IEnumerator RaiseInHandsCoroutine(bool boolValue)
@@ -233,7 +231,7 @@ public class PlayerMove : MonoBehaviour
 		MatchesProgressBar.SetActive(false);
 		StopCoroutine(matchLifeCoroutine);
 		StartCoroutine(RaiseInHandsCoroutine(false));
-		MatchLightingAudio.Stop(); // актуально, если очень быстро погасить после зажигания
+		MatchLightingAudio.Stop(); // it is topical, if you put out too quick after the lighting on
 		//MatchInHandObject.SetActive(false);
 	}
 
@@ -245,13 +243,14 @@ public class PlayerMove : MonoBehaviour
 		MenuManager.Instance.Lose();
 	}
 
-	float rotationImpulse = 0f;
+	//float rotationImpulse = 0f;
 
 	void FixedUpdate()
 	{
 		if (!Dead)
 			KeyboardMovement();
 
+		// it was needed for improving an animation of the flame in hand, TODO in future
 		/*float y = Input.GetAxis("Mouse X") * turnSpeed;
 		_playerRotationsList.Add(y);
 		_playerRotationsList.RemoveAt(0);
@@ -264,7 +263,6 @@ public class PlayerMove : MonoBehaviour
 		}
 
 		rotationImpulse = sumY / _playerRotationsListLength;*/
-
 	}
 
 	void MouseAiming()
@@ -278,10 +276,10 @@ public class PlayerMove : MonoBehaviour
         // clamp the vertical rotation
         rotX = Mathf.Clamp(rotX, minTurnAngle, maxTurnAngle);
 		
-		//Debug.Log(rotX);
 		float _sin = Mathf.Sin(Mathf.Abs(rotX) * Mathf.Deg2Rad);
 		float angleCoef = 0.585f * _sin * _sin;
 
+		// TODO improve MatchFlame animation in future
 		MatchFlame.transform.localScale = new Vector3(1,1 - angleCoef /*(90+45)*/ ,1);
 
 		_playerRotationsList.Add(y);
@@ -310,9 +308,6 @@ public class PlayerMove : MonoBehaviour
 							+ dir.x * moveSpeed * transform.right)
 							 * boost;
 
-		//Debug.Log(1f / boost);
-
-
 		FootstepsAudio.pitch = boost;
 		//FootstepsAudio.outputAudioMixerGroup.audioMixer.SetFloat("Pitch", 1f / boost);
 
@@ -323,5 +318,6 @@ public class PlayerMove : MonoBehaviour
 
 	}
 
+	// TODO in future
 	//void CameraBobbing(val);
 }
